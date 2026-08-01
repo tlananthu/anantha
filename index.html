@@ -184,6 +184,51 @@
 
         /* Footer */
         .app-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--surface-light); text-align: center; color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px; }
+        /* Mobile App Bottom Navigation */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 1rem 80px 1rem; /* Add bottom padding so content isn't hidden behind the nav */
+            }
+            .nav-tabs {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background-color: var(--surface-color);
+                border-top: 1px solid var(--border-color);
+                border-bottom: none;
+                margin: 0;
+                padding: 0.5rem 0.25rem;
+                justify-content: space-between;
+                z-index: 1000;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+                overflow-x: visible;
+                gap: 0;
+            }
+            .tab-btn {
+                flex: 1;
+                padding: 0.5rem 0.25rem;
+                font-size: 0.7rem;
+                border-bottom: none; 
+                border-radius: 8px;
+                white-space: normal;
+                line-height: 1.2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                height: 50px;
+            }
+            .tab-btn.active {
+                background-color: rgba(56, 189, 248, 0.1);
+                color: var(--accent-color);
+                border-bottom: none;
+            }
+            /* Hide the footer on mobile so it doesn't clash with the nav bar */
+            .app-footer {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
