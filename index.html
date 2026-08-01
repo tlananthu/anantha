@@ -48,9 +48,10 @@
         .brand-name { font-size: 1.5rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
         
         .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); overflow-x: auto; }
-        .tab-btn { background: transparent; border: none; color: var(--text-secondary); padding: 1rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; border-radius: 0; white-space: nowrap; transition: color 0.2s; }
+        .tab-btn { display: flex; align-items: center; gap: 0.5rem; background: transparent; border: none; color: var(--text-secondary); padding: 1rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; border-radius: 0; white-space: nowrap; transition: color 0.2s; }
         .tab-btn.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
         .tab-btn:hover:not(.active) { color: var(--text-primary); }
+        .tab-btn svg { width: 18px; height: 18px; }
         
         .view { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view.active { display: block; }
@@ -184,6 +185,7 @@
 
         /* Footer */
         .app-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--surface-light); text-align: center; color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px; }
+
         /* Mobile App Bottom Navigation */
         @media (max-width: 768px) {
             body {
@@ -207,27 +209,31 @@
             }
             .tab-btn {
                 flex: 1;
+                flex-direction: column;
+                gap: 0.25rem;
                 padding: 0.5rem 0.25rem;
-                font-size: 0.7rem;
+                font-size: 0.65rem;
                 border-bottom: none; 
                 border-radius: 8px;
                 white-space: normal;
-                line-height: 1.2;
-                display: flex;
-                align-items: center;
+                line-height: 1.1;
                 justify-content: center;
-                text-align: center;
-                height: 50px;
+                height: 55px;
             }
+            .tab-btn svg { width: 22px; height: 22px; margin-bottom: 2px; }
             .tab-btn.active {
                 background-color: rgba(56, 189, 248, 0.1);
                 color: var(--accent-color);
                 border-bottom: none;
             }
-            /* Hide the footer on mobile so it doesn't clash with the nav bar */
             .app-footer {
                 display: none;
             }
+            .toast {
+                bottom: 85px; /* Adjust toast to pop up above the nav bar on mobile */
+            }
+            @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 85px; opacity: 1; } }
+            @keyframes fadeout { from { bottom: 85px; opacity: 1; } to { bottom: 0; opacity: 0; } }
         }
     </style>
 </head>
@@ -247,10 +253,22 @@
 
     <main class="app-content">
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="app.switchView('home')">Dashboard Summary</button>
-            <button class="tab-btn" onclick="app.switchView('goals')">Financial Goals / Plan</button>
-            <button class="tab-btn" onclick="app.switchView('investments')">Asset Portfolio</button>
-            <button class="tab-btn" onclick="app.switchView('settings')">Settings</button>
+            <button class="tab-btn active" onclick="app.switchView('home')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                <span>Dashboard</span>
+            </button>
+            <button class="tab-btn" onclick="app.switchView('goals')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                <span>Goals Plan</span>
+            </button>
+            <button class="tab-btn" onclick="app.switchView('investments')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                <span>Portfolio</span>
+            </button>
+            <button class="tab-btn" onclick="app.switchView('settings')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Settings</span>
+            </button>
         </div>
 
         <!-- SHARED UNIFIED FILTER PANEL -->
@@ -528,7 +546,7 @@
                         <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.2rem; line-height: 1.6;">
                             <li><strong>INDMoney</strong> (holdings-family-template.xlsx)</li>
                             <li><strong>Zerodha</strong> (holdings-template-zerodha.xlsx)</li>
-                            <li><strong>Upstox</strong> (holdings_report_Upstox.xlsx) <span style="color:var(--success-color);font-size:0.7rem;">NEW!</span></li>
+                            <li><strong>Upstox</strong> (holdings_report_Upstox.xlsx)</li>
                         </ul>
                         <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning-color); font-style: italic;">
                             Zerodha imports will auto-create profiles named after the Client ID. Upstox imports use the Report Name.
@@ -633,7 +651,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.34</div>
+        <div>Anantha Wealth OS V2.36</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -727,9 +745,9 @@
             },
 
             migrateData() {
-                const savedV2_34 = localStorage.getItem('ananthaDataV2_34');
-                if (savedV2_34) {
-                    this.data = JSON.parse(savedV2_34);
+                const savedV2_36 = localStorage.getItem('ananthaDataV2_36');
+                if (savedV2_36) {
+                    this.data = JSON.parse(savedV2_36);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -750,7 +768,7 @@
                     return;
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_33');
+                const savedOld = localStorage.getItem('ananthaDataV2_35');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -805,7 +823,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_34', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_36', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1159,7 +1177,6 @@
                                     rawClass = "Equity";
                                     rawCategory = "NA";
                                     rawSector = "NA";
-                                    // No historic invested amount, rely on default positive rate
                                 } else if (!isZerodha) {
                                     // INDmoney Extraction
                                     invName = rowObj["Investment"];
@@ -1241,7 +1258,6 @@
                                         else if (aClassStr.includes('hybrid') || aClassStr.includes('balanced') || aCatStr.includes('hybrid')) invType = 'hybrid';
                                     }
                                     
-                                    // Use default expected future growth rate base
                                     let rate = this.defaultRates[invType];
                                     if(rate === undefined) rate = 7.0;
 
@@ -1266,7 +1282,7 @@
 
                                     // If historical loss, mark negative growth
                                     if (isLossMaking && !isManuallyEdited) {
-                                        rate = -1.0; // Minimal negative for future projection warning
+                                        rate = -1.0; 
                                     }
 
                                     newInvestments.push({
@@ -1551,7 +1567,7 @@
                             </div>
                         </td>
                         <td>${this.formatCurrency(inv.value)}</td>
-                        <td class="highlight-val">${parseFloat(inv.growthRate).toFixed(1)}%</td>
+                        <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
                         <td style="color: var(--text-secondary);">${inv.matDisplay}</td>
                         <td class="highlight-val">${this.formatCurrency(inv.computedFV)}</td>
                         <td style="text-align: center;">
@@ -1687,7 +1703,7 @@
                     tr.innerHTML = `
                         <td style="text-transform: capitalize; font-weight: 500;">${typeKey} ${warningIcon}</td>
                         <td>₹${this.formatCurrency(data.cv)}</td>
-                        <td class="highlight-val">${avgGrowth}%</td>
+                        <td style="color: ${avgGrowth < 0 ? 'var(--danger-color)' : 'var(--text-primary)'}; font-weight: 600;">${avgGrowth}%</td>
                         <td style="color: var(--accent-color); font-weight: 600;">₹${this.formatCurrency(data.fv)}</td>
                         <td>${pct}%</td>
                     `;
