@@ -170,6 +170,8 @@
         
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
         .portfolio-header h3 { font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+        .btn-upload { background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color); font-weight: 500; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
+        .btn-upload:hover { border-color: var(--accent-color); }
         
         /* Settings Card specific styles */
         .settings-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
@@ -180,9 +182,6 @@
         .toast.show { visibility: visible; animation: fadein 0.4s, fadeout 0.4s 2.5s; }
         @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
         @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
-
-        /* Footer */
-        .app-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--surface-light); text-align: center; color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px; }
 
         /* Mobile App Bottom Navigation */
         @media (max-width: 768px) {
@@ -482,9 +481,9 @@
         <div id="view-investments" class="view">
             <div class="portfolio-header">
                 <h3>Registered Assets</h3>
-                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                     <button class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('inv')">Tune Filters ⚡</button>
-                    <button class="btn-upload" onclick="app.openAssetModal()" style="background: var(--accent-color); color: #000; border: none;">+ Add Asset</button>
+                    <button class="btn-upload" onclick="app.openAssetModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600;">+ Add Asset</button>
                 </div>
             </div>
             
@@ -663,7 +662,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.38</div>
+        <div>Anantha Wealth OS V2.39</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -763,9 +762,9 @@
             },
 
             migrateData() {
-                const savedV2_38 = localStorage.getItem('ananthaDataV2_38');
-                if (savedV2_38) {
-                    this.data = JSON.parse(savedV2_38);
+                const savedV2_39 = localStorage.getItem('ananthaDataV2_39');
+                if (savedV2_39) {
+                    this.data = JSON.parse(savedV2_39);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -783,10 +782,10 @@
                     this.sortAsc = this.data.sortAsc !== undefined ? this.data.sortAsc : true;
                     this.invSortColumn = this.data.invSortColumn || 'fv';
                     this.invSortAsc = this.data.invSortAsc !== undefined ? this.data.invSortAsc : false;
-                    return false; // Not a fresh install
+                    return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_37') || localStorage.getItem('ananthaDataV2_36') || localStorage.getItem('ananthaDataV2_35');
+                const savedOld = localStorage.getItem('ananthaDataV2_38') || localStorage.getItem('ananthaDataV2_37');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -808,7 +807,7 @@
                     this.invSortColumn = this.data.invSortColumn || 'fv';
                     this.invSortAsc = this.data.invSortAsc !== undefined ? this.data.invSortAsc : false;
                     this.saveState();
-                    return false; // Not a fresh install
+                    return false; 
                 }
                 
                 this.dashProfileFilters = [...this.data.profiles];
@@ -820,7 +819,7 @@
                 this.invClassFilters = [];
                 this.invTypeFilters = [];
                 this.invCategoryFilters = [];
-                return true; // Is a fresh install
+                return true; 
             },
 
             saveState() {
@@ -842,7 +841,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_38', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_39', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -929,7 +928,6 @@
                     `;
                 });
 
-                // Toggle Onboarding Card visibility
                 const onboard = document.getElementById('onboardingCard');
                 if (onboard) {
                     if (this.data.investments.length === 0) {
@@ -1120,7 +1118,6 @@
                     });
                     
                     workbook.SheetNames.forEach(sheetName => {
-                        // Removed the strict "report" exclusion to allow Scripbox's "Holding Report" sheet.
                         if (sheetName.toLowerCase() === 'combined') return; 
 
                         const worksheet = workbook.Sheets[sheetName];
@@ -1343,7 +1340,6 @@
                                         isManuallyEdited = true;
                                     }
 
-                                    // If historical loss, mark negative growth for dashboard visibility
                                     if (isLossMaking && !isManuallyEdited && isNaN(calcRate)) {
                                         rate = -1.0; 
                                     }
@@ -1397,7 +1393,6 @@
                         this.renderInvestments();
                         this.renderDashboard();
                         
-                        // Navigate to dashboard on successful import
                         this.switchView('home');
                         this.showToast(`Imported ${newInvestments.length} assets for: ${importedProfiles.join(", ")}`);
                     } else {
