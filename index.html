@@ -124,7 +124,8 @@
 
         /* Unified Filter Panel */
         .filter-panel { background: var(--surface-light); border: 1px solid var(--accent-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; display: none; animation: fadeIn 0.2s ease-in-out; }
-        .filter-panel h4 { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem; }
+        .filter-panel h4 { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .filter-col-header { display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-bottom: 0.8rem; }
         .filter-col label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; margin-bottom: 0.4rem; cursor: pointer; color: var(--text-primary); text-transform: uppercase; }
         .filter-col input[type="checkbox"] { accent-color: var(--accent-color); cursor: pointer; width: 14px; height: 14px; }
         
@@ -248,19 +249,19 @@
 
     <main class="app-content">
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="app.switchView('home')">
+            <button class="tab-btn active" onclick="app.switchView('home')" title="Shortcut: Press `">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
                 <span>Dashboard</span>
             </button>
-            <button class="tab-btn" onclick="app.switchView('goals')">
+            <button class="tab-btn" onclick="app.switchView('goals')" title="Shortcut: Press `">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
                 <span>Goals Plan</span>
             </button>
-            <button class="tab-btn" onclick="app.switchView('investments')">
+            <button class="tab-btn" onclick="app.switchView('investments')" title="Shortcut: Press `">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                 <span>Portfolio</span>
             </button>
-            <button class="tab-btn" onclick="app.switchView('settings')">
+            <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
@@ -275,35 +276,43 @@
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
                 <div class="filter-col">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.8rem;">
-                        <h4 style="margin:0;">Profiles</h4>
+                    <div class="filter-col-header">
+                        <h4>Profiles</h4>
                         <div style="font-size:0.75rem;"><a href="#" onclick="app.selectAllTemp('profiles', true); return false;" style="color:var(--accent-color); text-decoration:none;">All</a> | <a href="#" onclick="app.selectAllTemp('profiles', false); return false;" style="color:var(--danger-color); text-decoration:none;">None</a></div>
                     </div>
                     <div id="fp-prof" style="display:flex; flex-direction:column; gap:0.4rem; max-height: 200px; overflow-y:auto;"></div>
                 </div>
 
                 <div class="filter-col">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.8rem;">
-                        <h4 style="margin:0;">Classes</h4>
+                    <div class="filter-col-header">
+                        <h4>Classes</h4>
                         <div style="font-size:0.75rem;"><a href="#" onclick="app.selectAllTemp('classes', true); return false;" style="color:var(--accent-color); text-decoration:none;">All</a> | <a href="#" onclick="app.selectAllTemp('classes', false); return false;" style="color:var(--danger-color); text-decoration:none;">None</a></div>
                     </div>
                     <div id="fp-class" style="display:flex; flex-direction:column; gap:0.4rem; max-height: 200px; overflow-y:auto;"></div>
                 </div>
 
                 <div class="filter-col">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.8rem;">
-                        <h4 style="margin:0;">Types</h4>
+                    <div class="filter-col-header">
+                        <h4>Types</h4>
                         <div style="font-size:0.75rem;"><a href="#" onclick="app.selectAllTemp('types', true); return false;" style="color:var(--accent-color); text-decoration:none;">All</a> | <a href="#" onclick="app.selectAllTemp('types', false); return false;" style="color:var(--danger-color); text-decoration:none;">None</a></div>
                     </div>
                     <div id="fp-type" style="display:flex; flex-direction:column; gap:0.4rem; max-height: 200px; overflow-y:auto;"></div>
                 </div>
 
                 <div class="filter-col">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.8rem;">
-                        <h4 style="margin:0;">Categories</h4>
+                    <div class="filter-col-header">
+                        <h4>Categories</h4>
                         <div style="font-size:0.75rem;"><a href="#" onclick="app.selectAllTemp('categories', true); return false;" style="color:var(--accent-color); text-decoration:none;">All</a> | <a href="#" onclick="app.selectAllTemp('categories', false); return false;" style="color:var(--danger-color); text-decoration:none;">None</a></div>
                     </div>
                     <div id="fp-cat" style="display:flex; flex-direction:column; gap:0.4rem; max-height: 200px; overflow-y:auto;"></div>
+                </div>
+                
+                <div class="filter-col">
+                    <div class="filter-col-header">
+                        <h4>Sectors</h4>
+                        <div style="font-size:0.75rem;"><a href="#" onclick="app.selectAllTemp('sectors', true); return false;" style="color:var(--accent-color); text-decoration:none;">All</a> | <a href="#" onclick="app.selectAllTemp('sectors', false); return false;" style="color:var(--danger-color); text-decoration:none;">None</a></div>
+                    </div>
+                    <div id="fp-sec" style="display:flex; flex-direction:column; gap:0.4rem; max-height: 200px; overflow-y:auto;"></div>
                 </div>
             </div>
 
@@ -660,7 +669,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.40</div>
+        <div>Anantha Wealth OS V2.41</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -683,6 +692,20 @@
                 });
             });
         }
+        
+        // Global Keyboard Navigation (Backtick ` to toggle views)
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'select' || e.target.tagName.toLowerCase() === 'textarea') {
+                return; // Do not trigger if typing in a form field
+            }
+            if (e.key === '`') {
+                e.preventDefault();
+                const views = ['home', 'goals', 'investments', 'settings'];
+                const currentIndex = views.indexOf(app.activeView);
+                const nextIndex = (currentIndex + 1) % views.length;
+                app.switchView(views[nextIndex]);
+            }
+        });
 
         const app = {
             data: {
@@ -707,15 +730,17 @@
             dashClassFilters: [],
             dashTypeFilters: [],
             dashCategoryFilters: [],
+            dashSectorFilters: [],
 
             invProfileFilters: [],
             invClassFilters: [],
             invTypeFilters: [],
             invCategoryFilters: [],
+            invSectorFilters: [],
             
             // Unified Filter Panel State
             currentFilterMode: 'dash',
-            tempFilters: { profiles: [], classes: [], types: [], categories: [] },
+            tempFilters: { profiles: [], classes: [], types: [], categories: [], sectors: [] },
 
             allocationGroupBy: 'class', 
 
@@ -760,20 +785,22 @@
             },
 
             migrateData() {
-                const savedV2_40 = localStorage.getItem('ananthaDataV2_40');
-                if (savedV2_40) {
-                    this.data = JSON.parse(savedV2_40);
+                const savedV2_41 = localStorage.getItem('ananthaDataV2_41');
+                if (savedV2_41) {
+                    this.data = JSON.parse(savedV2_41);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
+                    this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
 
                     this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
                     this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.invCategoryFilters = this.data.invCategoryFilters !== undefined ? this.data.invCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
+                    this.invSectorFilters = this.data.invSectorFilters !== undefined ? this.data.invSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
                     
                     this.allocationGroupBy = this.data.allocationGroupBy || 'class';
                     this.sortColumn = this.data.sortColumn || 'year';
@@ -783,7 +810,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_39') || localStorage.getItem('ananthaDataV2_38') || localStorage.getItem('ananthaDataV2_37');
+                const savedOld = localStorage.getItem('ananthaDataV2_40') || localStorage.getItem('ananthaDataV2_39') || localStorage.getItem('ananthaDataV2_38');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -793,11 +820,13 @@
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
+                    this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
 
                     this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
                     this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.invCategoryFilters = this.data.invCategoryFilters !== undefined ? this.data.invCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
+                    this.invSectorFilters = this.data.invSectorFilters !== undefined ? this.data.invSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
                     
                     this.allocationGroupBy = this.data.allocationGroupBy || 'class';
                     this.sortColumn = this.data.sortColumn || 'year';
@@ -812,11 +841,13 @@
                 this.dashClassFilters = [];
                 this.dashTypeFilters = [];
                 this.dashCategoryFilters = [];
+                this.dashSectorFilters = [];
 
                 this.invProfileFilters = [...this.data.profiles];
                 this.invClassFilters = [];
                 this.invTypeFilters = [];
                 this.invCategoryFilters = [];
+                this.invSectorFilters = [];
                 return true; 
             },
 
@@ -827,11 +858,13 @@
                 this.data.dashClassFilters = this.dashClassFilters;
                 this.data.dashTypeFilters = this.dashTypeFilters;
                 this.data.dashCategoryFilters = this.dashCategoryFilters;
+                this.data.dashSectorFilters = this.dashSectorFilters;
 
                 this.data.invProfileFilters = this.invProfileFilters;
                 this.data.invClassFilters = this.invClassFilters;
                 this.data.invTypeFilters = this.invTypeFilters;
                 this.data.invCategoryFilters = this.invCategoryFilters;
+                this.data.invSectorFilters = this.invSectorFilters;
                 
                 this.data.allocationGroupBy = this.allocationGroupBy;
                 this.data.sortColumn = this.sortColumn;
@@ -839,7 +872,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_40', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_41', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1042,6 +1075,9 @@
 
                 if (!this.invCategoryFilters.includes(rCategory)) this.invCategoryFilters.push(rCategory);
                 if (!this.dashCategoryFilters.includes(rCategory)) this.dashCategoryFilters.push(rCategory);
+
+                if (!this.invSectorFilters.includes(rSector)) this.invSectorFilters.push(rSector);
+                if (!this.dashSectorFilters.includes(rSector)) this.dashSectorFilters.push(rSector);
 
                 this.saveState();
                 this.closeAssetModal();
@@ -1381,10 +1417,12 @@
                         this.invClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                         this.invTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                         this.invCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
+                        this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
 
                         this.dashClassFilters = [...this.invClassFilters];
                         this.dashTypeFilters = [...this.invTypeFilters];
                         this.dashCategoryFilters = [...this.invCategoryFilters];
+                        this.dashSectorFilters = [...this.invSectorFilters];
                         
                         this.saveState();
                         this.updateProfileDropdowns();
@@ -1423,11 +1461,13 @@
                     this.tempFilters.classes = [...this.dashClassFilters];
                     this.tempFilters.types = [...this.dashTypeFilters];
                     this.tempFilters.categories = [...this.dashCategoryFilters];
+                    this.tempFilters.sectors = [...this.dashSectorFilters];
                 } else {
                     this.tempFilters.profiles = [...this.invProfileFilters];
                     this.tempFilters.classes = [...this.invClassFilters];
                     this.tempFilters.types = [...this.invTypeFilters];
                     this.tempFilters.categories = [...this.invCategoryFilters];
+                    this.tempFilters.sectors = [...this.invSectorFilters];
                 }
 
                 const panel = document.getElementById('globalFilterPanel');
@@ -1453,12 +1493,14 @@
                     this.dashClassFilters = [...this.tempFilters.classes];
                     this.dashTypeFilters = [...this.tempFilters.types];
                     this.dashCategoryFilters = [...this.tempFilters.categories];
+                    this.dashSectorFilters = [...this.tempFilters.sectors];
                     this.renderDashboard();
                 } else {
                     this.invProfileFilters = [...this.tempFilters.profiles];
                     this.invClassFilters = [...this.tempFilters.classes];
                     this.invTypeFilters = [...this.tempFilters.types];
                     this.invCategoryFilters = [...this.tempFilters.categories];
+                    this.invSectorFilters = [...this.tempFilters.sectors];
                     this.renderInvestments();
                 }
                 this.closeFilterPanel();
@@ -1489,6 +1531,12 @@
                     let dataC = dataP.filter(i => this.tempFilters.classes.includes(i.rawAssetClass || i.type));
                     let dataT = dataC.filter(i => this.tempFilters.types.includes(i.rawAssetType || 'Other'));
                     this.tempFilters.categories = isAll ? [...new Set(dataT.map(i => i.rawCategory || 'NA'))] : [];
+                } else if (level === 'sectors') {
+                    let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
+                    let dataC = dataP.filter(i => this.tempFilters.classes.includes(i.rawAssetClass || i.type));
+                    let dataT = dataC.filter(i => this.tempFilters.types.includes(i.rawAssetType || 'Other'));
+                    let dataCat = dataT.filter(i => this.tempFilters.categories.includes(i.rawCategory || 'NA'));
+                    this.tempFilters.sectors = isAll ? [...new Set(dataCat.map(i => i.rawSector || 'NA'))] : [];
                 }
                 this.renderFilterPanel();
             },
@@ -1498,7 +1546,8 @@
                 const fpClass = document.getElementById('fp-class');
                 const fpType = document.getElementById('fp-type');
                 const fpCat = document.getElementById('fp-cat');
-                if(!fpProf || !fpClass || !fpType || !fpCat) return;
+                const fpSec = document.getElementById('fp-sec');
+                if(!fpProf || !fpClass || !fpType || !fpCat || !fpSec) return;
 
                 // 1. Profiles
                 let profHtml = '';
@@ -1541,6 +1590,17 @@
                     catHtml += `<label><input type="checkbox" value="${c}" ${checked} onchange="app.updateTempFilter('categories', this.value, this.checked)"> ${c}</label>`;
                 });
                 fpCat.innerHTML = catHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">Select types first</span>';
+                
+                let dataCat = dataT.filter(i => this.tempFilters.categories.includes(i.rawCategory || 'NA'));
+                
+                // 5. Sectors
+                let availSectors = [...new Set(dataCat.map(i => i.rawSector || 'NA'))].sort();
+                let secHtml = '';
+                availSectors.forEach(s => {
+                    let checked = this.tempFilters.sectors.includes(s) ? 'checked' : '';
+                    secHtml += `<label><input type="checkbox" value="${s}" ${checked} onchange="app.updateTempFilter('sectors', this.value, this.checked)"> ${s}</label>`;
+                });
+                fpSec.innerHTML = secHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">Select categories first</span>';
             },
 
             renderInvestments() {
@@ -1565,7 +1625,8 @@
                     const classMatch = this.invClassFilters.includes(i.rawAssetClass || i.type);
                     const typeMatch = this.invTypeFilters.includes(i.rawAssetType || 'Other');
                     const catMatch = this.invCategoryFilters.includes(i.rawCategory || 'NA');
-                    return profileMatch && classMatch && typeMatch && catMatch;
+                    const sectorMatch = this.invSectorFilters.includes(i.rawSector || 'NA');
+                    return profileMatch && classMatch && typeMatch && catMatch && sectorMatch;
                 });
 
                 if (filteredInvestments.length === 0) {
@@ -1677,14 +1738,17 @@
                     this.invClassFilters = [keyStr];
                     this.invTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.invCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
+                    this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
                 } else if (grouping === 'type') {
                     this.invTypeFilters = [keyStr];
                     this.invClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
+                    this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
                 } else if (grouping === 'category') {
                     this.invCategoryFilters = [keyStr];
                     this.invClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
                 }
                 
                 this.invProfileFilters = [...this.dashProfileFilters];
@@ -2205,7 +2269,8 @@
                     const classMatch = this.dashClassFilters.includes(i.rawAssetClass || i.type);
                     const typeMatch = this.dashTypeFilters.includes(i.rawAssetType || 'Other');
                     const catMatch = this.dashCategoryFilters.includes(i.rawCategory || 'NA');
-                    return profileMatch && classMatch && typeMatch && catMatch;
+                    const sectorMatch = this.dashSectorFilters.includes(i.rawSector || 'NA');
+                    return profileMatch && classMatch && typeMatch && catMatch && sectorMatch;
                 });
 
                 this.renderAllocationTable('dashAssetSummaryBody', 'dashAllocColHeader', tableInvestments, true);
