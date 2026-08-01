@@ -170,8 +170,6 @@
         
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
         .portfolio-header h3 { font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin: 0; }
-        .btn-upload { background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color); font-weight: 500; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
-        .btn-upload:hover { border-color: var(--accent-color); }
         
         /* Settings Card specific styles */
         .settings-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
@@ -519,7 +517,7 @@
                         This is your completely private, offline personal finance dashboard. None of your data ever leaves your device.
                     </p>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0; line-height: 1.6;">
-                        <strong>To get started:</strong> Simply download your holdings report from your broker (INDmoney, Zerodha, Upstox, or Scripbox) and upload it below. We will automatically analyze, categorize, and project the future value of your entire portfolio!
+                        <strong>To get started:</strong> Simply download your holdings report from your broker and upload it below. We will automatically analyze, categorize, and project the future value of your entire portfolio!
                     </p>
                 </div>
 
@@ -532,10 +530,10 @@
                     <div style="background: var(--surface-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid var(--accent-color);">
                         <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Supported Platforms</h4>
                         <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.2rem; line-height: 1.6;">
-                            <li><strong>INDMoney</strong> (holdings-family-template.xlsx)</li>
-                            <li><strong>Zerodha</strong> (holdings-template-zerodha.xlsx)</li>
-                            <li><strong>Upstox</strong> (holdings_report_Upstox.xlsx)</li>
-                            <li><strong>Scripbox</strong> (HoldingsStatement-ScripBox.xlsx)</li>
+                            <li><strong>INDMoney</strong></li>
+                            <li><strong>Zerodha</strong></li>
+                            <li><strong>Upstox</strong></li>
+                            <li><strong>Scripbox</strong></li>
                         </ul>
                         <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning-color); font-style: italic;">
                             The engine will auto-create asset profiles based on the Client ID or Portfolio Name found in the file.
@@ -662,7 +660,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.39</div>
+        <div>Anantha Wealth OS V2.40</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -762,9 +760,9 @@
             },
 
             migrateData() {
-                const savedV2_39 = localStorage.getItem('ananthaDataV2_39');
-                if (savedV2_39) {
-                    this.data = JSON.parse(savedV2_39);
+                const savedV2_40 = localStorage.getItem('ananthaDataV2_40');
+                if (savedV2_40) {
+                    this.data = JSON.parse(savedV2_40);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -785,7 +783,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_38') || localStorage.getItem('ananthaDataV2_37');
+                const savedOld = localStorage.getItem('ananthaDataV2_39') || localStorage.getItem('ananthaDataV2_38') || localStorage.getItem('ananthaDataV2_37');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -841,7 +839,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_39', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_40', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
