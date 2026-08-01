@@ -122,6 +122,10 @@
         .legend-item { display: flex; align-items: center; gap: 0.4rem; color: var(--text-primary); }
         .legend-color { width: 12px; height: 12px; border-radius: 3px; }
 
+        /* Goal Table Progress Bars */
+        .goal-progress-track { width: 100%; background: var(--surface-light); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+        .goal-progress-fill { height: 100%; background: var(--success-color); transition: width 0.5s ease; }
+
         /* Unified Filter Panel */
         .filter-panel { background: var(--surface-light); border: 1px solid var(--accent-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; display: none; animation: fadeIn 0.2s ease-in-out; }
         .filter-panel h4 { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
@@ -164,13 +168,15 @@
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px; border: 1px solid var(--border-color); position: relative; }
+        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 550px; border: 1px solid var(--border-color); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
         .modal-content h3 { margin-bottom: 1.5rem; color: var(--accent-color); font-size: 1.2rem; margin-top: 0; }
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
         
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
         .portfolio-header h3 { font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+        .btn-upload { background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color); font-weight: 500; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
+        .btn-upload:hover { border-color: var(--accent-color); }
         
         /* Settings Card specific styles */
         .settings-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
@@ -664,12 +670,30 @@
                 </form>
             </div>
         </div>
+
+        <!-- Assign Assets Modal (Goal Buckets) -->
+        <div class="modal-overlay" id="assignAssetsModal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="app.closeAssignModal()">✕</button>
+                <h3 id="assignModalTitle">Bucket Assets into Goal</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;">Tick the assets you want to link to this goal. Unassigned assets are shown below.</p>
+                
+                <div id="assignAssetsList" style="display:flex; flex-direction:column; gap:0.6rem; max-height: 350px; overflow-y:auto; background:var(--bg-color); padding:1rem; border-radius:6px; border:1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <!-- Checklists injected via JS -->
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" onclick="app.saveGoalAssignments()" class="btn-action">Save Buckets</button>
+                    <button type="button" onclick="app.closeAssignModal()" class="btn-cancel btn-action" style="display: block;">Cancel</button>
+                </div>
+            </div>
+        </div>
     </main>
     
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.41</div>
+        <div>Anantha Wealth OS V2.42</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -696,7 +720,7 @@
         // Global Keyboard Navigation (Backtick ` to toggle views)
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'select' || e.target.tagName.toLowerCase() === 'textarea') {
-                return; // Do not trigger if typing in a form field
+                return; 
             }
             if (e.key === '`') {
                 e.preventDefault();
@@ -716,6 +740,7 @@
             editingGoalId: null,
             editingBatchId: null,
             editingInvId: null,
+            assigningGoalId: null,
             currentYear: new Date().getFullYear(),
             
             // App State
@@ -752,12 +777,9 @@
 
             init() {
                 let isFreshInstall = this.migrateData();
-                
-                // If it's a completely new user with no investments, force them to the settings onboarding screen
                 if (isFreshInstall || this.data.investments.length === 0) {
                     this.activeView = 'settings';
                 }
-                
                 this.updateProfileDropdowns();
                 this.toggleGoalFields();
                 this.renderAll();
@@ -785,9 +807,9 @@
             },
 
             migrateData() {
-                const savedV2_41 = localStorage.getItem('ananthaDataV2_41');
-                if (savedV2_41) {
-                    this.data = JSON.parse(savedV2_41);
+                const savedV2_42 = localStorage.getItem('ananthaDataV2_42');
+                if (savedV2_42) {
+                    this.data = JSON.parse(savedV2_42);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -810,7 +832,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_40') || localStorage.getItem('ananthaDataV2_39') || localStorage.getItem('ananthaDataV2_38');
+                const savedOld = localStorage.getItem('ananthaDataV2_41') || localStorage.getItem('ananthaDataV2_40') || localStorage.getItem('ananthaDataV2_39');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -872,7 +894,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_41', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_42', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1061,6 +1083,7 @@
 
                 if (this.editingInvId) {
                     const index = this.data.investments.findIndex(i => i.id === this.editingInvId);
+                    invData.linkedGoalId = this.data.investments[index].linkedGoalId; // Retain goal tag
                     this.data.investments[index] = invData;
                 } else {
                     this.data.investments.push(invData);
@@ -1129,7 +1152,7 @@
             },
 
             /* -------------------------------------------------------------------------- */
-            /* SMART PLATFORM-AWARE BULK UPLOAD WITH MANUAL OVERRIDE RETENTION            */
+            /* SMART PLATFORM-AWARE BULK UPLOAD WITH TAG & OVERRIDE PERSISTENCE           */
             /* -------------------------------------------------------------------------- */
             handleBulkUpload(event) {
                 const file = event.target.files[0];
@@ -1143,11 +1166,16 @@
                     let newInvestments = [];
                     let newProfiles = new Set();
 
+                    // Capture Existing Manual Overrides & Goal Tags (Zero Lost Work)
                     let manualOverrides = {};
+                    let assetGoalTags = {};
                     this.data.investments.forEach(i => {
+                        let key = `${(i.profile || 'Main Portfolio').toLowerCase()}|${i.name.toLowerCase()}`;
                         if (i.isManuallyEdited) {
-                            let key = `${(i.profile || 'Main Portfolio').toLowerCase()}|${i.name.toLowerCase()}`;
                             manualOverrides[key] = i;
+                        }
+                        if (i.linkedGoalId) {
+                            assetGoalTags[key] = i.linkedGoalId;
                         }
                     });
                     
@@ -1167,10 +1195,8 @@
                         for(let i=0; i<rows.length; i++) {
                             if(rows[i]) {
                                 const rowStr = rows[i].join(" ").toLowerCase();
-                                
                                 function strVal(v) { return v ? v.toString().trim() : ""; }
 
-                                // Zerodha Profile Extract
                                 if (rowStr.includes("client id")) {
                                     let idx = rows[i].findIndex(cell => strVal(cell).toLowerCase() === 'client id');
                                     if (idx !== -1 && rows[i].length > idx + 1) {
@@ -1178,7 +1204,6 @@
                                     }
                                 }
 
-                                // Upstox Profile Extract
                                 if (rowStr.includes("upstox") || (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation"))) {
                                     isUpstox = true;
                                 }
@@ -1188,37 +1213,26 @@
                                     }
                                 }
 
-                                // Header Row Detect
                                 if(rowStr.includes("investment") && rowStr.includes("market value")) {
                                     headerRowIndex = i;
-                                    isZerodha = false;
-                                    isUpstox = false;
-                                    isScripbox = false;
+                                    isZerodha = false; isUpstox = false; isScripbox = false;
                                     break;
                                 } else if (rowStr.includes("symbol") && rowStr.includes("quantity available")) {
                                     headerRowIndex = i;
-                                    isZerodha = true;
-                                    isUpstox = false;
-                                    isScripbox = false;
+                                    isZerodha = true; isUpstox = false; isScripbox = false;
                                     break;
                                 } else if (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation") && rowStr.includes("current qty")) {
                                     headerRowIndex = i;
-                                    isUpstox = true;
-                                    isZerodha = false;
-                                    isScripbox = false;
+                                    isUpstox = true; isZerodha = false; isScripbox = false;
                                     break;
                                 } else if (rowStr.includes("portfolio name") && rowStr.includes("security name") && rowStr.includes("current value")) {
                                     headerRowIndex = i;
-                                    isScripbox = true;
-                                    isZerodha = false;
-                                    isUpstox = false;
+                                    isScripbox = true; isZerodha = false; isUpstox = false;
                                     break;
                                 }
                             }
                         }
 
-                        function strVal(v) { return v ? v.toString().trim() : ""; }
-                        
                         if (headerRowIndex !== -1) {
                             const headers = rows[headerRowIndex];
                             for(let i = headerRowIndex + 1; i < rows.length; i++) {
@@ -1246,92 +1260,61 @@
                                     invName = rowObj["Security Name"];
                                     mVal = this.parseCurrencyStr(rowObj["Current Value"]);
                                     let invested = this.parseCurrencyStr(rowObj["Amount Invested"]);
-                                    
-                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0) {
-                                        let histReturn = mVal - invested;
-                                        if (histReturn < 0) isLossMaking = true;
-                                    }
-
+                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
                                     profileName = strValSafe(rowObj["Portfolio Name"]) || "Main Portfolio";
                                     rawType = strValSafe(rowObj["Product"]) || "Mutual Fund";
                                     rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
                                     rawCategory = strValSafe(rowObj["Sub-Asset Class"]) || "NA";
                                     rawSector = "NA";
-
                                     calcRate = this.parseCurrencyStr(rowObj["Xirr(%)"]);
                                 } else if (isUpstox) {
                                     invName = rowObj["Scrip Name"];
                                     mVal = this.parseCurrencyStr(rowObj["Valuation"]);
                                     profileName = upstoxProfileName;
-                                    rawType = "STOCK";
-                                    rawClass = "Equity";
-                                    rawCategory = "NA";
-                                    rawSector = "NA";
+                                    rawType = "STOCK"; rawClass = "Equity"; rawCategory = "NA"; rawSector = "NA";
                                 } else if (!isZerodha) {
-                                    // INDmoney Extraction
                                     invName = rowObj["Investment"];
                                     mVal = this.parseCurrencyStr(rowObj["Market Value"]);
                                     let invested = this.parseCurrencyStr(rowObj["Invested Amount"]);
                                     if(isNaN(mVal)) mVal = invested;
-
-                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0) {
-                                        let histReturn = ((mVal - invested) / invested) * 100;
-                                        if (histReturn < 0) isLossMaking = true;
-                                    }
-
+                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && ((mVal - invested) / invested) * 100 < 0) isLossMaking = true;
                                     profileName = rowObj["First Name"] ? strValSafe(rowObj["First Name"]) : "Main Portfolio";
                                     rawType = strValSafe(rowObj["Asset Type"]) || "Other";
                                     rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
                                     rawCategory = strValSafe(rowObj["Category"]) || "NA";
                                     rawSector = "NA";
                                 } else {
-                                    // Zerodha Extraction
                                     invName = rowObj["Symbol"];
                                     let qty = this.parseCurrencyStr(rowObj["Quantity Available"]);
                                     let price = this.parseCurrencyStr(rowObj["Previous Closing Price"]);
                                     let avgPrice = this.parseCurrencyStr(rowObj["Average Price"]);
                                     mVal = qty * price;
-                                    
-                                    if (isNaN(mVal) || mVal === 0) {
-                                        mVal = qty * avgPrice;
-                                    }
-
+                                    if (isNaN(mVal) || mVal === 0) mVal = qty * avgPrice;
                                     let pnl = this.parseCurrencyStr(rowObj["Unrealized P&L"]);
                                     if (!isNaN(pnl) && pnl < 0) isLossMaking = true;
-
                                     if (globalClientId) profileName = `Zerodha - ${globalClientId}`; 
-                                    
                                     let instType = strValSafe(rowObj["Instrument Type"]);
-                                    let sector = strValSafe(rowObj["Sector"]);
-
-                                    rawSector = sector || "NA";
-
+                                    rawSector = strValSafe(rowObj["Sector"]) || "NA";
                                     if (sheetName.toLowerCase().includes("mutual fund") || instType.includes(" - ")) {
                                         rawType = "MF";
                                         if (instType.includes(" - ")) {
                                             let parts = instType.split(" - ");
-                                            rawClass = parts[0].trim();
-                                            rawCategory = parts[1].trim();
+                                            rawClass = parts[0].trim(); rawCategory = parts[1].trim();
                                         } else {
-                                            rawClass = instType || "Mutual Fund";
-                                            rawCategory = "NA";
+                                            rawClass = instType || "Mutual Fund"; rawCategory = "NA";
                                         }
                                     } else {
-                                        rawType = "STOCK";
-                                        rawClass = "Equity";
-                                        rawCategory = "NA"; 
+                                        rawType = "STOCK"; rawClass = "Equity"; rawCategory = "NA"; 
                                     }
                                 }
 
                                 if (invName && !isNaN(mVal)) {
                                     newProfiles.add(profileName);
-                                    
                                     let aTypeStr = rawType.toUpperCase();
                                     let aClassStr = rawClass.toLowerCase();
                                     let aCatStr = rawCategory.toLowerCase();
                                     
                                     let invType = 'equity'; 
-                                    
                                     if (aTypeStr === 'VEHICLE' || aClassStr === 'vehicle') invType = 'vehicle';
                                     else if (aTypeStr === 'NPS') invType = 'nps';
                                     else if (aTypeStr === 'EPF') invType = 'epf';
@@ -1350,18 +1333,16 @@
                                     
                                     let rate = this.defaultRates[invType];
                                     if(rate === undefined) rate = 7.0;
+                                    if (!isNaN(calcRate)) rate = calcRate;
 
-                                    if (!isNaN(calcRate)) {
-                                        rate = calcRate;
-                                    }
-
-                                    let isManuallyEdited = false;
                                     let matchKey = `${profileName.toLowerCase()}|${invName.toLowerCase()}`;
                                     let existingManual = manualOverrides[matchKey];
+                                    let retainedGoalId = assetGoalTags[matchKey] || null;
+                                    
                                     let maturityDate = "";
                                     let objId = Date.now().toString() + Math.random().toString().slice(2,8);
+                                    let isManuallyEdited = false;
 
-                                    // Apply Persistent Overrides
                                     if (existingManual) {
                                         invType = existingManual.type;
                                         rate = existingManual.growthRate;
@@ -1390,7 +1371,8 @@
                                         rawAssetType: rawType,
                                         rawCategory: rawCategory,
                                         rawSector: rawSector,
-                                        isManuallyEdited: isManuallyEdited
+                                        isManuallyEdited: isManuallyEdited,
+                                        linkedGoalId: retainedGoalId // Preserved across uploads!
                                     });
                                 }
                             }
@@ -1399,10 +1381,7 @@
                     
                     if(newInvestments.length > 0) {
                         let importedProfiles = Array.from(newProfiles);
-                        
-                        // NON-DESTRUCTIVE IMPORT
                         this.data.investments = this.data.investments.filter(i => !importedProfiles.includes(i.profile || 'Main Portfolio'));
-                        
                         this.data.investments = [...this.data.investments, ...newInvestments];
 
                         importedProfiles.forEach(p => {
@@ -1413,7 +1392,6 @@
                             }
                         });
 
-                        // Rebuild all filters to include new incoming data
                         this.invClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                         this.invTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                         this.invCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
@@ -1430,7 +1408,7 @@
                         this.renderDashboard();
                         
                         this.switchView('home');
-                        this.showToast(`Imported ${newInvestments.length} assets for: ${importedProfiles.join(", ")}`);
+                        this.showToast(`Imported ${newInvestments.length} assets. Tags preserved!`);
                     } else {
                         this.showToast("No valid asset data found in the template.", true);
                     }
@@ -1448,6 +1426,76 @@
                 }
                 this.saveState();
                 this.renderInvestments();
+            },
+
+            /* -------------------------------------------------------------------------- */
+            /* GOAL BUCKET ASSIGNMENTS (OPTION 3)                                         */
+            /* -------------------------------------------------------------------------- */
+            openAssignModal(goalId) {
+                this.assigningGoalId = goalId;
+                const goal = this.data.goals.find(g => g.id === goalId);
+                if (!goal) return;
+
+                document.getElementById('assignModalTitle').innerText = `Bucket Assets into: ${goal.name}`;
+                const container = document.getElementById('assignAssetsList');
+                container.innerHTML = '';
+
+                if (this.data.investments.length === 0) {
+                    container.innerHTML = `<span style="color:var(--text-secondary); text-align:center; padding:1rem;">No assets registered in portfolio yet. Upload a file or add assets first.</span>`;
+                } else {
+                    this.data.investments.forEach(inv => {
+                        const isAssignedToThis = inv.linkedGoalId === goalId;
+                        const isAssignedToOther = inv.linkedGoalId && inv.linkedGoalId !== goalId;
+                        
+                        let assignedNotice = "";
+                        if (isAssignedToOther) {
+                            const otherGoal = this.data.goals.find(g => g.id === inv.linkedGoalId);
+                            assignedNotice = `<span style="font-size:0.75rem; color:var(--warning-color); font-style:italic;">(Linked to: ${otherGoal ? otherGoal.name : 'Another Goal'})</span>`;
+                        }
+
+                        container.innerHTML += `
+                            <label style="display:flex; align-items:center; justify-content:space-between; background:var(--surface-color); padding:0.6rem 0.8rem; border-radius:4px; cursor:pointer; border:1px solid var(--border-color);">
+                                <div style="display:flex; align-items:center; gap:0.6rem;">
+                                    <input type="checkbox" class="assign-asset-checkbox" value="${inv.id}" ${isAssignedToThis ? 'checked' : ''} style="width:16px; height:16px; accent-color:var(--accent-color);">
+                                    <span style="font-size:0.9rem; font-weight:500; color:var(--text-primary);">${inv.name}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:0.8rem;">
+                                    <span style="font-size:0.85rem; color:var(--accent-color); font-weight:600;">₹${this.formatCurrency(inv.value)}</span>
+                                    ${assignedNotice}
+                                </div>
+                            </label>
+                        `;
+                    });
+                }
+
+                document.getElementById('assignAssetsModal').style.display = 'flex';
+            },
+
+            closeAssignModal() {
+                document.getElementById('assignAssetsModal').style.display = 'none';
+                this.assigningGoalId = null;
+            },
+
+            saveGoalAssignments() {
+                if (!this.assigningGoalId) return;
+                const checkboxes = document.querySelectorAll('.assign-asset-checkbox');
+                
+                checkboxes.forEach(cb => {
+                    const invId = cb.value;
+                    const inv = this.data.investments.find(i => i.id === invId);
+                    if (inv) {
+                        if (cb.checked) {
+                            inv.linkedGoalId = this.assigningGoalId;
+                        } else if (inv.linkedGoalId === this.assigningGoalId) {
+                            inv.linkedGoalId = null; // Uncheck/remove tag
+                        }
+                    }
+                });
+
+                this.saveState();
+                this.closeAssignModal();
+                this.renderGoals();
+                this.showToast("Goal buckets updated successfully.");
             },
 
             /* -------------------------------------------------------------------------- */
@@ -1557,7 +1605,6 @@
                 });
                 fpProf.innerHTML = profHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">No profiles</span>';
 
-                // Cascade Base Data
                 let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
                 
                 // 2. Classes
@@ -1662,7 +1709,6 @@
                     totalFV += inv.computedFV;
 
                     let displayClass = (inv.rawAssetClass || inv.type).toUpperCase();
-                    
                     let warningIcon = "";
                     let rowClass = "clickable-row";
                     
@@ -1835,7 +1881,7 @@
             },
 
             /* -------------------------------------------------------------------------- */
-            /* GOALS LOGIC                                                                */
+            /* GOALS LOGIC & PROGRESS VISUALIZATION                                       */
             /* -------------------------------------------------------------------------- */
             toggleGoalFields() {
                 const type = document.getElementById('goalType').value;
@@ -1899,14 +1945,14 @@
                 stages.forEach((stage) => {
                     const targetYear = this.currentYear + stage.yearOffset;
                     container.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-light); padding:0.6rem; border-radius:4px; border: 1px solid transparent; transition: 0.2s;" onfocus="this.style.borderColor='var(--accent-color)'" onblur="this.style.borderColor='transparent'">
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-light); padding:0.6rem; border-radius:4px; border: 1px solid transparent; transition: 0.2s;">
                             <div style="display:flex; flex-direction:column; flex:1;">
                                 <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">${stage.name}</span>
                                 <span style="font-size:0.75rem; color:var(--accent-color);">Target Year: ${targetYear}</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:0.5rem;">
                                 <input type="number" class="edu-cost-input" data-name="${stage.name}" data-year="${targetYear}" data-yrs="${stage.yearOffset}" placeholder="₹ Cost Today" style="width:130px; padding:0.5rem; font-size:0.9rem; background: var(--surface-color);">
-                                <button type="button" class="icon-btn delete" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus();" title="Clear / Delete this year">✕</button>
+                                <button type="button" class="icon-btn delete" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus();" title="Clear">✕</button>
                             </div>
                         </div>
                     `;
@@ -2073,8 +2119,12 @@
             },
 
             deleteGoal(id) {
-                if(confirm("Remove this specific goal?")) {
+                if(confirm("Remove this specific goal? Unassigned assets will be unlinked.")) {
                     this.data.goals = this.data.goals.filter(g => g.id !== id);
+                    // Unlink any assets tied to this goal
+                    this.data.investments.forEach(inv => {
+                        if (inv.linkedGoalId === id) inv.linkedGoalId = null;
+                    });
                     if(this.editingGoalId === id) this.cancelGoalEdit();
                     this.saveState();
                     this.renderGoals();
@@ -2126,7 +2176,20 @@
                         else if (goal.type === 'retirement') tYear = this.currentYear + (goal.yTo || 0);
                         else tYear = this.currentYear;
                     }
-                    return { ...goal, computedCExp: cExp, computedFV: fv, computedYear: tYear };
+
+                    // Calculate assigned asset valuation & projected future value against this goal
+                    let assignedValuation = 0;
+                    let assignedFV = 0;
+                    this.data.investments.forEach(inv => {
+                        if (inv.linkedGoalId === goal.id) {
+                            assignedValuation += (inv.value || 0);
+                            assignedFV += this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                        }
+                    });
+
+                    let progressPct = fv > 0 ? Math.min((assignedFV / fv) * 100, 100) : 0;
+
+                    return { ...goal, computedCExp: cExp, computedFV: fv, computedYear: tYear, assignedValuation, assignedFV, progressPct };
                 });
 
                 processedGoals.sort((a, b) => {
@@ -2153,9 +2216,17 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>
-                            <div class="goal-name-cell">
-                                ${goal.name}
-                                <span class="badge" style="background:${badgeColor}; color:${badgeTextColor}; font-size:0.6rem;">${displayType}</span>
+                            <div class="goal-name-cell" style="display:flex; flex-direction:column; align-items:flex-start; gap:0.2rem;">
+                                <div style="display:flex; align-items:center; gap:0.5rem;">
+                                    <strong>${goal.name}</strong>
+                                    <span class="badge" style="background:${badgeColor}; color:${badgeTextColor}; font-size:0.55rem;">${displayType}</span>
+                                </div>
+                                <div style="font-size:0.75rem; color:var(--text-secondary);">
+                                    Bucketed: <span style="color:var(--success-color); font-weight:600;">₹${this.formatCurrency(goal.assignedValuation)}</span> (${goal.progressPct.toFixed(1)}% funded)
+                                </div>
+                                <div class="goal-progress-track">
+                                    <div class="goal-progress-fill" style="width: ${goal.progressPct}%;"></div>
+                                </div>
                             </div>
                         </td>
                         <td>${goal.computedYear}</td>
@@ -2163,8 +2234,11 @@
                         <td>${goal.inflation}%</td>
                         <td class="highlight-val">${this.formatCurrency(goal.computedFV)}</td>
                         <td style="text-align: center;">
-                            <button class="icon-btn" onclick="app.editGoal('${goal.id}')">✎</button>
-                            <button class="icon-btn delete" onclick="app.deleteGoal('${goal.id}')">✕</button>
+                            <button onclick="app.openAssignModal('${goal.id}')" class="btn-outline" style="width:auto; padding:0.3rem 0.6rem; font-size:0.75rem; border-radius:15px; margin-bottom:0.3rem;" title="Bucket Assets">🔗 Assign</button>
+                            <div style="display:flex; justify-content:center; gap:0.4rem;">
+                                <button class="icon-btn" onclick="app.editGoal('${goal.id}')" title="Edit Goal">✎</button>
+                                <button class="icon-btn delete" onclick="app.deleteGoal('${goal.id}')" title="Delete Goal">✕</button>
+                            </div>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -2286,7 +2360,9 @@
 
         window.onclick = function(event) {
             const assetModal = document.getElementById('assetModal');
+            const assignModal = document.getElementById('assignAssetsModal');
             if (event.target === assetModal) app.closeAssetModal();
+            if (event.target === assignModal) app.closeAssignModal();
         }
 
         document.addEventListener('DOMContentLoaded', () => app.init());
