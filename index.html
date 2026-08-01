@@ -40,9 +40,10 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden; /* Prevents global horizontal scrolling on mobile */
         }
         
-        main.app-content { flex: 1; }
+        main.app-content { flex: 1; min-width: 0; }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
         .brand-name { font-size: 1.5rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
@@ -58,6 +59,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .dashboard-layout { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; }
+        .dashboard-layout > * { min-width: 0; } /* CRITICAL FIX: prevents CSS Grid elements from blowing out container width */
+        
         .summary-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
 
@@ -126,10 +129,6 @@
         .filter-col label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; margin-bottom: 0.4rem; cursor: pointer; color: var(--text-primary); text-transform: uppercase; }
         .filter-col input[type="checkbox"] { accent-color: var(--accent-color); cursor: pointer; width: 14px; height: 14px; }
         
-        .pill-toggle { display: inline-flex; align-items: center; gap: 0.4rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; user-select: none; }
-        .pill-toggle:hover { border-color: var(--accent-color); color: var(--text-primary); }
-        .pill-toggle.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
-
         /* Sortable Data Tables */
         .table-container { width: 100%; overflow-x: auto; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 1rem; }
         .table-header-row { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.5rem 0.5rem; flex-wrap: wrap; gap: 1rem; }
@@ -189,7 +188,7 @@
         /* Mobile App Bottom Navigation */
         @media (max-width: 768px) {
             body {
-                padding: 1rem 1rem 80px 1rem; /* Add bottom padding so content isn't hidden behind the nav */
+                padding: 1rem 1rem 80px 1rem; 
             }
             .nav-tabs {
                 position: fixed;
@@ -230,7 +229,7 @@
                 display: none;
             }
             .toast {
-                bottom: 85px; /* Adjust toast to pop up above the nav bar on mobile */
+                bottom: 85px; 
             }
             @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 85px; opacity: 1; } }
             @keyframes fadeout { from { bottom: 85px; opacity: 1; } to { bottom: 0; opacity: 0; } }
@@ -547,10 +546,8 @@
                             <li><strong>INDMoney</strong> (holdings-family-template.xlsx)</li>
                             <li><strong>Zerodha</strong> (holdings-template-zerodha.xlsx)</li>
                             <li><strong>Upstox</strong> (holdings_report_Upstox.xlsx)</li>
+                            <li><strong>Scripbox</strong> (HoldingsStatement-ScripBox.xlsx) <span style="color:var(--success-color);font-size:0.7rem;font-weight:bold;">NEW!</span></li>
                         </ul>
-                        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning-color); font-style: italic;">
-                            Zerodha imports will auto-create profiles named after the Client ID. Upstox imports use the Report Name.
-                        </div>
                     </div>
 
                     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
@@ -651,7 +648,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.36</div>
+        <div>Anantha Wealth OS V2.37</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -745,9 +742,9 @@
             },
 
             migrateData() {
-                const savedV2_36 = localStorage.getItem('ananthaDataV2_36');
-                if (savedV2_36) {
-                    this.data = JSON.parse(savedV2_36);
+                const savedV2_37 = localStorage.getItem('ananthaDataV2_37');
+                if (savedV2_37) {
+                    this.data = JSON.parse(savedV2_37);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -768,7 +765,7 @@
                     return;
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_35');
+                const savedOld = localStorage.getItem('ananthaDataV2_36');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -823,7 +820,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_36', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_37', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1100,6 +1097,7 @@
                         let headerRowIndex = -1;
                         let isZerodha = false;
                         let isUpstox = false;
+                        let isScripbox = false;
                         let globalClientId = "";
                         let upstoxProfileName = "Main Portfolio";
 
@@ -1132,22 +1130,29 @@
                                     headerRowIndex = i;
                                     isZerodha = false;
                                     isUpstox = false;
+                                    isScripbox = false;
                                     break;
                                 } else if (rowStr.includes("symbol") && rowStr.includes("quantity available")) {
                                     headerRowIndex = i;
                                     isZerodha = true;
                                     isUpstox = false;
+                                    isScripbox = false;
                                     break;
                                 } else if (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation") && rowStr.includes("current qty")) {
                                     headerRowIndex = i;
                                     isUpstox = true;
                                     isZerodha = false;
+                                    isScripbox = false;
+                                    break;
+                                } else if (rowStr.includes("portfolio name") && rowStr.includes("security name") && rowStr.includes("current value")) {
+                                    headerRowIndex = i;
+                                    isScripbox = true;
+                                    isZerodha = false;
+                                    isUpstox = false;
                                     break;
                                 }
                             }
                         }
-
-                        function strVal(v) { return v ? v.toString().trim() : ""; }
                         
                         if (headerRowIndex !== -1) {
                             const headers = rows[headerRowIndex];
@@ -1168,8 +1173,28 @@
                                 let rawCategory = "NA";
                                 let rawSector = "NA";
                                 let isLossMaking = false;
+                                let calcRate = NaN;
 
-                                if (isUpstox) {
+                                function strValSafe(v) { return v ? v.toString().trim() : ""; }
+
+                                if (isScripbox) {
+                                    invName = rowObj["Security Name"];
+                                    mVal = this.parseCurrencyStr(rowObj["Current Value"]);
+                                    let invested = this.parseCurrencyStr(rowObj["Amount Invested"]);
+                                    
+                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0) {
+                                        let histReturn = mVal - invested;
+                                        if (histReturn < 0) isLossMaking = true;
+                                    }
+
+                                    profileName = strValSafe(rowObj["Portfolio Name"]) || "Main Portfolio";
+                                    rawType = strValSafe(rowObj["Product"]) || "Mutual Fund";
+                                    rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
+                                    rawCategory = strValSafe(rowObj["Sub-Asset Class"]) || "NA";
+                                    rawSector = "NA";
+
+                                    calcRate = this.parseCurrencyStr(rowObj["Xirr(%)"]);
+                                } else if (isUpstox) {
                                     invName = rowObj["Scrip Name"];
                                     mVal = this.parseCurrencyStr(rowObj["Valuation"]);
                                     profileName = upstoxProfileName;
@@ -1189,10 +1214,10 @@
                                         if (histReturn < 0) isLossMaking = true;
                                     }
 
-                                    profileName = rowObj["First Name"] ? strVal(rowObj["First Name"]) : "Main Portfolio";
-                                    rawType = strVal(rowObj["Asset Type"]) || "Other";
-                                    rawClass = strVal(rowObj["Asset Class"]) || "Other";
-                                    rawCategory = strVal(rowObj["Category"]) || "NA";
+                                    profileName = rowObj["First Name"] ? strValSafe(rowObj["First Name"]) : "Main Portfolio";
+                                    rawType = strValSafe(rowObj["Asset Type"]) || "Other";
+                                    rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
+                                    rawCategory = strValSafe(rowObj["Category"]) || "NA";
                                     rawSector = "NA";
                                 } else {
                                     // Zerodha Extraction
@@ -1211,8 +1236,8 @@
 
                                     if (globalClientId) profileName = `Zerodha - ${globalClientId}`; 
                                     
-                                    let instType = strVal(rowObj["Instrument Type"]);
-                                    let sector = strVal(rowObj["Sector"]);
+                                    let instType = strValSafe(rowObj["Instrument Type"]);
+                                    let sector = strValSafe(rowObj["Sector"]);
 
                                     rawSector = sector || "NA";
 
@@ -1261,6 +1286,10 @@
                                     let rate = this.defaultRates[invType];
                                     if(rate === undefined) rate = 7.0;
 
+                                    if (!isNaN(calcRate)) {
+                                        rate = calcRate;
+                                    }
+
                                     let isManuallyEdited = false;
                                     let matchKey = `${profileName.toLowerCase()}|${invName.toLowerCase()}`;
                                     let existingManual = manualOverrides[matchKey];
@@ -1280,8 +1309,8 @@
                                         isManuallyEdited = true;
                                     }
 
-                                    // If historical loss, mark negative growth
-                                    if (isLossMaking && !isManuallyEdited) {
+                                    // If historical loss, mark negative growth for dashboard visibility
+                                    if (isLossMaking && !isManuallyEdited && isNaN(calcRate)) {
                                         rate = -1.0; 
                                     }
 
