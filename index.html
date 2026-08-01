@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anantha | Wealth OS</title>
-    <!-- Link to PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -40,7 +39,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden; /* Prevents global horizontal scrolling on mobile */
+            overflow-x: hidden; 
         }
         
         main.app-content { flex: 1; min-width: 0; }
@@ -59,7 +58,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .dashboard-layout { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; }
-        .dashboard-layout > * { min-width: 0; } /* CRITICAL FIX: prevents CSS Grid elements from blowing out container width */
+        .dashboard-layout > * { min-width: 0; } 
         
         .summary-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
@@ -513,6 +512,52 @@
         <!-- VIEW: SETTINGS (PROFILES & IMPORT) -->
         <div id="view-settings" class="view">
             <div class="settings-layout">
+
+                <!-- Onboarding Card (Only shows if no data exists) -->
+                <div id="onboardingCard" class="settings-card" style="grid-column: 1 / -1; display: none; border: 1px solid var(--accent-color); background: rgba(56, 189, 248, 0.05);">
+                    <h2 style="color: var(--accent-color); font-size: 1.3rem;">Welcome to Wealth OS! 👋</h2>
+                    <p style="color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; line-height: 1.6;">
+                        This is your completely private, offline personal finance dashboard. None of your data ever leaves your device.
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0; line-height: 1.6;">
+                        <strong>To get started:</strong> Simply download your holdings report from your broker (INDmoney, Zerodha, Upstox, or Scripbox) and upload it below. We will automatically analyze, categorize, and project the future value of your entire portfolio!
+                    </p>
+                </div>
+
+                <div class="settings-card" style="height: fit-content;">
+                    <h2>Data Management</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">
+                        Upload your portfolio holdings file to automatically populate your dashboard. All uploaded data is safely stored offline in your local browser storage.
+                    </p>
+                    
+                    <div style="background: var(--surface-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid var(--accent-color);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Supported Platforms</h4>
+                        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.2rem; line-height: 1.6;">
+                            <li><strong>INDMoney</strong> (holdings-family-template.xlsx)</li>
+                            <li><strong>Zerodha</strong> (holdings-template-zerodha.xlsx)</li>
+                            <li><strong>Upstox</strong> (holdings_report_Upstox.xlsx)</li>
+                            <li><strong>Scripbox</strong> (HoldingsStatement-ScripBox.xlsx)</li>
+                        </ul>
+                        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning-color); font-style: italic;">
+                            The engine will auto-create asset profiles based on the Client ID or Portfolio Name found in the file.
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <input type="file" id="bulkUpload" accept=".xlsx, .xls" style="display:none;" onchange="app.handleBulkUpload(event)">
+                        <button style="width: 100%; padding: 1rem; font-size: 1.05rem;" class="btn-action" onclick="if(confirm('Warning: This will replace existing assets for the specific profiles found in this file. Data for other profiles will remain safe. Custom mapped categories will be retained. Continue?')) document.getElementById('bulkUpload').click()">
+                            ⬆ Upload Portfolio Data
+                        </button>
+                    </div>
+                    
+                    <!-- PWA Installation Container -->
+                    <div id="installAppContainer" style="display: none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Install Application</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Install Wealth OS on your home screen for quick, offline access.</p>
+                        <button onclick="app.installPWA()" style="background-color: var(--edu-color); color: #fff;">📲 Install App</button>
+                    </div>
+                </div>
+
                 <div class="settings-card" style="height: fit-content;">
                     <h2>Profile Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
@@ -534,36 +579,6 @@
                     </div>
                 </div>
                 
-                <div class="settings-card" style="height: fit-content;">
-                    <h2>Data Management</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">
-                        Upload your portfolio holdings file to automatically populate your dashboard. All uploaded data is safely stored offline in your local browser storage.
-                    </p>
-                    
-                    <div style="background: var(--surface-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid var(--accent-color);">
-                        <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Supported Platforms</h4>
-                        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.2rem; line-height: 1.6;">
-                            <li><strong>INDMoney</strong> (holdings-family-template.xlsx)</li>
-                            <li><strong>Zerodha</strong> (holdings-template-zerodha.xlsx)</li>
-                            <li><strong>Upstox</strong> (holdings_report_Upstox.xlsx)</li>
-                            <li><strong>Scripbox</strong> (HoldingsStatement-ScripBox.xlsx) <span style="color:var(--success-color);font-size:0.7rem;font-weight:bold;">NEW!</span></li>
-                        </ul>
-                    </div>
-
-                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                        <input type="file" id="bulkUpload" accept=".xlsx, .xls" style="display:none;" onchange="app.handleBulkUpload(event)">
-                        <button style="width: 100%; padding: 1rem; font-size: 1.05rem;" class="btn-action" onclick="if(confirm('Warning: This will replace existing assets for the specific profiles found in this file. Data for other profiles will remain safe. Custom mapped categories will be retained. Continue?')) document.getElementById('bulkUpload').click()">
-                            ⬆ Upload Portfolio Data
-                        </button>
-                    </div>
-                    
-                    <!-- PWA Installation Container -->
-                    <div id="installAppContainer" style="display: none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
-                        <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Install Application</h4>
-                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Install Wealth OS on your home screen for quick, offline access.</p>
-                        <button onclick="app.installPWA()" style="background-color: var(--edu-color); color: #fff;">📲 Install App</button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -648,7 +663,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.37</div>
+        <div>Anantha Wealth OS V2.38</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -714,7 +729,13 @@
             profileColors: ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#f43f5e', '#ec4899', '#14b8a6', '#6366f1'],
 
             init() {
-                this.migrateData();
+                let isFreshInstall = this.migrateData();
+                
+                // If it's a completely new user with no investments, force them to the settings onboarding screen
+                if (isFreshInstall || this.data.investments.length === 0) {
+                    this.activeView = 'settings';
+                }
+                
                 this.updateProfileDropdowns();
                 this.toggleGoalFields();
                 this.renderAll();
@@ -742,9 +763,9 @@
             },
 
             migrateData() {
-                const savedV2_37 = localStorage.getItem('ananthaDataV2_37');
-                if (savedV2_37) {
-                    this.data = JSON.parse(savedV2_37);
+                const savedV2_38 = localStorage.getItem('ananthaDataV2_38');
+                if (savedV2_38) {
+                    this.data = JSON.parse(savedV2_38);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -762,10 +783,10 @@
                     this.sortAsc = this.data.sortAsc !== undefined ? this.data.sortAsc : true;
                     this.invSortColumn = this.data.invSortColumn || 'fv';
                     this.invSortAsc = this.data.invSortAsc !== undefined ? this.data.invSortAsc : false;
-                    return;
+                    return false; // Not a fresh install
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_36');
+                const savedOld = localStorage.getItem('ananthaDataV2_37') || localStorage.getItem('ananthaDataV2_36') || localStorage.getItem('ananthaDataV2_35');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -787,7 +808,7 @@
                     this.invSortColumn = this.data.invSortColumn || 'fv';
                     this.invSortAsc = this.data.invSortAsc !== undefined ? this.data.invSortAsc : false;
                     this.saveState();
-                    return;
+                    return false; // Not a fresh install
                 }
                 
                 this.dashProfileFilters = [...this.data.profiles];
@@ -799,6 +820,7 @@
                 this.invClassFilters = [];
                 this.invTypeFilters = [];
                 this.invCategoryFilters = [];
+                return true; // Is a fresh install
             },
 
             saveState() {
@@ -820,7 +842,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_37', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_38', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -906,6 +928,16 @@
                         </div>
                     `;
                 });
+
+                // Toggle Onboarding Card visibility
+                const onboard = document.getElementById('onboardingCard');
+                if (onboard) {
+                    if (this.data.investments.length === 0) {
+                        onboard.style.display = 'block';
+                    } else {
+                        onboard.style.display = 'none';
+                    }
+                }
             },
 
             switchView(viewId) {
@@ -1088,7 +1120,7 @@
                     });
                     
                     workbook.SheetNames.forEach(sheetName => {
-                        if (sheetName.toLowerCase().includes('report')) return;
+                        // Removed the strict "report" exclusion to allow Scripbox's "Holding Report" sheet.
                         if (sheetName.toLowerCase() === 'combined') return; 
 
                         const worksheet = workbook.Sheets[sheetName];
@@ -1153,6 +1185,8 @@
                                 }
                             }
                         }
+
+                        function strVal(v) { return v ? v.toString().trim() : ""; }
                         
                         if (headerRowIndex !== -1) {
                             const headers = rows[headerRowIndex];
@@ -1362,6 +1396,9 @@
                         this.updateProfileDropdowns();
                         this.renderInvestments();
                         this.renderDashboard();
+                        
+                        // Navigate to dashboard on successful import
+                        this.switchView('home');
                         this.showToast(`Imported ${newInvestments.length} assets for: ${importedProfiles.join(", ")}`);
                     } else {
                         this.showToast("No valid asset data found in the template.", true);
