@@ -57,11 +57,7 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .dashboard-layout { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; }
-        .dashboard-layout > * { min-width: 0; } 
-        
         .summary-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
 
         .form-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; height: fit-content; }
         .form-card h2 { font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--accent-color); }
@@ -168,7 +164,7 @@
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 550px; border: 1px solid var(--border-color); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
+        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 550px; border: 1px solid var(--border-color); position: relative; max-height: 85vh; display: flex; flex-direction: column; overflow-y: auto; }
         .modal-content h3 { margin-bottom: 1.5rem; color: var(--accent-color); font-size: 1.2rem; margin-top: 0; }
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
@@ -394,99 +390,27 @@
         
         <!-- VIEW: GOALS -->
         <div id="view-goals" class="view">
-            <div class="dashboard-layout">
-                <aside class="form-card">
-                    <h2 id="goalFormTitle">Define Target Goal</h2>
-                    <form id="goalForm" onsubmit="app.handleGoalSave(event)">
-                        <div class="form-group">
-                            <label for="goalType">Goal Type</label>
-                            <select id="goalType" onchange="app.toggleGoalFields()">
-                                <option value="standard">Standard Financial Goal</option>
-                                <option value="retirement">Retirement Corpus</option>
-                                <option value="education">Kids Education Planner (Multi-Stage)</option>
-                                <option value="edu_stage" style="display:none;">Education Milestone (Edit)</option>
-                            </select>
-                        </div>
+            <div class="portfolio-header">
+                <h3>Financial Goals / Plan</h3>
+                <button onclick="app.openGoalModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; width: auto;">+ Define New Goal</button>
+            </div>
 
-                        <div class="form-group">
-                            <label for="goalName" id="goalNameLabel">Goal Name</label>
-                            <input type="text" id="goalName" required placeholder="e.g., Higher Education">
-                        </div>
-
-                        <div id="standardFields">
-                            <div class="form-group">
-                                <label for="currentValue">C. Expenses (Current Value ₹)</label>
-                                <input type="number" id="currentValue" placeholder="1000000" min="0" step="any">
-                            </div>
-                            <div class="form-group">
-                                <label for="years">Years Till Closure</label>
-                                <input type="number" id="years" placeholder="8" min="1" max="100">
-                            </div>
-                        </div>
-
-                        <div id="retirementFields" style="display: none;">
-                            <div class="form-group">
-                                <label for="monthlyExpenses">Current Monthly Expenses (₹)</label>
-                                <input type="number" id="monthlyExpenses" placeholder="50000" min="0" step="any">
-                            </div>
-                            <div class="form-group">
-                                <label for="yearsToRetire">Years To Retirement</label>
-                                <input type="number" id="yearsToRetire" placeholder="15" min="1" max="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="yearsInRetirement">Years In Retirement (Duration)</label>
-                                <input type="number" id="yearsInRetirement" placeholder="25" min="1" max="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="postRetirementReturn">Expected Post-Retirement Return (%)</label>
-                                <input type="number" id="postRetirementReturn" placeholder="8" min="0" max="100" step="0.1">
-                            </div>
-                        </div>
-
-                        <div id="educationFields" style="display: none;">
-                            <div class="form-group">
-                                <label for="eduCurrentGrade">Current Grade of Child (1-12)</label>
-                                <input type="number" id="eduCurrentGrade" value="4" min="1" max="12" oninput="app.generateEduTimeline()" onchange="app.generateEduTimeline()">
-                            </div>
-                            <div class="form-group">
-                                <label style="color: var(--accent-color); margin-bottom: 0.8rem;">Define Upcoming Stages (Today's ₹ Cost)</label>
-                                <div id="eduTimelineGrid" style="display:flex; flex-direction:column; gap:0.5rem; background: var(--bg-color); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); max-height: 350px; overflow-y: auto;">
-                                    <!-- Auto generated via JS -->
-                                </div>
-                                <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:0.5rem;">*Leave cost empty or click '✕' for stages you do not want to track.</span>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label id="inflationLabel" for="inflation">Inflation (%)</label>
-                            <input type="number" id="inflation" required placeholder="10" min="0" max="100" step="0.1">
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" id="goalSubmitBtn" class="btn-action">Calculate & Save</button>
-                            <button type="button" id="goalCancelBtn" class="btn-cancel btn-action" onclick="app.cancelGoalEdit()">Cancel</button>
-                        </div>
-                    </form>
-                </aside>
-                <main>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th onclick="app.sortGoals('name')">Goal <span id="sort-name" class="sort-icon"></span></th>
-                                    <th onclick="app.sortGoals('year')">Year <span id="sort-year" class="sort-icon"></span></th>
-                                    <th onclick="app.sortGoals('cExp')">C. Expenses <span id="sort-cExp" class="sort-icon"></span></th>
-                                    <th onclick="app.sortGoals('inflation')">Inflation <span id="sort-inflation" class="sort-icon"></span></th>
-                                    <th onclick="app.sortGoals('fv')">Goal Required <span id="sort-fv" class="sort-icon"></span></th>
-                                    <th style="text-align: center;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="goalsTableBody">
-                                <!-- Rows injected via JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </main>
+            <div class="table-container" style="margin-top: 0;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th onclick="app.sortGoals('name')">Goal <span id="sort-name" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('year')">Year <span id="sort-year" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('cExp')">C. Expenses <span id="sort-cExp" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('inflation')">Inflation <span id="sort-inflation" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('fv')">Goal Required <span id="sort-fv" class="sort-icon"></span></th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="goalsTableBody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -671,6 +595,84 @@
             </div>
         </div>
 
+        <!-- Goal Form Modal -->
+        <div class="modal-overlay" id="goalModal">
+            <div class="modal-content" style="max-width: 550px;">
+                <button class="close-modal" onclick="app.closeGoalModal()">✕</button>
+                <h3 id="goalFormTitle">Define Target Goal</h3>
+                <form id="goalForm" onsubmit="app.handleGoalSave(event)">
+                    <div class="form-group">
+                        <label for="goalType">Goal Type</label>
+                        <select id="goalType" onchange="app.toggleGoalFields()">
+                            <option value="standard">Standard Financial Goal</option>
+                            <option value="retirement">Retirement Corpus</option>
+                            <option value="education">Kids Education Planner (Multi-Stage)</option>
+                            <option value="edu_stage" style="display:none;">Education Milestone (Edit)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goalName" id="goalNameLabel">Goal Name</label>
+                        <input type="text" id="goalName" required placeholder="e.g., Higher Education">
+                    </div>
+
+                    <div id="standardFields">
+                        <div class="form-group">
+                            <label for="currentValue">C. Expenses (Current Value ₹)</label>
+                            <input type="number" id="currentValue" placeholder="1000000" min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="years">Years Till Closure</label>
+                            <input type="number" id="years" placeholder="8" min="1" max="100">
+                        </div>
+                    </div>
+
+                    <div id="retirementFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="monthlyExpenses">Current Monthly Expenses (₹)</label>
+                            <input type="number" id="monthlyExpenses" placeholder="50000" min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="yearsToRetire">Years To Retirement</label>
+                            <input type="number" id="yearsToRetire" placeholder="15" min="1" max="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="yearsInRetirement">Years In Retirement (Duration)</label>
+                            <input type="number" id="yearsInRetirement" placeholder="25" min="1" max="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="postRetirementReturn">Expected Post-Retirement Return (%)</label>
+                            <input type="number" id="postRetirementReturn" placeholder="8" min="0" max="100" step="0.1">
+                        </div>
+                    </div>
+
+                    <div id="educationFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="eduCurrentGrade">Current Grade of Child (1-12)</label>
+                            <input type="number" id="eduCurrentGrade" value="4" min="1" max="12" oninput="app.generateEduTimeline()" onchange="app.generateEduTimeline()">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: var(--accent-color); margin-bottom: 0.8rem;">Define Upcoming Stages (Today's ₹ Cost)</label>
+                            <div id="eduTimelineGrid" style="display:flex; flex-direction:column; gap:0.5rem; background: var(--bg-color); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); max-height: 250px; overflow-y: auto;">
+                                <!-- Auto generated via JS -->
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:0.5rem;">*Leave cost empty or click '✕' for stages you do not want to track.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label id="inflationLabel" for="inflation">Inflation (%)</label>
+                        <input type="number" id="inflation" required placeholder="10" min="0" max="100" step="0.1">
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 1.5rem;">
+                        <button type="submit" id="goalSubmitBtn" class="btn-action">Calculate & Save</button>
+                        <button type="button" class="btn-cancel btn-action" onclick="app.closeGoalModal()" style="display: block;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Assign Assets Modal (Goal Buckets) -->
         <div class="modal-overlay" id="assignAssetsModal">
             <div class="modal-content">
@@ -693,7 +695,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.42</div>
+        <div>Anantha Wealth OS V2.45</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -807,9 +809,9 @@
             },
 
             migrateData() {
-                const savedV2_42 = localStorage.getItem('ananthaDataV2_42');
-                if (savedV2_42) {
-                    this.data = JSON.parse(savedV2_42);
+                const savedV2_45 = localStorage.getItem('ananthaDataV2_45');
+                if (savedV2_45) {
+                    this.data = JSON.parse(savedV2_45);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -832,7 +834,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_41') || localStorage.getItem('ananthaDataV2_40') || localStorage.getItem('ananthaDataV2_39');
+                const savedOld = localStorage.getItem('ananthaDataV2_44') || localStorage.getItem('ananthaDataV2_43') || localStorage.getItem('ananthaDataV2_42');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -894,7 +896,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_42', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_45', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1083,7 +1085,7 @@
 
                 if (this.editingInvId) {
                     const index = this.data.investments.findIndex(i => i.id === this.editingInvId);
-                    invData.linkedGoalId = this.data.investments[index].linkedGoalId; // Retain goal tag
+                    invData.linkedGoalId = this.data.investments[index].linkedGoalId; 
                     this.data.investments[index] = invData;
                 } else {
                     this.data.investments.push(invData);
@@ -1166,7 +1168,6 @@
                     let newInvestments = [];
                     let newProfiles = new Set();
 
-                    // Capture Existing Manual Overrides & Goal Tags (Zero Lost Work)
                     let manualOverrides = {};
                     let assetGoalTags = {};
                     this.data.investments.forEach(i => {
@@ -1260,13 +1261,26 @@
                                     invName = rowObj["Security Name"];
                                     mVal = this.parseCurrencyStr(rowObj["Current Value"]);
                                     let invested = this.parseCurrencyStr(rowObj["Amount Invested"]);
+                                    let days = this.parseCurrencyStr(rowObj["Weighted avg days"]);
+                                    
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
                                     profileName = strValSafe(rowObj["Portfolio Name"]) || "Main Portfolio";
                                     rawType = strValSafe(rowObj["Product"]) || "Mutual Fund";
                                     rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
                                     rawCategory = strValSafe(rowObj["Sub-Asset Class"]) || "NA";
                                     rawSector = "NA";
-                                    calcRate = this.parseCurrencyStr(rowObj["Xirr(%)"]);
+
+                                    let xirrVal = this.parseCurrencyStr(rowObj["Xirr(%)"]);
+                                    if (!isNaN(xirrVal) && xirrVal > 0) {
+                                        calcRate = xirrVal;
+                                    } else if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && mVal > 0) {
+                                        if (!isNaN(days) && days > 0) {
+                                            let years = days / 365.25;
+                                            calcRate = (Math.pow(mVal / invested, 1 / years) - 1) * 100;
+                                        } else {
+                                            calcRate = ((mVal - invested) / invested) * 100;
+                                        }
+                                    }
                                 } else if (isUpstox) {
                                     invName = rowObj["Scrip Name"];
                                     mVal = this.parseCurrencyStr(rowObj["Valuation"]);
@@ -1372,7 +1386,7 @@
                                         rawCategory: rawCategory,
                                         rawSector: rawSector,
                                         isManuallyEdited: isManuallyEdited,
-                                        linkedGoalId: retainedGoalId // Preserved across uploads!
+                                        linkedGoalId: retainedGoalId 
                                     });
                                 }
                             }
@@ -1429,7 +1443,7 @@
             },
 
             /* -------------------------------------------------------------------------- */
-            /* GOAL BUCKET ASSIGNMENTS (OPTION 3)                                         */
+            /* GOAL BUCKET ASSIGNMENTS                                                    */
             /* -------------------------------------------------------------------------- */
             openAssignModal(goalId) {
                 this.assigningGoalId = goalId;
@@ -1487,7 +1501,7 @@
                         if (cb.checked) {
                             inv.linkedGoalId = this.assigningGoalId;
                         } else if (inv.linkedGoalId === this.assigningGoalId) {
-                            inv.linkedGoalId = null; // Uncheck/remove tag
+                            inv.linkedGoalId = null; 
                         }
                     }
                 });
@@ -1496,6 +1510,274 @@
                 this.closeAssignModal();
                 this.renderGoals();
                 this.showToast("Goal buckets updated successfully.");
+            },
+
+            /* -------------------------------------------------------------------------- */
+            /* GOAL MODAL & FIELDS HANDLING                                              */
+            /* -------------------------------------------------------------------------- */
+            openGoalModal() {
+                this.editingGoalId = null;
+                this.editingBatchId = null;
+                document.getElementById('goalFormTitle').innerText = "Define Target Goal";
+                document.getElementById('goalSubmitBtn').innerText = "Calculate & Save";
+                document.getElementById('goalForm').reset();
+                document.getElementById('goalType').value = 'standard';
+                this.toggleGoalFields();
+                document.getElementById('goalModal').style.display = 'flex';
+                document.getElementById('goalName').focus();
+            },
+
+            closeGoalModal() {
+                document.getElementById('goalModal').style.display = 'none';
+                this.editingGoalId = null;
+                this.editingBatchId = null;
+            },
+
+            toggleGoalFields() {
+                const type = document.getElementById('goalType').value;
+                const standard = document.getElementById('standardFields');
+                const retirement = document.getElementById('retirementFields');
+                const education = document.getElementById('educationFields');
+                const nameLabel = document.getElementById('goalNameLabel');
+                const nameInput = document.getElementById('goalName');
+
+                document.getElementById('currentValue').required = false;
+                document.getElementById('years').required = false;
+                document.getElementById('monthlyExpenses').required = false;
+                document.getElementById('yearsToRetire').required = false;
+                document.getElementById('yearsInRetirement').required = false;
+                document.getElementById('postRetirementReturn').required = false;
+
+                standard.style.display = 'none';
+                retirement.style.display = 'none';
+                education.style.display = 'none';
+
+                if (type === 'standard' || type === 'edu_stage') {
+                    standard.style.display = 'block';
+                    document.getElementById('currentValue').required = true;
+                    document.getElementById('years').required = true;
+                    nameLabel.innerText = "Goal Name";
+                    nameInput.placeholder = "e.g., Higher Education";
+                } else if (type === 'retirement') {
+                    retirement.style.display = 'block';
+                    document.getElementById('monthlyExpenses').required = true;
+                    document.getElementById('yearsToRetire').required = true;
+                    document.getElementById('yearsInRetirement').required = true;
+                    document.getElementById('postRetirementReturn').required = true;
+                    nameLabel.innerText = "Goal Name";
+                    nameInput.placeholder = "e.g., Retirement Corpus";
+                } else if (type === 'education') {
+                    education.style.display = 'block';
+                    nameLabel.innerText = "Child Name";
+                    nameInput.placeholder = "e.g., Arjun";
+                    
+                    if (!this.editingBatchId) {
+                        this.generateEduTimeline();
+                    }
+                }
+            },
+
+            generateEduTimeline() {
+                const grade = parseInt(document.getElementById('eduCurrentGrade').value) || 1;
+                const container = document.getElementById('eduTimelineGrid');
+                container.innerHTML = '';
+
+                const stages = [];
+                for (let i = grade + 1; i <= 10; i++) {
+                    stages.push({ name: `Grade ${i}`, yearOffset: i - grade });
+                }
+                if (grade <= 10) stages.push({ name: `+1 (11th)`, yearOffset: 11 - grade });
+                if (grade <= 11) stages.push({ name: `+2 (12th)`, yearOffset: 12 - grade });
+                
+                stages.push({ name: `Degree (Lump Sum)`, yearOffset: Math.max(1, 13 - grade) });
+                stages.push({ name: `PG (Lump Sum)`, yearOffset: Math.max(4, 16 - grade) });
+
+                stages.forEach((stage) => {
+                    const targetYear = this.currentYear + stage.yearOffset;
+                    container.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-light); padding:0.6rem; border-radius:4px; border: 1px solid transparent; transition: 0.2s;">
+                            <div style="display:flex; flex-direction:column; flex:1;">
+                                <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">${stage.name}</span>
+                                <span style="font-size:0.75rem; color:var(--accent-color);">Target Year: ${targetYear}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                <input type="number" class="edu-cost-input" data-name="${stage.name}" data-year="${targetYear}" data-yrs="${stage.yearOffset}" placeholder="₹ Cost Today" style="width:130px; padding:0.5rem; font-size:0.9rem; background: var(--surface-color);">
+                                <button type="button" class="icon-btn delete" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus();" title="Clear">✕</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            calcRetFV(exp, yrsTo, yRet, inf, ret) {
+                const fExp = (exp*12) * Math.pow((1+(inf/100)), yrsTo);
+                const r = ret/100, i = inf/100;
+                const real = ((1+r)/(1+i))-1;
+                return real <= 0 ? fExp*yRet : fExp * ((1-Math.pow(1+real, -yRet))/real) * (1+real);
+            },
+
+            handleGoalSave(event) {
+                event.preventDefault();
+                const type = document.getElementById('goalType').value;
+                const inf = parseFloat(document.getElementById('inflation').value);
+                const baseName = document.getElementById('goalName').value;
+                
+                if (type === 'education') {
+                    const inputs = document.querySelectorAll('.edu-cost-input');
+                    const batchId = this.editingBatchId || Date.now().toString();
+                    const grade = parseInt(document.getElementById('eduCurrentGrade').value) || 1;
+                    let addedCount = 0;
+                    
+                    if (this.editingBatchId) {
+                        this.data.goals = this.data.goals.filter(g => g.batchId !== this.editingBatchId);
+                    }
+                    
+                    inputs.forEach(input => {
+                        const cost = parseFloat(input.value);
+                        if (cost > 0) { 
+                            const targetYear = parseInt(input.getAttribute('data-year'));
+                            const yrs = parseInt(input.getAttribute('data-yrs'));
+                            const stageName = input.getAttribute('data-name');
+                            
+                            let goalData = {
+                                id: Date.now().toString() + Math.random().toString().slice(2,8),
+                                batchId: batchId,
+                                batchName: baseName,
+                                batchGrade: grade,
+                                stageName: stageName,
+                                type: 'edu_stage',
+                                name: `${baseName} - ${stageName}`,
+                                inflation: inf,
+                                cExp: cost,
+                                yrs: yrs,
+                                targetYear: targetYear,
+                                fv: cost * Math.pow((1 + (inf / 100)), yrs)
+                            };
+                            this.data.goals.push(goalData);
+                            addedCount++;
+                        }
+                    });
+                    
+                    if(addedCount === 0 && !this.editingBatchId) {
+                        alert("Please enter a cost for at least one educational stage to save the plan.");
+                        return;
+                    }
+
+                } else {
+                    let goalData = {
+                        id: this.editingGoalId || Date.now().toString(),
+                        type: type,
+                        name: baseName,
+                        inflation: inf
+                    };
+
+                    if (type === 'standard' || type === 'edu_stage') {
+                        goalData.cv = parseFloat(document.getElementById('currentValue').value);
+                        goalData.yrs = parseInt(document.getElementById('years').value);
+                        goalData.cExp = goalData.cv; 
+                        goalData.fv = goalData.cv * Math.pow((1+(inf/100)), goalData.yrs);
+                        goalData.targetYear = this.currentYear + goalData.yrs;
+                    } else if (type === 'retirement') {
+                        goalData.exp = parseFloat(document.getElementById('monthlyExpenses').value);
+                        goalData.yTo = parseInt(document.getElementById('yearsToRetire').value);
+                        goalData.yIn = parseInt(document.getElementById('yearsInRetirement').value);
+                        goalData.pRet = parseFloat(document.getElementById('postRetirementReturn').value);
+                        goalData.cExp = goalData.exp * 12; 
+                        goalData.fv = this.calcRetFV(goalData.exp, goalData.yTo, goalData.yIn, inf, goalData.pRet);
+                        goalData.targetYear = this.currentYear + goalData.yTo;
+                    } 
+
+                    if (this.editingGoalId) {
+                        const idx = this.data.goals.findIndex(g => g.id === this.editingGoalId);
+                        this.data.goals[idx] = goalData;
+                    } else {
+                        this.data.goals.push(goalData);
+                    }
+                }
+
+                this.saveState();
+                this.closeGoalModal();
+                this.renderGoals();
+                this.renderDashboard();
+                this.showToast("Goal saved successfully.");
+            },
+
+            editGoal(id) {
+                const g = this.data.goals.find(g => g.id === id);
+                if (!g) return;
+
+                if (g.type === 'edu_stage' && g.batchId) {
+                    this.editingBatchId = g.batchId;
+                    this.editingGoalId = null;
+                    
+                    document.getElementById('goalFormTitle').innerText = "Edit Education Plan";
+                    document.getElementById('goalSubmitBtn').innerText = "Update Entire Plan";
+                    
+                    document.getElementById('goalType').value = 'education';
+                    document.getElementById('eduCurrentGrade').value = g.batchGrade || 1;
+                    
+                    this.generateEduTimeline();
+                    this.toggleGoalFields();
+                    
+                    document.getElementById('goalName').value = g.batchName;
+                    document.getElementById('inflation').value = g.inflation;
+
+                    const batchGoals = this.data.goals.filter(goal => goal.batchId === g.batchId);
+                    batchGoals.forEach(bg => {
+                        const input = document.querySelector(`.edu-cost-input[data-name="${bg.stageName}"]`);
+                        if (input) input.value = bg.cExp;
+                    });
+                    
+                    document.getElementById('goalModal').style.display = 'flex';
+                    return;
+                }
+
+                this.editingGoalId = id;
+                this.editingBatchId = null;
+                document.getElementById('goalFormTitle').innerText = "Edit Goal";
+                document.getElementById('goalSubmitBtn').innerText = "Update Goal";
+                
+                document.getElementById('goalType').value = g.type === 'edu_stage' ? 'edu_stage' : g.type;
+                this.toggleGoalFields();
+                
+                document.getElementById('goalName').value = g.name;
+                document.getElementById('inflation').value = g.inflation;
+
+                if (g.type === 'standard' || g.type === 'edu_stage') {
+                    document.getElementById('currentValue').value = g.cv || g.cExp || g.pv || g.currentValue;
+                    document.getElementById('years').value = g.yrs || (g.targetYear ? g.targetYear - this.currentYear : 0);
+                } else if (g.type === 'retirement') {
+                    document.getElementById('monthlyExpenses').value = g.exp;
+                    document.getElementById('yearsToRetire').value = g.yTo;
+                    document.getElementById('yearsInRetirement').value = g.yIn;
+                    document.getElementById('postRetirementReturn').value = g.pRet;
+                } 
+                document.getElementById('goalModal').style.display = 'flex';
+            },
+
+            deleteGoal(id) {
+                if(confirm("Remove this specific goal? Unassigned assets will be unlinked.")) {
+                    this.data.goals = this.data.goals.filter(g => g.id !== id);
+                    this.data.investments.forEach(inv => {
+                        if (inv.linkedGoalId === id) inv.linkedGoalId = null;
+                    });
+                    if(this.editingGoalId === id) this.closeGoalModal();
+                    this.saveState();
+                    this.renderGoals();
+                    this.renderDashboard();
+                    this.showToast("Goal removed.");
+                }
+            },
+
+            sortGoals(column) {
+                if (this.sortColumn === column) {
+                    this.sortAsc = !this.sortAsc; 
+                } else {
+                    this.sortColumn = column;
+                    this.sortAsc = true; 
+                }
+                this.saveState();
+                this.renderGoals();
             },
 
             /* -------------------------------------------------------------------------- */
@@ -1597,7 +1879,6 @@
                 const fpSec = document.getElementById('fp-sec');
                 if(!fpProf || !fpClass || !fpType || !fpCat || !fpSec) return;
 
-                // 1. Profiles
                 let profHtml = '';
                 [...this.data.profiles].sort().forEach(p => {
                     let checked = this.tempFilters.profiles.includes(p) ? 'checked' : '';
@@ -1607,7 +1888,6 @@
 
                 let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
                 
-                // 2. Classes
                 let availClasses = [...new Set(dataP.map(i => i.rawAssetClass || i.type))].sort();
                 let classHtml = '';
                 availClasses.forEach(c => {
@@ -1618,7 +1898,6 @@
 
                 let dataC = dataP.filter(i => this.tempFilters.classes.includes(i.rawAssetClass || i.type));
 
-                // 3. Types
                 let availTypes = [...new Set(dataC.map(i => i.rawAssetType || 'Other'))].sort();
                 let typeHtml = '';
                 availTypes.forEach(t => {
@@ -1629,7 +1908,6 @@
 
                 let dataT = dataC.filter(i => this.tempFilters.types.includes(i.rawAssetType || 'Other'));
 
-                // 4. Categories
                 let availCats = [...new Set(dataT.map(i => i.rawCategory || 'NA'))].sort();
                 let catHtml = '';
                 availCats.forEach(c => {
@@ -1640,7 +1918,6 @@
                 
                 let dataCat = dataT.filter(i => this.tempFilters.categories.includes(i.rawCategory || 'NA'));
                 
-                // 5. Sectors
                 let availSectors = [...new Set(dataCat.map(i => i.rawSector || 'NA'))].sort();
                 let secHtml = '';
                 availSectors.forEach(s => {
@@ -1880,270 +2157,6 @@
                 });
             },
 
-            /* -------------------------------------------------------------------------- */
-            /* GOALS LOGIC & PROGRESS VISUALIZATION                                       */
-            /* -------------------------------------------------------------------------- */
-            toggleGoalFields() {
-                const type = document.getElementById('goalType').value;
-                const standard = document.getElementById('standardFields');
-                const retirement = document.getElementById('retirementFields');
-                const education = document.getElementById('educationFields');
-                const nameLabel = document.getElementById('goalNameLabel');
-                const nameInput = document.getElementById('goalName');
-
-                document.getElementById('currentValue').required = false;
-                document.getElementById('years').required = false;
-                document.getElementById('monthlyExpenses').required = false;
-                document.getElementById('yearsToRetire').required = false;
-                document.getElementById('yearsInRetirement').required = false;
-                document.getElementById('postRetirementReturn').required = false;
-
-                standard.style.display = 'none';
-                retirement.style.display = 'none';
-                education.style.display = 'none';
-
-                if (type === 'standard' || type === 'edu_stage') {
-                    standard.style.display = 'block';
-                    document.getElementById('currentValue').required = true;
-                    document.getElementById('years').required = true;
-                    nameLabel.innerText = "Goal Name";
-                    nameInput.placeholder = "e.g., Higher Education";
-                } else if (type === 'retirement') {
-                    retirement.style.display = 'block';
-                    document.getElementById('monthlyExpenses').required = true;
-                    document.getElementById('yearsToRetire').required = true;
-                    document.getElementById('yearsInRetirement').required = true;
-                    document.getElementById('postRetirementReturn').required = true;
-                    nameLabel.innerText = "Goal Name";
-                    nameInput.placeholder = "e.g., Retirement Corpus";
-                } else if (type === 'education') {
-                    education.style.display = 'block';
-                    nameLabel.innerText = "Child Name";
-                    nameInput.placeholder = "e.g., Arjun";
-                    
-                    if (!this.editingBatchId) {
-                        this.generateEduTimeline();
-                    }
-                }
-            },
-
-            generateEduTimeline() {
-                const grade = parseInt(document.getElementById('eduCurrentGrade').value) || 1;
-                const container = document.getElementById('eduTimelineGrid');
-                container.innerHTML = '';
-
-                const stages = [];
-                for (let i = grade + 1; i <= 10; i++) {
-                    stages.push({ name: `Grade ${i}`, yearOffset: i - grade });
-                }
-                if (grade <= 10) stages.push({ name: `+1 (11th)`, yearOffset: 11 - grade });
-                if (grade <= 11) stages.push({ name: `+2 (12th)`, yearOffset: 12 - grade });
-                
-                stages.push({ name: `Degree (Lump Sum)`, yearOffset: Math.max(1, 13 - grade) });
-                stages.push({ name: `PG (Lump Sum)`, yearOffset: Math.max(4, 16 - grade) });
-
-                stages.forEach((stage) => {
-                    const targetYear = this.currentYear + stage.yearOffset;
-                    container.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-light); padding:0.6rem; border-radius:4px; border: 1px solid transparent; transition: 0.2s;">
-                            <div style="display:flex; flex-direction:column; flex:1;">
-                                <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">${stage.name}</span>
-                                <span style="font-size:0.75rem; color:var(--accent-color);">Target Year: ${targetYear}</span>
-                            </div>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <input type="number" class="edu-cost-input" data-name="${stage.name}" data-year="${targetYear}" data-yrs="${stage.yearOffset}" placeholder="₹ Cost Today" style="width:130px; padding:0.5rem; font-size:0.9rem; background: var(--surface-color);">
-                                <button type="button" class="icon-btn delete" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus();" title="Clear">✕</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            },
-
-            calcRetFV(exp, yrsTo, yRet, inf, ret) {
-                const fExp = (exp*12) * Math.pow((1+(inf/100)), yrsTo);
-                const r = ret/100, i = inf/100;
-                const real = ((1+r)/(1+i))-1;
-                return real <= 0 ? fExp*yRet : fExp * ((1-Math.pow(1+real, -yRet))/real) * (1+real);
-            },
-
-            handleGoalSave(event) {
-                event.preventDefault();
-                const type = document.getElementById('goalType').value;
-                const inf = parseFloat(document.getElementById('inflation').value);
-                const baseName = document.getElementById('goalName').value;
-                
-                if (type === 'education') {
-                    const inputs = document.querySelectorAll('.edu-cost-input');
-                    const batchId = this.editingBatchId || Date.now().toString();
-                    const grade = parseInt(document.getElementById('eduCurrentGrade').value) || 1;
-                    let addedCount = 0;
-                    
-                    if (this.editingBatchId) {
-                        this.data.goals = this.data.goals.filter(g => g.batchId !== this.editingBatchId);
-                    }
-                    
-                    inputs.forEach(input => {
-                        const cost = parseFloat(input.value);
-                        if (cost > 0) { 
-                            const targetYear = parseInt(input.getAttribute('data-year'));
-                            const yrs = parseInt(input.getAttribute('data-yrs'));
-                            const stageName = input.getAttribute('data-name');
-                            
-                            let goalData = {
-                                id: Date.now().toString() + Math.random().toString().slice(2,8),
-                                batchId: batchId,
-                                batchName: baseName,
-                                batchGrade: grade,
-                                stageName: stageName,
-                                type: 'edu_stage',
-                                name: `${baseName} - ${stageName}`,
-                                inflation: inf,
-                                cExp: cost,
-                                yrs: yrs,
-                                targetYear: targetYear,
-                                fv: cost * Math.pow((1 + (inf / 100)), yrs)
-                            };
-                            this.data.goals.push(goalData);
-                            addedCount++;
-                        }
-                    });
-                    
-                    if(addedCount === 0 && !this.editingBatchId) {
-                        alert("Please enter a cost for at least one educational stage to save the plan.");
-                        return;
-                    }
-
-                } else {
-                    let goalData = {
-                        id: this.editingGoalId || Date.now().toString(),
-                        type: type,
-                        name: baseName,
-                        inflation: inf
-                    };
-
-                    if (type === 'standard' || type === 'edu_stage') {
-                        goalData.cv = parseFloat(document.getElementById('currentValue').value);
-                        goalData.yrs = parseInt(document.getElementById('years').value);
-                        goalData.cExp = goalData.cv; 
-                        goalData.fv = goalData.cv * Math.pow((1+(inf/100)), goalData.yrs);
-                        goalData.targetYear = this.currentYear + goalData.yrs;
-                    } else if (type === 'retirement') {
-                        goalData.exp = parseFloat(document.getElementById('monthlyExpenses').value);
-                        goalData.yTo = parseInt(document.getElementById('yearsToRetire').value);
-                        goalData.yIn = parseInt(document.getElementById('yearsInRetirement').value);
-                        goalData.pRet = parseFloat(document.getElementById('postRetirementReturn').value);
-                        goalData.cExp = goalData.exp * 12; 
-                        goalData.fv = this.calcRetFV(goalData.exp, goalData.yTo, goalData.yIn, inf, goalData.pRet);
-                        goalData.targetYear = this.currentYear + goalData.yTo;
-                    } 
-
-                    if (this.editingGoalId) {
-                        const idx = this.data.goals.findIndex(g => g.id === this.editingGoalId);
-                        this.data.goals[idx] = goalData;
-                    } else {
-                        this.data.goals.push(goalData);
-                    }
-                }
-
-                this.saveState();
-                this.cancelGoalEdit();
-                this.renderGoals();
-                this.renderDashboard();
-                this.showToast("Goal saved successfully.");
-            },
-
-            editGoal(id) {
-                const g = this.data.goals.find(g => g.id === id);
-                if (!g) return;
-
-                if (g.type === 'edu_stage' && g.batchId) {
-                    this.editingBatchId = g.batchId;
-                    this.editingGoalId = null;
-                    
-                    document.getElementById('goalFormTitle').innerText = "Edit Education Plan";
-                    document.getElementById('goalSubmitBtn').innerText = "Update Entire Plan";
-                    document.getElementById('goalCancelBtn').style.display = "block";
-                    
-                    document.getElementById('goalType').value = 'education';
-                    document.getElementById('eduCurrentGrade').value = g.batchGrade || 1;
-                    
-                    this.generateEduTimeline();
-                    this.toggleGoalFields();
-                    
-                    document.getElementById('goalName').value = g.batchName;
-                    document.getElementById('inflation').value = g.inflation;
-
-                    const batchGoals = this.data.goals.filter(goal => goal.batchId === g.batchId);
-                    batchGoals.forEach(bg => {
-                        const input = document.querySelector(`.edu-cost-input[data-name="${bg.stageName}"]`);
-                        if (input) input.value = bg.cExp;
-                    });
-                    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    return;
-                }
-
-                this.editingGoalId = id;
-                this.editingBatchId = null;
-                document.getElementById('goalFormTitle').innerText = "Edit Goal";
-                document.getElementById('goalSubmitBtn').innerText = "Update Goal";
-                document.getElementById('goalCancelBtn').style.display = "block";
-                
-                document.getElementById('goalType').value = g.type === 'edu_stage' ? 'edu_stage' : g.type;
-                this.toggleGoalFields();
-                
-                document.getElementById('goalName').value = g.name;
-                document.getElementById('inflation').value = g.inflation;
-
-                if (g.type === 'standard' || g.type === 'edu_stage') {
-                    document.getElementById('currentValue').value = g.cv || g.cExp || g.pv || g.currentValue;
-                    document.getElementById('years').value = g.yrs || (g.targetYear ? g.targetYear - this.currentYear : 0);
-                } else if (g.type === 'retirement') {
-                    document.getElementById('monthlyExpenses').value = g.exp;
-                    document.getElementById('yearsToRetire').value = g.yTo;
-                    document.getElementById('yearsInRetirement').value = g.yIn;
-                    document.getElementById('postRetirementReturn').value = g.pRet;
-                } 
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            },
-
-            cancelGoalEdit() {
-                this.editingGoalId = null;
-                this.editingBatchId = null;
-                document.getElementById('goalFormTitle').innerText = "Define Target Goal";
-                document.getElementById('goalSubmitBtn').innerText = "Calculate & Save";
-                document.getElementById('goalCancelBtn').style.display = "none";
-                document.getElementById('goalForm').reset();
-                document.getElementById('goalType').value = 'standard';
-                this.toggleGoalFields();
-            },
-
-            deleteGoal(id) {
-                if(confirm("Remove this specific goal? Unassigned assets will be unlinked.")) {
-                    this.data.goals = this.data.goals.filter(g => g.id !== id);
-                    // Unlink any assets tied to this goal
-                    this.data.investments.forEach(inv => {
-                        if (inv.linkedGoalId === id) inv.linkedGoalId = null;
-                    });
-                    if(this.editingGoalId === id) this.cancelGoalEdit();
-                    this.saveState();
-                    this.renderGoals();
-                    this.renderDashboard();
-                    this.showToast("Goal removed.");
-                }
-            },
-
-            sortGoals(column) {
-                if (this.sortColumn === column) {
-                    this.sortAsc = !this.sortAsc; 
-                } else {
-                    this.sortColumn = column;
-                    this.sortAsc = true; 
-                }
-                this.saveState();
-                this.renderGoals();
-            },
-
             renderGoals() {
                 const tbody = document.getElementById('goalsTableBody');
                 tbody.innerHTML = ''; 
@@ -2160,7 +2173,7 @@
                 });
 
                 if (this.data.goals.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No goals defined yet.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No goals defined yet. Click "+ Define New Goal" above.</td></tr>`;
                     return;
                 }
 
@@ -2177,7 +2190,6 @@
                         else tYear = this.currentYear;
                     }
 
-                    // Calculate assigned asset valuation & projected future value against this goal
                     let assignedValuation = 0;
                     let assignedFV = 0;
                     this.data.investments.forEach(inv => {
@@ -2256,100 +2268,6 @@
                 tbody.appendChild(totalRow);
             },
 
-            /* -------------------------------------------------------------------------- */
-            /* DASHBOARD LOGIC                                                            */
-            /* -------------------------------------------------------------------------- */
-            renderDashboard() {
-                let globalInvestments = 0;
-                let globalFutureInvestments = 0;
-                let profileTotals = {};
-                const maxYear = this.getMaxGoalYear();
-                
-                this.data.investments.forEach(inv => {
-                    let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
-                    globalInvestments += (inv.value || 0);
-                    globalFutureInvestments += fv;
-
-                    let pName = inv.profile || 'Main Portfolio';
-                    if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
-                    profileTotals[pName].fv += fv;
-                });
-                
-                let totalCExp = 0;
-                let totalFV = 0;
-                this.data.goals.forEach(goal => {
-                    let cExp = goal.cExp || (goal.type === 'retirement' ? (goal.exp * 12) : (goal.cv || goal.pv || 0));
-                    totalCExp += cExp;
-                    totalFV += (goal.fv || goal.targetValue || 0);
-                });
-
-                document.getElementById('dashTotalAssets').innerText = '₹' + this.formatCurrency(globalInvestments);
-                document.getElementById('dashFutureAssets').innerText = '₹' + this.formatCurrency(globalFutureInvestments);
-                document.getElementById('dashTotalPV').innerText = '₹' + this.formatCurrency(totalCExp);
-                document.getElementById('dashTotalFV').innerText = '₹' + this.formatCurrency(totalFV);
-
-                const badgeT1 = document.getElementById('badgeDashToday1');
-                const badgeT2 = document.getElementById('badgeDashToday2');
-                const badgeF1 = document.getElementById('badgeDashFV1');
-                const badgeF2 = document.getElementById('badgeDashFV2');
-                
-                if (badgeT1) badgeT1.innerText = this.currentYear;
-                if (badgeT2) badgeT2.innerText = this.currentYear;
-                if (badgeF1) badgeF1.innerText = `TO ${maxYear}`;
-                if (badgeF2) badgeF2.innerText = `TO ${maxYear}`;
-
-                let totalPct = 0;
-                if (totalFV > 0) {
-                    totalPct = Math.min((globalFutureInvestments / totalFV) * 100, 100);
-                }
-                document.getElementById('dashPercentage').innerText = `${totalPct.toFixed(1)}%`;
-
-                const progressContainer = document.getElementById('dashProgressBarContainer');
-                const progressLegend = document.getElementById('dashProgressLegend');
-                progressContainer.innerHTML = '';
-                progressLegend.innerHTML = '';
-
-                let colorIdx = 0;
-                const sortedProfiles = Object.keys(profileTotals).sort((a,b) => profileTotals[b].fv - profileTotals[a].fv);
-                
-                sortedProfiles.forEach(pName => {
-                    const pFV = profileTotals[pName].fv;
-                    if (pFV > 0 && totalFV > 0) {
-                        const pPctOfGoal = (pFV / totalFV) * 100;
-                        const color = this.profileColors[colorIdx % this.profileColors.length];
-                        
-                        const seg = document.createElement('div');
-                        seg.className = 'progress-bar-segment';
-                        seg.style.background = color;
-                        seg.style.width = '0%'; 
-                        progressContainer.appendChild(seg);
-                        
-                        const leg = document.createElement('div');
-                        leg.className = 'legend-item';
-                        leg.innerHTML = `<div class="legend-color" style="background:${color};"></div><span><strong>${pName}</strong>: ${pPctOfGoal.toFixed(1)}%</span>`;
-                        progressLegend.appendChild(leg);
-
-                        setTimeout(() => {
-                            const visualWidth = totalPct >= 100 ? (pFV / globalFutureInvestments) * 100 : pPctOfGoal;
-                            seg.style.width = `${visualWidth}%`;
-                        }, 100);
-                        
-                        colorIdx++;
-                    }
-                });
-
-                let tableInvestments = this.data.investments.filter(i => {
-                    const profileMatch = this.dashProfileFilters.includes(i.profile || 'Main Portfolio');
-                    const classMatch = this.dashClassFilters.includes(i.rawAssetClass || i.type);
-                    const typeMatch = this.dashTypeFilters.includes(i.rawAssetType || 'Other');
-                    const catMatch = this.dashCategoryFilters.includes(i.rawCategory || 'NA');
-                    const sectorMatch = this.dashSectorFilters.includes(i.rawSector || 'NA');
-                    return profileMatch && classMatch && typeMatch && catMatch && sectorMatch;
-                });
-
-                this.renderAllocationTable('dashAssetSummaryBody', 'dashAllocColHeader', tableInvestments, true);
-            },
-
             renderAll() {
                 this.renderGoals();
                 this.renderInvestments();
@@ -2360,8 +2278,10 @@
 
         window.onclick = function(event) {
             const assetModal = document.getElementById('assetModal');
+            const goalModal = document.getElementById('goalModal');
             const assignModal = document.getElementById('assignAssetsModal');
             if (event.target === assetModal) app.closeAssetModal();
+            if (event.target === goalModal) app.closeGoalModal();
             if (event.target === assignModal) app.closeAssignModal();
         }
 
