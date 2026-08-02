@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -365,7 +365,10 @@
         <div id="view-goals" class="view">
             <div class="portfolio-header">
                 <h3>Financial Goals / Plan</h3>
-                <button onclick="app.openGoalModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; width: auto;">+ Define New Goal</button>
+                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <button onclick="app.openSmartAllocateModal()" style="background: var(--surface-light); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; width: auto;" title="Engine identifies ideal unassigned assets for each goal based on time horizons">✨ Smart Allocate</button>
+                    <button onclick="app.openGoalModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; width: auto;">+ Define New Goal</button>
+                </div>
             </div>
 
             <div class="table-container" style="margin-top: 0;">
@@ -585,6 +588,24 @@
             </div>
         </div>
 
+        <!-- Smart Allocate Modal -->
+        <div class="modal-overlay" id="smartAllocateModal">
+            <div class="modal-content" style="max-width: 650px;">
+                <button class="close-modal" onclick="app.closeSmartAllocateModal()">✕</button>
+                <h3 id="smartAllocateTitle">✨ Smart Asset Allocation</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;">The engine analyzes your unassigned assets and recommends allocations based on goal time horizons and asset risk profiles.</p>
+                
+                <div id="smartAllocateList" style="display:flex; flex-direction:column; gap:0.6rem; max-height: 400px; overflow-y:auto; background:var(--bg-color); padding:1rem; border-radius:6px; border:1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <!-- Recs injected here -->
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" onclick="app.applySmartRecommendations()" class="btn-action">Apply Selected Recommendations</button>
+                    <button type="button" onclick="app.closeSmartAllocateModal()" class="btn-cancel btn-action" style="display: block;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Goal Form Modal -->
         <div class="modal-overlay" id="goalModal">
             <div class="modal-content" style="max-width: 550px;">
@@ -685,7 +706,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.50</div>
+        <div>Anantha Wealth OS V2.51</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -732,6 +753,7 @@
             assigningGoalId: null,
             splittingInvId: null,
             currentYear: new Date().getFullYear(),
+            currentRecommendations: [],
             
             activeView: 'home',
             sortColumn: 'year',
@@ -788,16 +810,15 @@
             },
 
             migrateData() {
-                const savedV2_50 = localStorage.getItem('ananthaDataV2_50');
-                if (savedV2_50) {
-                    this.data = JSON.parse(savedV2_50);
+                const savedV2_51 = localStorage.getItem('ananthaDataV2_51');
+                if (savedV2_51) {
+                    this.data = JSON.parse(savedV2_51);
                     this.activeView = this.data.activeView || 'home';
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
                     this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-
                     this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
                     this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
@@ -811,7 +832,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_49') || localStorage.getItem('ananthaDataV2_48') || localStorage.getItem('ananthaDataV2_47');
+                const savedOld = localStorage.getItem('ananthaDataV2_50') || localStorage.getItem('ananthaDataV2_49') || localStorage.getItem('ananthaDataV2_48');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -868,7 +889,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_50', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_51', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1009,6 +1030,181 @@
             },
 
             /* -------------------------------------------------------------------------- */
+            /* SMART ALLOCATE ENGINE (OPTION 4 / ADVANCED RECOMMENDATIONS)                */
+            /* -------------------------------------------------------------------------- */
+            openSmartAllocateModal() {
+                this.generateSmartRecommendations();
+                document.getElementById('smartAllocateModal').style.display = 'flex';
+            },
+
+            closeSmartAllocateModal() {
+                document.getElementById('smartAllocateModal').style.display = 'none';
+                this.currentRecommendations = [];
+            },
+
+            generateSmartRecommendations() {
+                let recs = [];
+                let usedAssetIds = new Set();
+                
+                // Re-calculate goal funding statuses dynamically for the engine run
+                let goalsWithShortage = this.data.goals.map(g => {
+                    let tYear = g.targetYear || (this.currentYear + (g.yrs || g.yTo || 0));
+                    let yrsToGoal = tYear - this.currentYear;
+                    let assignedFV = 0;
+                    this.data.investments.forEach(inv => {
+                        if(inv.linkedGoalId === g.id) assignedFV += this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                    });
+                    let reqFv = g.fv || g.targetValue || 0;
+                    let shortage = reqFv - assignedFV;
+                    return { ...g, yrsToGoal, shortage, origShortage: shortage };
+                }).filter(g => g.shortage > 0);
+
+                let availableAssets = this.data.investments.filter(i => !i.linkedGoalId).map(inv => {
+                    return { ...inv, computedFV: this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate), origFV: this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate) };
+                });
+
+                // Prioritize large assets to fill buckets quickly
+                availableAssets.sort((a,b) => b.computedFV - a.computedFV);
+
+                // Phase 1: Retirement matching
+                let retGoals = goalsWithShortage.filter(g => g.type === 'retirement');
+                retGoals.forEach(g => {
+                    availableAssets.forEach(a => {
+                        if (a.computedFV <= 0 || g.shortage <= 0 || usedAssetIds.has(a.id)) return;
+                        if (['nps', 'epf', 'ppf'].includes(a.type)) {
+                            let allocatePct = Math.min(100, (g.shortage / a.computedFV) * 100);
+                            if (allocatePct > 99) allocatePct = 100;
+                            
+                            recs.push({
+                                asset: a, goal: g, pct: allocatePct, fvAdded: a.origFV * (allocatePct/100),
+                                reason: `Asset type (${a.type.toUpperCase()}) is structurally designed for retirement.`
+                            });
+                            g.shortage -= (a.origFV * (allocatePct/100));
+                            usedAssetIds.add(a.id);
+                        }
+                    });
+                });
+
+                // Phase 2: Short term goals (< 4 years)
+                let shortGoals = goalsWithShortage.filter(g => g.yrsToGoal < 4 && g.shortage > 0);
+                shortGoals.sort((a,b) => a.yrsToGoal - b.yrsToGoal); // Nearest goals first
+                shortGoals.forEach(g => {
+                    availableAssets.forEach(a => {
+                        if (a.computedFV <= 0 || g.shortage <= 0 || usedAssetIds.has(a.id)) return;
+                        if (['liquid', 'fd', 'rd', 'debt'].includes(a.type)) {
+                            let allocatePct = Math.min(100, (g.shortage / a.computedFV) * 100);
+                            if (allocatePct > 99) allocatePct = 100; 
+                            
+                            recs.push({
+                                asset: a, goal: g, pct: allocatePct, fvAdded: a.origFV * (allocatePct/100),
+                                reason: `Low-risk stable asset perfectly matches short-term horizon (${g.yrsToGoal} yrs).`
+                            });
+                            g.shortage -= (a.origFV * (allocatePct/100));
+                            usedAssetIds.add(a.id);
+                        }
+                    });
+                });
+
+                // Phase 3: Long term goals (>= 4 years)
+                let longGoals = goalsWithShortage.filter(g => g.yrsToGoal >= 4 && g.shortage > 0);
+                longGoals.sort((a,b) => a.yrsToGoal - b.yrsToGoal);
+                longGoals.forEach(g => {
+                    availableAssets.forEach(a => {
+                        if (a.computedFV <= 0 || g.shortage <= 0 || usedAssetIds.has(a.id)) return;
+                        if (['equity', 'hybrid', 'gold_silver', 'real_estate', 'debt', 'ppf'].includes(a.type)) {
+                            let allocatePct = Math.min(100, (g.shortage / a.computedFV) * 100);
+                            if (allocatePct > 99) allocatePct = 100; 
+                            
+                            recs.push({
+                                asset: a, goal: g, pct: allocatePct, fvAdded: a.origFV * (allocatePct/100),
+                                reason: `Growth asset is suitable to compound for long-term horizon (${g.yrsToGoal} yrs).`
+                            });
+                            g.shortage -= (a.origFV * (allocatePct/100));
+                            usedAssetIds.add(a.id);
+                        }
+                    });
+                });
+
+                this.currentRecommendations = recs;
+                this.renderRecommendationsUI();
+            },
+
+            renderRecommendationsUI() {
+                const container = document.getElementById('smartAllocateList');
+                container.innerHTML = '';
+                if (this.currentRecommendations.length === 0) {
+                    container.innerHTML = `<span style="color:var(--text-secondary); text-align:center; padding:1rem;">No optimal recommendations found. All goals are funded, or no suitable unassigned assets exist.</span>`;
+                    return;
+                }
+
+                this.currentRecommendations.forEach((rec, idx) => {
+                    container.innerHTML += `
+                        <label style="display:flex; align-items:flex-start; justify-content:space-between; background:var(--surface-color); padding:0.8rem; border-radius:4px; cursor:pointer; border:1px solid var(--border-color);">
+                            <div style="display:flex; align-items:flex-start; gap:0.6rem; flex:1;">
+                                <input type="checkbox" class="rec-checkbox" value="${idx}" checked style="width:16px; height:16px; accent-color:var(--accent-color); margin-top:3px;">
+                                <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);">
+                                        Allocate ${rec.pct.toFixed(0)}% of <span style="color:var(--accent-color);">${rec.asset.name}</span>
+                                    </span>
+                                    <span style="font-size:0.85rem; color:var(--text-secondary);">
+                                        ➔ To: <strong>${rec.goal.name}</strong> (Fills ₹${this.formatCurrency(rec.fvAdded)} of need)
+                                    </span>
+                                    <span style="font-size:0.75rem; color:var(--success-color); background:rgba(52, 211, 153, 0.1); padding:0.2rem 0.4rem; border-radius:4px; width:fit-content; margin-top:0.2rem;">
+                                        💡 ${rec.reason}
+                                    </span>
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                });
+            },
+
+            applySmartRecommendations() {
+                const checkboxes = document.querySelectorAll('.rec-checkbox');
+                let appliedCount = 0;
+                
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        const rec = this.currentRecommendations[parseInt(cb.value)];
+                        const inv = this.data.investments.find(i => i.id === rec.asset.id);
+                        if (!inv) return;
+
+                        if (rec.pct >= 99) {
+                            inv.linkedGoalId = rec.goal.id;
+                        } else {
+                            // Split logic
+                            const splitFactor = rec.pct / 100;
+                            let newAsset = JSON.parse(JSON.stringify(inv)); 
+                            newAsset.id = Date.now().toString() + Math.random().toString().slice(2,8);
+                            newAsset.name = inv.name + " (Split)";
+                            newAsset.value = inv.value * splitFactor;
+                            if (newAsset.investedValue != null && !isNaN(newAsset.investedValue)) {
+                                newAsset.investedValue = inv.investedValue * splitFactor;
+                            }
+                            newAsset.linkedGoalId = rec.goal.id;
+                            newAsset.splitParentId = inv.id;
+                            newAsset.isManuallyEdited = true;
+
+                            inv.value = inv.value * (1 - splitFactor);
+                            if (inv.investedValue != null && !isNaN(inv.investedValue)) {
+                                inv.investedValue = inv.investedValue * (1 - splitFactor);
+                            }
+                            inv.isManuallyEdited = true;
+                            
+                            this.data.investments.push(newAsset);
+                        }
+                        appliedCount++;
+                    }
+                });
+
+                this.saveState();
+                this.closeSmartAllocateModal();
+                this.renderAll();
+                this.showToast(`Applied ${appliedCount} recommendations successfully!`);
+            },
+
+
+            /* -------------------------------------------------------------------------- */
             /* INVESTMENTS LOGIC & MODAL                                                  */
             /* -------------------------------------------------------------------------- */
             openAssetModal() { 
@@ -1019,39 +1215,10 @@
                 document.getElementById('assetModal').style.display = 'none'; 
                 this.cancelInvEdit(); 
             },
-
-            getMaxGoalYear() {
-                let maxYear = this.currentYear + 10; 
-                if (this.data.goals && this.data.goals.length > 0) {
-                    const goalYears = this.data.goals.map(g => g.targetYear || this.currentYear);
-                    maxYear = Math.max(...goalYears);
-                }
-                return maxYear;
-            },
             
             handleInvTypeChange() {
                 const type = document.getElementById('invType').value;
                 document.getElementById('invGrowth').value = this.defaultRates[type] || 0;
-            },
-            
-            calcInvFV(val, rate, matDateStr) {
-                if (!rate && rate !== 0) return val;
-                let years = 0;
-
-                if (matDateStr) {
-                    const matDate = new Date(matDateStr);
-                    const today = new Date();
-                    years = (matDate - today) / (1000 * 60 * 60 * 24 * 365.25);
-                } else {
-                    years = this.getMaxGoalYear() - this.currentYear;
-                }
-                
-                if (years <= 0) return val;
-                
-                let multiplier = 1 + (rate / 100);
-                if (multiplier < 0) return 0;
-                
-                return val * Math.pow(multiplier, years);
             },
 
             handleInvSave(event) {
@@ -2621,10 +2788,12 @@
             const goalModal = document.getElementById('goalModal');
             const assignModal = document.getElementById('assignAssetsModal');
             const splitModal = document.getElementById('splitAssetModal');
+            const smartAllocateModal = document.getElementById('smartAllocateModal');
             if (event.target === assetModal) app.closeAssetModal();
             if (event.target === goalModal) app.closeGoalModal();
             if (event.target === assignModal) app.closeAssignModal();
             if (event.target === splitModal) app.closeSplitModal();
+            if (event.target === smartAllocateModal) app.closeSmartAllocateModal();
         }
 
         document.addEventListener('DOMContentLoaded', () => app.init());
