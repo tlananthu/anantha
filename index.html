@@ -440,7 +440,7 @@
 
                     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                         <input type="file" id="bulkUpload" accept=".xlsx, .xls" style="display:none;" onchange="app.handleBulkUpload(event)">
-                        <button style="width: 100%; padding: 1rem; font-size: 1.05rem;" class="btn-action" onclick="if(confirm('Warning: This will replace existing assets for the specific profiles found in this file. Data for other profiles will remain safe. Custom mapped categories will be retained. Continue?')) document.getElementById('bulkUpload').click()">
+                        <button style="width: 100%; padding: 1rem; font-size: 1.05rem;" class="btn-action" onclick="if(confirm('Warning: This will clear older data ONLY for the platform source you are currently uploading. Manually created assets, goal tags, overrides, and data from other platforms will remain perfectly safe. Continue?')) document.getElementById('bulkUpload').click()">
                             ⬆ Upload Portfolio Data
                         </button>
                     </div>
@@ -456,7 +456,7 @@
                 <div class="settings-card" style="height: fit-content;">
                     <h2>Profile Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
-                        Create, view, and delete asset owner profiles. Deleting a profile will permanently remove all assets associated with it.
+                        Create, view, merge, and delete asset owner profiles. Deleting a profile will permanently remove all assets associated with it.
                     </p>
                     
                     <div id="settingsProfileList" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
@@ -564,21 +564,21 @@
         <div class="modal-overlay" id="splitAssetModal">
             <div class="modal-content" style="max-width: 400px;">
                 <button class="close-modal" onclick="app.closeSplitModal()">✕</button>
-                <h3 id="splitModalTitle">Split & Assign Goal</h3>
+                <h3 id="splitModalTitle">Allocate / Split Asset</h3>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;" id="splitModalDesc"></p>
                 
                 <form id="splitForm" onsubmit="app.handleSplitSave(event)">
                     <div class="form-group">
-                        <label for="splitPercentage">Percentage to Split (%)</label>
-                        <input type="number" id="splitPercentage" required min="1" max="99" value="50">
+                        <label for="splitPercentage">Percentage to Allocate (%)</label>
+                        <input type="number" id="splitPercentage" required min="1" max="100" value="100">
                     </div>
                     <div class="form-group">
-                        <label for="splitGoal">Assign Split Portion to Goal</label>
+                        <label for="splitGoal">Assign to Goal</label>
                         <select id="splitGoal" required></select>
                     </div>
 
                     <div class="form-actions" style="margin-top: 1.5rem;">
-                        <button type="submit" class="btn-action">Split Asset</button>
+                        <button type="submit" class="btn-action">Allocate</button>
                         <button type="button" class="btn-cancel btn-action" onclick="app.closeSplitModal()" style="display: block;">Cancel</button>
                     </div>
                 </form>
@@ -685,7 +685,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.49</div>
+        <div>Anantha Wealth OS V2.50</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -788,15 +788,16 @@
             },
 
             migrateData() {
-                const savedV2_49 = localStorage.getItem('ananthaDataV2_49');
-                if (savedV2_49) {
-                    this.data = JSON.parse(savedV2_49);
+                const savedV2_50 = localStorage.getItem('ananthaDataV2_50');
+                if (savedV2_50) {
+                    this.data = JSON.parse(savedV2_50);
                     this.activeView = this.data.activeView || 'home';
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
                     this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
+
                     this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
                     this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
@@ -810,11 +811,10 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_48') || localStorage.getItem('ananthaDataV2_47') || localStorage.getItem('ananthaDataV2_46');
+                const savedOld = localStorage.getItem('ananthaDataV2_49') || localStorage.getItem('ananthaDataV2_48') || localStorage.getItem('ananthaDataV2_47');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
-                    // Normalize Profiles
                     this.data.profiles = [...new Set(this.data.profiles.map(p => this.toTitleCase(p)))];
                     this.data.investments.forEach(i => {
                         i.profile = this.toTitleCase(i.profile);
@@ -868,7 +868,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_49', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_50', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -921,6 +921,31 @@
                 }
             },
 
+            editProfile(oldName) {
+                let newName = prompt(`Enter new name for profile '${oldName}'.\n(If you enter an existing profile name, they will be intelligently merged together):`, oldName);
+                if (!newName || newName.trim() === '' || newName.trim().toLowerCase() === oldName.toLowerCase()) return;
+                
+                newName = this.toTitleCase(newName.trim());
+
+                this.data.investments.forEach(inv => {
+                    if (inv.profile === oldName) inv.profile = newName;
+                });
+
+                this.data.profiles = this.data.profiles.filter(p => p !== oldName);
+                if (!this.data.profiles.includes(newName)) this.data.profiles.push(newName);
+
+                this.dashProfileFilters = this.dashProfileFilters.map(p => p === oldName ? newName : p);
+                this.dashProfileFilters = [...new Set(this.dashProfileFilters)]; 
+
+                this.invProfileFilters = this.invProfileFilters.map(p => p === oldName ? newName : p);
+                this.invProfileFilters = [...new Set(this.invProfileFilters)]; 
+
+                this.saveState();
+                this.updateProfileDropdowns();
+                this.renderAll();
+                this.showToast(`Profile renamed to '${newName}'.`);
+            },
+
             deleteFullProfile(pName) {
                 if (this.data.profiles.length <= 1) {
                     this.showToast("You must have at least one profile to use the system.", true);
@@ -946,7 +971,10 @@
                     container.innerHTML += `
                         <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-light); padding: 0.8rem 1.2rem; border: 1px solid var(--border-color); border-radius: 6px;">
                             <span style="font-weight: 600; color: var(--text-primary); text-transform: uppercase; font-size: 0.9rem;">${p}</span>
-                            <button onclick="app.deleteFullProfile('${p}')" style="width: auto; background: rgba(244, 63, 94, 0.1); color: var(--danger-color); padding: 0.4rem 0.8rem; border: 1px solid rgba(244, 63, 94, 0.2); border-radius: 4px; font-size: 0.8rem; cursor: pointer;">Delete</button>
+                            <div>
+                                <button onclick="app.editProfile('${p}')" style="width: auto; background: rgba(56, 189, 248, 0.1); color: var(--accent-color); padding: 0.4rem 0.8rem; border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 4px; font-size: 0.8rem; cursor: pointer; margin-right: 0.5rem;">Edit / Merge</button>
+                                <button onclick="app.deleteFullProfile('${p}')" style="width: auto; background: rgba(244, 63, 94, 0.1); color: var(--danger-color); padding: 0.4rem 0.8rem; border: 1px solid rgba(244, 63, 94, 0.2); border-radius: 4px; font-size: 0.8rem; cursor: pointer;">Delete</button>
+                            </div>
                         </div>
                     `;
                 });
@@ -976,6 +1004,8 @@
 
                 if (viewId === 'home') this.renderDashboard();
                 if (viewId === 'investments') this.renderInvestments();
+                if (viewId === 'settings') this.renderSettingsProfiles();
+                if (viewId === 'goals') this.renderGoals();
             },
 
             /* -------------------------------------------------------------------------- */
@@ -1154,7 +1184,7 @@
                 const inv = this.data.investments.find(i => i.id === id);
                 if (!inv) return;
                 this.splittingInvId = id;
-                document.getElementById('splitModalDesc').innerText = `Splitting: ${inv.name} (Current Val: ₹${this.formatCurrency(inv.value)})`;
+                document.getElementById('splitModalDesc').innerText = `Allocating: ${inv.name} (Current Val: ₹${this.formatCurrency(inv.value)})`;
 
                 const goalSelect = document.getElementById('splitGoal');
                 goalSelect.innerHTML = '<option value="">-- Select Goal to Assign To --</option>';
@@ -1183,6 +1213,18 @@
                 if (origIdx === -1) return;
 
                 const orig = this.data.investments[origIdx];
+                
+                if (pct === 100) {
+                    orig.linkedGoalId = goalId;
+                    this.saveState();
+                    this.closeSplitModal();
+                    this.renderInvestments();
+                    this.renderDashboard();
+                    this.renderGoals();
+                    this.showToast(`Asset fully allocated to goal!`);
+                    return;
+                }
+
                 const splitFactor = pct / 100;
 
                 let newAsset = JSON.parse(JSON.stringify(orig)); 
@@ -1209,7 +1251,7 @@
                 this.renderInvestments();
                 this.renderDashboard();
                 this.renderGoals();
-                this.showToast(`Asset split by ${pct}% and assigned to goal!`);
+                this.showToast(`Asset split by ${pct}% and allocated!`);
             },
             unsplitAsset(id) {
                 const inv = this.data.investments.find(i => i.id === id);
@@ -1278,7 +1320,7 @@
                         let upstoxProfileName = "Main Portfolio";
                         let growwProfileName = "Main Portfolio";
 
-                        for(let i=0; i<rows.length; i++) {
+                        for(let i=0; i < Math.min(10, rows.length); i++) {
                             if(rows[i]) {
                                 const rowStr = rows[i].join(" ").toLowerCase();
                                 function strVal(v) { return v ? v.toString().trim() : ""; }
@@ -1295,13 +1337,9 @@
                                     if (rows[i].length > 1 && strVal(rows[i][1])) upstoxProfileName = strVal(rows[i][1]);
                                 }
                                 
-                                if (rowStr.includes("personal details") && rows[i+1] && strVal(rows[i+1][0]).toLowerCase() === "name") {
-                                    growwProfileName = strVal(rows[i+1][1]);
-                                }
-                                if (rowStr.includes("unique client code")) {
-                                    let sheetHeaders = Object.keys(rows[0] || {});
-                                    if (sheetHeaders.length > 1 && !sheetHeaders[1].toLowerCase().includes("unnamed")) {
-                                         growwProfileName = strVal(sheetHeaders[1]); 
+                                if (rows[i][0] && strVal(rows[i][0]).toLowerCase() === "name") {
+                                    if (rows[i].length > 1 && strVal(rows[i][1])) {
+                                        growwProfileName = strVal(rows[i][1]);
                                     }
                                 }
 
@@ -1515,13 +1553,11 @@
                     if(newInvestments.length > 0) {
                         let importedProfiles = Array.from(newProfiles);
                         
-                        // Clean older data ONLY from the same channel/source, OR legacy undefined sources
                         this.data.investments = this.data.investments.filter(i => {
                             let pName = i.profile || 'Main Portfolio';
                             let isProfileMatch = importedProfiles.includes(pName);
                             let isSourceMatch = (i.source === detectedSource || i.source === 'Legacy');
                             
-                            // Remove older auto-imported items that match profile & source
                             if (isProfileMatch && isSourceMatch && !i.isManuallyEdited) {
                                 return false; 
                             }
@@ -1552,6 +1588,7 @@
                         this.updateProfileDropdowns();
                         this.renderInvestments();
                         this.renderDashboard();
+                        this.renderSettingsProfiles();
                         
                         this.switchView('home');
                         this.showToast(`Imported ${newInvestments.length} assets from ${detectedSource}.`);
@@ -2154,7 +2191,7 @@
                         
                         let splitActionHtml = inv.splitParentId 
                             ? `<button class="icon-btn" onclick="event.stopPropagation(); app.unsplitAsset('${inv.id}')" title="Merge Back to Original Asset" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: rgba(56, 189, 248, 0.1); padding: 0.2rem 0.5rem; border-radius: 12px; color: var(--accent-color); border: 1px solid var(--accent-color);">Merge</button>` 
-                            : `<button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Split</button>`;
+                            : `<button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Allocate/Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Allocate</button>`;
 
                         tbodyHtml += `
                             <tr class="${rowClass}" onclick="app.editInv('${inv.id}')">
