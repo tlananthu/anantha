@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -706,7 +706,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.52</div>
+        <div>Anantha Wealth OS V2.53</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -810,9 +810,9 @@
             },
 
             migrateData() {
-                const savedV2_52 = localStorage.getItem('ananthaDataV2_52');
-                if (savedV2_52) {
-                    app.data = JSON.parse(savedV2_52);
+                const savedV2_53 = localStorage.getItem('ananthaDataV2_53');
+                if (savedV2_53) {
+                    app.data = JSON.parse(savedV2_53);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -832,7 +832,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_51') || localStorage.getItem('ananthaDataV2_50') || localStorage.getItem('ananthaDataV2_49');
+                const savedOld = localStorage.getItem('ananthaDataV2_52') || localStorage.getItem('ananthaDataV2_51') || localStorage.getItem('ananthaDataV2_50');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -889,7 +889,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_52', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_53', JSON.stringify(app.data));
             },
 
             formatCurrency(amount) {
@@ -1213,6 +1213,35 @@
                 app.cancelInvEdit(); 
             },
             
+            getMaxGoalYear() {
+                let maxYear = app.currentYear + 10; 
+                if (app.data.goals && app.data.goals.length > 0) {
+                    const goalYears = app.data.goals.map(g => g.targetYear || app.currentYear);
+                    maxYear = Math.max(...goalYears);
+                }
+                return maxYear;
+            },
+
+            calcInvFV(val, rate, matDateStr) {
+                if (!rate && rate !== 0) return val;
+                let years = 0;
+
+                if (matDateStr) {
+                    const matDate = new Date(matDateStr);
+                    const today = new Date();
+                    years = (matDate - today) / (1000 * 60 * 60 * 24 * 365.25);
+                } else {
+                    years = app.getMaxGoalYear() - app.currentYear;
+                }
+                
+                if (years <= 0) return val;
+                
+                let multiplier = 1 + (rate / 100);
+                if (multiplier < 0) return 0;
+                
+                return val * Math.pow(multiplier, years);
+            },
+
             handleInvTypeChange() {
                 const type = document.getElementById('invType').value;
                 document.getElementById('invGrowth').value = app.defaultRates[type] || 0;
