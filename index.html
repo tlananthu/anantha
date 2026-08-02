@@ -97,7 +97,6 @@
         }
         
         .badge { font-size: 0.65rem; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--text-secondary); vertical-align: middle; text-transform: uppercase;}
-        .badge.profile-badge { background: var(--accent-color); color: #000; font-weight: 600; }
         
         .icon-btn { background: none; color: var(--text-secondary); width: auto; padding: 0; font-size: 1.1rem; }
         .icon-btn:hover { color: var(--accent-color); }
@@ -120,7 +119,7 @@
 
         /* Goal Table Progress Bars */
         .goal-progress-track { width: 100%; background: var(--surface-light); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
-        .goal-progress-fill { height: 100%; background: var(--success-color); transition: width 0.5s ease; }
+        .goal-progress-fill { height: 100%; transition: width 0.5s ease; }
 
         /* Unified Filter Panel */
         .filter-panel { background: var(--surface-light); border: 1px solid var(--accent-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; display: none; animation: fadeIn 0.2s ease-in-out; }
@@ -133,7 +132,7 @@
         .table-container { width: 100%; overflow-x: auto; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 1rem; }
         .table-header-row { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.5rem 0.5rem; flex-wrap: wrap; gap: 1rem; }
         
-        .data-table { width: 100%; border-collapse: collapse; min-width: 750px; }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 800px; }
         .data-table th, .data-table td { padding: 1.25rem 1rem; text-align: right; border-bottom: 1px solid var(--surface-light); }
         .data-table th:first-child, .data-table td:first-child { text-align: left; }
         .data-table th { background: var(--surface-light); color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; cursor: pointer; user-select: none; transition: background 0.2s, color 0.2s; }
@@ -158,7 +157,6 @@
         .data-table .low-growth-row td { border-bottom: 1px solid rgba(251, 191, 36, 0.2); }
         .data-table .low-growth-row td:first-child { border-left: 4px solid var(--warning-color); }
 
-        /* Clickable Rows */
         tr.clickable-row { cursor: pointer; transition: background-color 0.2s; }
         tr.clickable-row:hover td { background-color: rgba(56, 189, 248, 0.08) !important; }
 
@@ -389,7 +387,7 @@
             </div>
         </div>
 
-        <!-- VIEW: INVESTMENTS (TABULAR) -->
+        <!-- VIEW: INVESTMENTS (PORTFOLIO BY PROFILE) -->
         <div id="view-investments" class="view">
             <div class="portfolio-header">
                 <h3>Registered Assets</h3>
@@ -401,24 +399,8 @@
             
             <div id="invFilterContainer"></div>
             
-            <div class="table-container" style="margin-top: 0;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name" class="sort-icon"></span></th>
-                            <th onclick="app.sortInvestments('value')">Valuation <span id="sort-inv-value" class="sort-icon"></span></th>
-                            <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth" class="sort-icon"></span></th>
-                            <th onclick="app.sortInvestments('growth')">Expected Growth <span id="sort-inv-growth" class="sort-icon"></span></th>
-                            <th onclick="app.sortInvestments('maturity')">Maturity <span id="sort-inv-maturity" class="sort-icon"></span></th>
-                            <th onclick="app.sortInvestments('fv')">Projected FV <span id="sort-inv-fv" class="sort-icon"></span></th>
-                            <th style="text-align: center;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="investmentsTableBody">
-                        <!-- Rows injected via JS -->
-                    </tbody>
-                </table>
-            </div>
+            <!-- Injected by JS per profile -->
+            <div id="portfolioContainer"></div>
         </div>
 
         <!-- VIEW: SETTINGS (PROFILES & IMPORT) -->
@@ -449,7 +431,7 @@
                             <li><strong>Zerodha</strong></li>
                             <li><strong>Upstox</strong></li>
                             <li><strong>Scripbox</strong></li>
-                            <li><strong>Groww</strong> <span style="color:var(--success-color);font-size:0.7rem;font-weight:bold;">NEW!</span></li>
+                            <li><strong>Groww</strong></li>
                         </ul>
                         <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning-color); font-style: italic;">
                             The engine will auto-create asset profiles based on the Client ID or Portfolio Name found in the file.
@@ -578,6 +560,31 @@
             </div>
         </div>
 
+        <!-- Split Asset Modal -->
+        <div class="modal-overlay" id="splitAssetModal">
+            <div class="modal-content" style="max-width: 400px;">
+                <button class="close-modal" onclick="app.closeSplitModal()">✕</button>
+                <h3 id="splitModalTitle">Split & Assign Goal</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;" id="splitModalDesc"></p>
+                
+                <form id="splitForm" onsubmit="app.handleSplitSave(event)">
+                    <div class="form-group">
+                        <label for="splitPercentage">Percentage to Split (%)</label>
+                        <input type="number" id="splitPercentage" required min="1" max="99" value="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="splitGoal">Assign Split Portion to Goal</label>
+                        <select id="splitGoal" required></select>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn-action">Split Asset</button>
+                        <button type="button" class="btn-cancel btn-action" onclick="app.closeSplitModal()" style="display: block;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Goal Form Modal -->
         <div class="modal-overlay" id="goalModal">
             <div class="modal-content" style="max-width: 550px;">
@@ -678,12 +685,11 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.46</div>
+        <div>Anantha Wealth OS V2.47</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
     <script>
-        // PWA Installation Setup
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -691,18 +697,16 @@
             document.getElementById('installAppContainer').style.display = 'block';
         });
         
-        // Register Service Worker if supported
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(registration => {
-                    console.log('SW registered: ', registration);
+                    console.log('SW registered');
                 }).catch(registrationError => {
-                    console.log('SW registration failed: ', registrationError);
+                    console.log('SW registration failed');
                 });
             });
         }
         
-        // Global Keyboard Navigation (Backtick ` to toggle views)
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'select' || e.target.tagName.toLowerCase() === 'textarea') {
                 return; 
@@ -726,6 +730,7 @@
             editingBatchId: null,
             editingInvId: null,
             assigningGoalId: null,
+            splittingInvId: null,
             currentYear: new Date().getFullYear(),
             
             // App State
@@ -792,11 +797,10 @@
             },
 
             migrateData() {
-                const savedV2_46 = localStorage.getItem('ananthaDataV2_46');
-                if (savedV2_46) {
-                    this.data = JSON.parse(savedV2_46);
+                const savedV2_47 = localStorage.getItem('ananthaDataV2_47');
+                if (savedV2_47) {
+                    this.data = JSON.parse(savedV2_47);
                     this.activeView = this.data.activeView || 'home';
-                    
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
@@ -808,7 +812,6 @@
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.invCategoryFilters = this.data.invCategoryFilters !== undefined ? this.data.invCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
                     this.invSectorFilters = this.data.invSectorFilters !== undefined ? this.data.invSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-                    
                     this.allocationGroupBy = this.data.allocationGroupBy || 'class';
                     this.sortColumn = this.data.sortColumn || 'year';
                     this.sortAsc = this.data.sortAsc !== undefined ? this.data.sortAsc : true;
@@ -817,12 +820,10 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_45') || localStorage.getItem('ananthaDataV2_44') || localStorage.getItem('ananthaDataV2_43');
+                const savedOld = localStorage.getItem('ananthaDataV2_46') || localStorage.getItem('ananthaDataV2_45') || localStorage.getItem('ananthaDataV2_44');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
-                    
                     this.activeView = this.data.activeView || 'home';
-                    
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
@@ -834,7 +835,6 @@
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.invCategoryFilters = this.data.invCategoryFilters !== undefined ? this.data.invCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
                     this.invSectorFilters = this.data.invSectorFilters !== undefined ? this.data.invSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-                    
                     this.allocationGroupBy = this.data.allocationGroupBy || 'class';
                     this.sortColumn = this.data.sortColumn || 'year';
                     this.sortAsc = this.data.sortAsc !== undefined ? this.data.sortAsc : true;
@@ -860,7 +860,6 @@
 
             saveState() {
                 this.data.activeView = this.activeView;
-                
                 this.data.dashProfileFilters = this.dashProfileFilters;
                 this.data.dashClassFilters = this.dashClassFilters;
                 this.data.dashTypeFilters = this.dashTypeFilters;
@@ -879,7 +878,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_46', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_47', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -910,7 +909,6 @@
                     formOpt.innerText = profileName;
                     formSelect.appendChild(formOpt);
                 });
-                
                 if(currentFormVal && this.data.profiles.includes(currentFormVal)) formSelect.value = currentFormVal;
             },
 
@@ -923,7 +921,6 @@
                     this.data.profiles.push(name);
                     this.dashProfileFilters.push(name);
                     this.invProfileFilters.push(name);
-                    
                     this.saveState();
                     this.updateProfileDropdowns();
                     input.value = '';
@@ -942,10 +939,8 @@
                 if (confirm(`Are you sure you want to completely delete the profile '${pName}' and ALL its associated assets?`)) {
                     this.data.profiles = this.data.profiles.filter(p => p !== pName);
                     this.data.investments = this.data.investments.filter(i => (i.profile || 'Main Portfolio') !== pName);
-                    
                     this.dashProfileFilters = this.dashProfileFilters.filter(f => f !== pName);
                     this.invProfileFilters = this.invProfileFilters.filter(f => f !== pName);
-                    
                     this.saveState();
                     this.updateProfileDropdowns();
                     this.renderAll();
@@ -968,11 +963,8 @@
 
                 const onboard = document.getElementById('onboardingCard');
                 if (onboard) {
-                    if (this.data.investments.length === 0) {
-                        onboard.style.display = 'block';
-                    } else {
-                        onboard.style.display = 'none';
-                    }
+                    if (this.data.investments.length === 0) onboard.style.display = 'block';
+                    else onboard.style.display = 'none';
                 }
             },
 
@@ -1142,6 +1134,69 @@
             },
 
             /* -------------------------------------------------------------------------- */
+            /* SPLIT ASSET LOGIC                                                          */
+            /* -------------------------------------------------------------------------- */
+            openSplitModal(id) {
+                const inv = this.data.investments.find(i => i.id === id);
+                if (!inv) return;
+                this.splittingInvId = id;
+                document.getElementById('splitModalDesc').innerText = `Splitting: ${inv.name} (Current Val: ₹${this.formatCurrency(inv.value)})`;
+
+                const goalSelect = document.getElementById('splitGoal');
+                goalSelect.innerHTML = '<option value="">-- Select Goal to Assign To --</option>';
+                this.data.goals.forEach(g => {
+                    goalSelect.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+                });
+
+                document.getElementById('splitAssetModal').style.display = 'flex';
+                document.getElementById('splitPercentage').focus();
+            },
+            closeSplitModal() {
+                document.getElementById('splitAssetModal').style.display = 'none';
+                this.splittingInvId = null;
+            },
+            handleSplitSave(e) {
+                e.preventDefault();
+                if (!this.splittingInvId) return;
+                const pct = parseFloat(document.getElementById('splitPercentage').value);
+                const goalId = document.getElementById('splitGoal').value;
+                if (!goalId) {
+                    this.showToast("Please select a goal.", true);
+                    return;
+                }
+
+                const origIdx = this.data.investments.findIndex(i => i.id === this.splittingInvId);
+                if (origIdx === -1) return;
+
+                const orig = this.data.investments[origIdx];
+                const splitFactor = pct / 100;
+
+                let newAsset = JSON.parse(JSON.stringify(orig)); 
+                newAsset.id = Date.now().toString() + Math.random().toString().slice(2,8);
+                newAsset.value = orig.value * splitFactor;
+                if (newAsset.investedValue != null && !isNaN(newAsset.investedValue)) {
+                    newAsset.investedValue = orig.investedValue * splitFactor;
+                }
+                newAsset.linkedGoalId = goalId;
+                newAsset.isManuallyEdited = true;
+
+                orig.value = orig.value * (1 - splitFactor);
+                if (orig.investedValue != null && !isNaN(orig.investedValue)) {
+                    orig.investedValue = orig.investedValue * (1 - splitFactor);
+                }
+                orig.isManuallyEdited = true;
+
+                this.data.investments.push(newAsset);
+                
+                this.saveState();
+                this.closeSplitModal();
+                this.renderInvestments();
+                this.renderDashboard();
+                this.renderGoals();
+                this.showToast(`Asset split by ${pct}% and assigned to goal!`);
+            },
+
+            /* -------------------------------------------------------------------------- */
             /* SMART PLATFORM-AWARE BULK UPLOAD WITH TAG & OVERRIDE PERSISTENCE           */
             /* -------------------------------------------------------------------------- */
             handleBulkUpload(event) {
@@ -1175,11 +1230,7 @@
                         const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
                         
                         let headerRowIndex = -1;
-                        let isZerodha = false;
-                        let isUpstox = false;
-                        let isScripbox = false;
-                        let isGrowwMF = false;
-                        let isGrowwStocks = false;
+                        let isZerodha = false, isUpstox = false, isScripbox = false, isGrowwMF = false, isGrowwStocks = false;
                         
                         let globalClientId = "";
                         let upstoxProfileName = "Main Portfolio";
@@ -1192,45 +1243,38 @@
 
                                 if (rowStr.includes("client id")) {
                                     let idx = rows[i].findIndex(cell => strVal(cell).toLowerCase() === 'client id');
-                                    if (idx !== -1 && rows[i].length > idx + 1) {
-                                        globalClientId = strVal(rows[i][idx + 1]);
-                                    }
+                                    if (idx !== -1 && rows[i].length > idx + 1) globalClientId = strVal(rows[i][idx + 1]);
                                 }
 
                                 if (rowStr.includes("upstox") || (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation"))) {
                                     isUpstox = true;
                                 }
                                 if (isUpstox && rows[i][0] && strVal(rows[i][0]).toLowerCase() === "name") {
-                                    if (rows[i].length > 1 && strVal(rows[i][1])) {
-                                        upstoxProfileName = strVal(rows[i][1]);
-                                    }
+                                    if (rows[i].length > 1 && strVal(rows[i][1])) upstoxProfileName = strVal(rows[i][1]);
                                 }
                                 
-                                // Groww Generic Profile Extraction
-                                if (rows[i][0] && strVal(rows[i][0]).toLowerCase() === "name") {
-                                    if (rows[i].length > 1 && strVal(rows[i][1])) {
-                                        growwProfileName = strVal(rows[i][1]);
+                                if (rowStr.includes("personal details") && rows[i+1] && strVal(rows[i+1][0]).toLowerCase() === "name") {
+                                    growwProfileName = strVal(rows[i+1][1]);
+                                }
+                                if (rowStr.includes("unique client code")) {
+                                    let sheetHeaders = Object.keys(rows[0] || {});
+                                    if (sheetHeaders.length > 1 && !sheetHeaders[1].toLowerCase().includes("unnamed")) {
+                                         growwProfileName = strVal(sheetHeaders[1]); 
                                     }
                                 }
 
                                 if(rowStr.includes("investment") && rowStr.includes("market value")) {
-                                    headerRowIndex = i; isZerodha = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false;
-                                    break;
+                                    headerRowIndex = i; isZerodha = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; break;
                                 } else if (rowStr.includes("symbol") && rowStr.includes("quantity available")) {
-                                    headerRowIndex = i; isZerodha = true; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false;
-                                    break;
+                                    headerRowIndex = i; isZerodha = true; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; break;
                                 } else if (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation") && rowStr.includes("current qty")) {
-                                    headerRowIndex = i; isUpstox = true; isZerodha = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false;
-                                    break;
+                                    headerRowIndex = i; isUpstox = true; isZerodha = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; break;
                                 } else if (rowStr.includes("portfolio name") && rowStr.includes("security name") && rowStr.includes("current value")) {
-                                    headerRowIndex = i; isScripbox = true; isZerodha = false; isUpstox = false; isGrowwMF = false; isGrowwStocks = false;
-                                    break;
+                                    headerRowIndex = i; isScripbox = true; isZerodha = false; isUpstox = false; isGrowwMF = false; isGrowwStocks = false; break;
                                 } else if (rowStr.includes("scheme name") && rowStr.includes("invested value") && rowStr.includes("current value") && rowStr.includes("xirr")) {
-                                    headerRowIndex = i; isGrowwMF = true; isScripbox = false; isZerodha = false; isUpstox = false; isGrowwStocks = false;
-                                    break;
+                                    headerRowIndex = i; isGrowwMF = true; isScripbox = false; isZerodha = false; isUpstox = false; isGrowwStocks = false; break;
                                 } else if (rowStr.includes("stock name") && rowStr.includes("isin") && rowStr.includes("buy value") && rowStr.includes("closing value")) {
-                                    headerRowIndex = i; isGrowwStocks = true; isGrowwMF = false; isScripbox = false; isZerodha = false; isUpstox = false;
-                                    break;
+                                    headerRowIndex = i; isGrowwStocks = true; isGrowwMF = false; isScripbox = false; isZerodha = false; isUpstox = false; break;
                                 }
                             }
                         }
@@ -1963,121 +2007,180 @@
             },
 
             renderPortfolioTable() {
-                const tbody = document.getElementById('investmentsTableBody');
-                if(!tbody) return;
-                tbody.innerHTML = '';
-                
-                ['name', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
-                    const iconEl = document.getElementById(`sort-inv-${col}`);
-                    if(iconEl) {
-                        if (this.invSortColumn === col) iconEl.innerText = this.invSortAsc ? ' ▲' : ' ▼';
-                        else iconEl.innerText = '';
-                    }
-                });
+                const container = document.getElementById('portfolioContainer');
+                if(!container) return;
+                container.innerHTML = '';
 
-                let filteredInvestments = this.data.investments.filter(i => {
-                    const profileMatch = this.invProfileFilters.includes(i.profile || 'Main Portfolio');
-                    const classMatch = this.invClassFilters.includes(i.rawAssetClass || i.type);
-                    const typeMatch = this.invTypeFilters.includes(i.rawAssetType || 'Other');
-                    const catMatch = this.invCategoryFilters.includes(i.rawCategory || 'NA');
-                    const sectorMatch = this.invSectorFilters.includes(i.rawSector || 'NA');
-                    return profileMatch && classMatch && typeMatch && catMatch && sectorMatch;
-                });
+                const activeProfiles = this.data.profiles.filter(p => this.invProfileFilters.includes(p));
 
-                if (filteredInvestments.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">No assets match your selected filters.</td></tr>`;
+                if (activeProfiles.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No profiles match your selected filters.</div>`;
                     return;
                 }
 
-                const processedInv = filteredInvestments.map(inv => {
-                    let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
-                    let matDisplay = inv.maturityDate ? new Date(inv.maturityDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '';
-                    let sortMat = inv.maturityDate ? new Date(inv.maturityDate).getTime() : 9999999999999; 
-                    
-                    let actualGrowthPct = null;
-                    if (inv.investedValue && inv.investedValue > 0) {
-                        actualGrowthPct = ((inv.value - inv.investedValue) / inv.investedValue) * 100;
-                    }
-                    return { ...inv, computedFV: fv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct };
-                });
+                activeProfiles.forEach(profile => {
+                    let profInvs = this.data.investments.filter(i => i.profile === profile || (!i.profile && profile === 'Main Portfolio'));
 
-                processedInv.sort((a, b) => {
-                    let valA, valB;
-                    if (this.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
-                    else if (this.invSortColumn === 'value') { valA = a.value; valB = b.value; }
-                    else if (this.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
-                    else if (this.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
-                    else if (this.invSortColumn === 'maturity') { valA = a.sortMat; valB = b.sortMat; }
-                    else if (this.invSortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
+                    profInvs = profInvs.filter(i => {
+                        return this.invClassFilters.includes(i.rawAssetClass || i.type) &&
+                               this.invTypeFilters.includes(i.rawAssetType || 'Other') &&
+                               this.invCategoryFilters.includes(i.rawCategory || 'NA') &&
+                               this.invSectorFilters.includes(i.rawSector || 'NA');
+                    });
 
-                    if (valA < valB) return this.invSortAsc ? -1 : 1;
-                    if (valA > valB) return this.invSortAsc ? 1 : -1;
-                    return 0;
-                });
+                    if (profInvs.length === 0) return; 
 
-                let totalCV = 0;
-                let totalFV = 0;
+                    const processedInv = profInvs.map(inv => {
+                        let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                        let matDisplay = inv.maturityDate ? new Date(inv.maturityDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '';
+                        let sortMat = inv.maturityDate ? new Date(inv.maturityDate).getTime() : 9999999999999; 
+                        
+                        let actualGrowthPct = null;
+                        if (inv.investedValue && inv.investedValue > 0) {
+                            actualGrowthPct = ((inv.value - inv.investedValue) / inv.investedValue) * 100;
+                        }
+                        return { ...inv, computedFV: fv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct };
+                    });
 
-                processedInv.forEach(inv => {
-                    totalCV += (inv.value || 0);
-                    totalFV += inv.computedFV;
+                    processedInv.sort((a, b) => {
+                        let valA, valB;
+                        if (this.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+                        else if (this.invSortColumn === 'value') { valA = a.value; valB = b.value; }
+                        else if (this.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
+                        else if (this.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
+                        else if (this.invSortColumn === 'maturity') { valA = a.sortMat; valB = b.sortMat; }
+                        else if (this.invSortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
 
-                    let displayClass = (inv.rawAssetClass || inv.type).toUpperCase();
-                    let warningIcon = "";
-                    let rowClass = "clickable-row";
-                    
-                    if (inv.growthRate < 0) {
-                        rowClass += " loss-making-row";
-                        warningIcon = `<span title="Loss making asset (Negative Growth Based on File)" style="cursor:help; margin-left:5px;">❗</span>`;
-                    } else if (inv.growthRate < 7.0 && inv.type !== 'vehicle') {
-                        rowClass += " low-growth-row";
-                        warningIcon = `<span title="Losing potential to inflation (Growth < 7.0%)" style="cursor:help; margin-left:5px;">⚠️</span>`;
-                    }
-                    
-                    let actualGrowthDisplay = "N/A";
-                    let actualGrowthColor = "var(--text-secondary)";
-                    if (inv.actualGrowthPct !== null) {
-                        actualGrowthDisplay = (inv.actualGrowthPct > 0 ? "+" : "") + inv.actualGrowthPct.toFixed(1) + "%";
-                        actualGrowthColor = inv.actualGrowthPct < 0 ? 'var(--danger-color)' : 'var(--success-color)';
-                    }
-                    
-                    const tr = document.createElement('tr');
-                    tr.className = rowClass;
-                    tr.setAttribute('onclick', `app.editInv('${inv.id}')`);
-                    
-                    tr.innerHTML = `
-                        <td>
-                            <div class="name-cell">
-                                ${inv.name} ${warningIcon}
-                                <span class="badge" style="border-left: 2px solid ${app.getTypeColor(inv.type)}">${displayClass}</span>
-                                <span class="badge profile-badge">${inv.profile || 'Main'}</span>
+                        if (valA < valB) return this.invSortAsc ? -1 : 1;
+                        if (valA > valB) return this.invSortAsc ? 1 : -1;
+                        return 0;
+                    });
+
+                    let totalCV = 0, totalFV = 0, totalAssignedFV = 0;
+                    let tbodyHtml = '';
+
+                    processedInv.forEach(inv => {
+                        totalCV += (inv.value || 0);
+                        totalFV += inv.computedFV;
+                        if (inv.linkedGoalId) totalAssignedFV += inv.computedFV;
+
+                        let displayClass = (inv.rawAssetClass || inv.type).toUpperCase();
+                        let warningIcon = "";
+                        let rowClass = "clickable-row";
+                        
+                        if (inv.growthRate < 0) {
+                            rowClass += " loss-making-row";
+                            warningIcon = `<span title="Loss making asset (Negative Growth Based on File)" style="cursor:help; margin-left:5px;">❗</span>`;
+                        } else if (inv.growthRate < 7.0 && inv.type !== 'vehicle') {
+                            rowClass += " low-growth-row";
+                            warningIcon = `<span title="Losing potential to inflation (Growth < 7.0%)" style="cursor:help; margin-left:5px;">⚠️</span>`;
+                        }
+                        
+                        let actualGrowthDisplay = "N/A";
+                        let actualGrowthColor = "var(--text-secondary)";
+                        if (inv.actualGrowthPct !== null && inv.actualGrowthPct !== undefined) {
+                            actualGrowthDisplay = (inv.actualGrowthPct > 0 ? "+" : "") + inv.actualGrowthPct.toFixed(1) + "%";
+                            actualGrowthColor = inv.actualGrowthPct < 0 ? 'var(--danger-color)' : 'var(--success-color)';
+                        }
+                        
+                        let goalBadge = "Unassigned";
+                        let goalStyle = "background: var(--surface-light); color: var(--text-secondary);";
+                        if (inv.linkedGoalId) {
+                            const goal = this.data.goals.find(g => g.id === inv.linkedGoalId);
+                            if (goal) {
+                                goalBadge = goal.name;
+                                goalStyle = "background: rgba(56, 189, 248, 0.2); color: var(--accent-color); border: 1px solid var(--accent-color);";
+                            }
+                        }
+
+                        tbodyHtml += `
+                            <tr class="${rowClass}" onclick="app.editInv('${inv.id}')">
+                                <td>
+                                    <div class="name-cell">
+                                        ${inv.name} ${warningIcon}
+                                        <span class="badge" style="border-left: 2px solid ${app.getTypeColor(inv.type)}">${displayClass}</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge" style="${goalStyle} white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; display: inline-block; vertical-align: bottom;">${goalBadge}</span></td>
+                                <td>₹${this.formatCurrency(inv.value)}</td>
+                                <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
+                                <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
+                                <td class="highlight-val">₹${this.formatCurrency(inv.computedFV)}</td>
+                                <td style="text-align: center; white-space: nowrap;">
+                                    <button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Split</button>
+                                    <button class="icon-btn" onclick="event.stopPropagation(); app.editInv('${inv.id}')" style="margin-right: 5px;">✎</button>
+                                    <button class="icon-btn delete" onclick="event.stopPropagation(); app.deleteInv('${inv.id}')">✕</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    let progressPct = totalFV > 0 ? (totalAssignedFV / totalFV) * 100 : 0;
+
+                    const safeProfileId = profile.replace(/\s+/g,'-');
+                    const sectionHtml = `
+                        <div style="margin-bottom: 3rem; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+                            <div style="padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                <div>
+                                    <h3 style="color: var(--accent-color); margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">
+                                        👤 ${profile}
+                                    </h3>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">
+                                        Assigned to Goals: <strong style="color: var(--text-primary);">₹${this.formatCurrency(totalAssignedFV)}</strong> of ₹${this.formatCurrency(totalFV)} Projected FV
+                                    </div>
+                                </div>
+                                <div style="width: 200px; min-width: 150px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.4rem; color: var(--text-secondary);">
+                                        <span>Goal Assignment</span>
+                                        <span style="font-weight: 700; color: var(--accent-color);">${progressPct.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="goal-progress-track">
+                                        <div class="goal-progress-fill" style="width: ${progressPct}%; background: var(--accent-color);"></div>
+                                    </div>
+                                </div>
                             </div>
-                        </td>
-                        <td>${this.formatCurrency(inv.value)}</td>
-                        <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
-                        <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
-                        <td style="color: var(--text-secondary);">${inv.matDisplay}</td>
-                        <td class="highlight-val">${this.formatCurrency(inv.computedFV)}</td>
-                        <td style="text-align: center;">
-                            <button class="icon-btn" onclick="event.stopPropagation(); app.editInv('${inv.id}')">✎</button>
-                            <button class="icon-btn delete" onclick="event.stopPropagation(); app.deleteInv('${inv.id}')">✕</button>
-                        </td>
+                            
+                            <div style="overflow-x: auto;">
+                                <table class="data-table" style="width: 100%; border-radius: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th>Goal</th>
+                                            <th onclick="app.sortInvestments('value')">Valuation <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('growth')">Expected Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('fv')">Projected FV <span id="sort-inv-fv-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th style="text-align: center;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${tbodyHtml}
+                                        <tr class="total-row">
+                                            <td colspan="2">TOTAL</td>
+                                            <td>₹${this.formatCurrency(totalCV)}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td class="highlight-val">₹${this.formatCurrency(totalFV)}</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     `;
-                    tbody.appendChild(tr);
+                    container.innerHTML += sectionHtml;
                 });
 
-                const totalRow = document.createElement('tr');
-                totalRow.className = 'total-row';
-                totalRow.innerHTML = `
-                    <td>TOTAL (Filtered)</td>
-                    <td>${this.formatCurrency(totalCV)}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="highlight-val">${this.formatCurrency(totalFV)}</td>
-                    <td></td>
-                `;
-                tbody.appendChild(totalRow);
+                // Update sort icons after DOM injection
+                ['name', 'value', 'actualGrowth', 'growth', 'fv'].forEach(col => {
+                    activeProfiles.forEach(profile => {
+                        const iconEl = document.getElementById(`sort-inv-${col}-${profile.replace(/\s+/g,'-')}`);
+                        if(iconEl) {
+                            if (this.invSortColumn === col) iconEl.innerText = this.invSortAsc ? ' ▲' : ' ▼';
+                            else iconEl.innerText = '';
+                        }
+                    });
+                });
             },
 
             getTypeColor(type) {
@@ -2314,6 +2417,97 @@
                 tbody.appendChild(totalRow);
             },
 
+            renderDashboard() {
+                let globalInvestments = 0;
+                let globalFutureInvestments = 0;
+                let profileTotals = {};
+                const maxYear = this.getMaxGoalYear();
+                
+                this.data.investments.forEach(inv => {
+                    let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                    globalInvestments += (inv.value || 0);
+                    globalFutureInvestments += fv;
+
+                    let pName = inv.profile || 'Main Portfolio';
+                    if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
+                    profileTotals[pName].fv += fv;
+                });
+                
+                let totalCExp = 0;
+                let totalFV = 0;
+                this.data.goals.forEach(goal => {
+                    let cExp = goal.cExp || (goal.type === 'retirement' ? (goal.exp * 12) : (goal.cv || goal.pv || 0));
+                    totalCExp += cExp;
+                    totalFV += (goal.fv || goal.targetValue || 0);
+                });
+
+                document.getElementById('dashTotalAssets').innerText = '₹' + this.formatCurrency(globalInvestments);
+                document.getElementById('dashFutureAssets').innerText = '₹' + this.formatCurrency(globalFutureInvestments);
+                document.getElementById('dashTotalPV').innerText = '₹' + this.formatCurrency(totalCExp);
+                document.getElementById('dashTotalFV').innerText = '₹' + this.formatCurrency(totalFV);
+
+                const badgeT1 = document.getElementById('badgeDashToday1');
+                const badgeT2 = document.getElementById('badgeDashToday2');
+                const badgeF1 = document.getElementById('badgeDashFV1');
+                const badgeF2 = document.getElementById('badgeDashFV2');
+                
+                if (badgeT1) badgeT1.innerText = this.currentYear;
+                if (badgeT2) badgeT2.innerText = this.currentYear;
+                if (badgeF1) badgeF1.innerText = `TO ${maxYear}`;
+                if (badgeF2) badgeF2.innerText = `TO ${maxYear}`;
+
+                let totalPct = 0;
+                if (totalFV > 0) {
+                    totalPct = Math.min((globalFutureInvestments / totalFV) * 100, 100);
+                }
+                document.getElementById('dashPercentage').innerText = `${totalPct.toFixed(1)}%`;
+
+                const progressContainer = document.getElementById('dashProgressBarContainer');
+                const progressLegend = document.getElementById('dashProgressLegend');
+                progressContainer.innerHTML = '';
+                progressLegend.innerHTML = '';
+
+                let colorIdx = 0;
+                const sortedProfiles = Object.keys(profileTotals).sort((a,b) => profileTotals[b].fv - profileTotals[a].fv);
+                
+                sortedProfiles.forEach(pName => {
+                    const pFV = profileTotals[pName].fv;
+                    if (pFV > 0 && totalFV > 0) {
+                        const pPctOfGoal = (pFV / totalFV) * 100;
+                        const color = this.profileColors[colorIdx % this.profileColors.length];
+                        
+                        const seg = document.createElement('div');
+                        seg.className = 'progress-bar-segment';
+                        seg.style.background = color;
+                        seg.style.width = '0%'; 
+                        progressContainer.appendChild(seg);
+                        
+                        const leg = document.createElement('div');
+                        leg.className = 'legend-item';
+                        leg.innerHTML = `<div class="legend-color" style="background:${color};"></div><span><strong>${pName}</strong>: ${pPctOfGoal.toFixed(1)}%</span>`;
+                        progressLegend.appendChild(leg);
+
+                        setTimeout(() => {
+                            const visualWidth = totalPct >= 100 ? (pFV / globalFutureInvestments) * 100 : pPctOfGoal;
+                            seg.style.width = `${visualWidth}%`;
+                        }, 100);
+                        
+                        colorIdx++;
+                    }
+                });
+
+                let tableInvestments = this.data.investments.filter(i => {
+                    const profileMatch = this.dashProfileFilters.includes(i.profile || 'Main Portfolio');
+                    const classMatch = this.dashClassFilters.includes(i.rawAssetClass || i.type);
+                    const typeMatch = this.dashTypeFilters.includes(i.rawAssetType || 'Other');
+                    const catMatch = this.dashCategoryFilters.includes(i.rawCategory || 'NA');
+                    const sectorMatch = this.dashSectorFilters.includes(i.rawSector || 'NA');
+                    return profileMatch && classMatch && typeMatch && catMatch && sectorMatch;
+                });
+
+                this.renderAllocationTable('dashAssetSummaryBody', 'dashAllocColHeader', tableInvestments, true);
+            },
+
             renderAll() {
                 this.renderGoals();
                 this.renderInvestments();
@@ -2326,9 +2520,11 @@
             const assetModal = document.getElementById('assetModal');
             const goalModal = document.getElementById('goalModal');
             const assignModal = document.getElementById('assignAssetsModal');
+            const splitModal = document.getElementById('splitAssetModal');
             if (event.target === assetModal) app.closeAssetModal();
             if (event.target === goalModal) app.closeGoalModal();
             if (event.target === assignModal) app.closeAssignModal();
+            if (event.target === splitModal) app.closeSplitModal();
         }
 
         document.addEventListener('DOMContentLoaded', () => app.init());
