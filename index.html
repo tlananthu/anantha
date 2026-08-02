@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -431,7 +431,7 @@
                         <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Supported Platforms</h4>
                         <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.2rem; line-height: 1.6;">
                             <li><strong>INDMoney</strong></li>
-                            <li><strong>Zerodha</strong></li>
+                            <li><strong>Zerodha</strong> (Kite & Console)</li>
                             <li><strong>Upstox</strong></li>
                             <li><strong>Scripbox</strong></li>
                             <li><strong>Groww</strong></li>
@@ -442,7 +442,7 @@
                     </div>
 
                     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                        <input type="file" id="bulkUpload" accept=".xlsx, .xls" style="display:none;" onchange="app.handleBulkUpload(event)">
+                        <input type="file" id="bulkUpload" accept=".xlsx, .xls, .csv" style="display:none;" onchange="app.handleBulkUpload(event)">
                         <button style="width: 100%; padding: 1rem; font-size: 1.05rem;" class="btn-action" onclick="if(confirm('Warning: This will clear older data ONLY for the platform source you are currently uploading. Manually created assets, goal tags, overrides, and data from other platforms will remain perfectly safe. Continue?')) document.getElementById('bulkUpload').click()">
                             ⬆ Upload Portfolio Data
                         </button>
@@ -538,14 +538,19 @@
                             <input type="text" id="invRawType" placeholder="e.g. STOCK, MF">
                         </div>
                     </div>
+                    
                     <div class="row-group">
                         <div class="form-group">
                             <label for="invRawCategory">Category</label>
                             <input type="text" id="invRawCategory" placeholder="e.g. Large Cap, NA">
                         </div>
                         <div class="form-group">
-                            <label for="invRawSector">Sector</label>
-                            <input type="text" id="invRawSector" placeholder="e.g. IT, Auto, NA">
+                            <label for="invPlanType">Plan Type (MF Only)</label>
+                            <select id="invPlanType">
+                                <option value="Unknown">Unknown / NA</option>
+                                <option value="Direct">Direct</option>
+                                <option value="Regular">Regular</option>
+                            </select>
                         </div>
                     </div>
 
@@ -724,7 +729,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.54</div>
+        <div>Anantha Wealth OS V2.55</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -828,9 +833,9 @@
             },
 
             migrateData() {
-                const savedV2_54 = localStorage.getItem('ananthaDataV2_54');
-                if (savedV2_54) {
-                    app.data = JSON.parse(savedV2_54);
+                const savedV2_55 = localStorage.getItem('ananthaDataV2_55');
+                if (savedV2_55) {
+                    app.data = JSON.parse(savedV2_55);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -850,7 +855,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_53') || localStorage.getItem('ananthaDataV2_52') || localStorage.getItem('ananthaDataV2_51');
+                const savedOld = localStorage.getItem('ananthaDataV2_54') || localStorage.getItem('ananthaDataV2_53') || localStorage.getItem('ananthaDataV2_52');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -858,6 +863,7 @@
                     app.data.investments.forEach(i => {
                         i.profile = app.toTitleCase(i.profile);
                         if (!i.source) i.source = i.isManuallyEdited ? 'Manual' : 'Legacy';
+                        if (!i.planType) i.planType = 'Unknown';
                     });
 
                     app.activeView = app.data.activeView || 'home';
@@ -907,7 +913,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_54', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_55', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1321,6 +1327,7 @@
                 const val = parseFloat(document.getElementById('invValue').value);
                 const rate = parseFloat(document.getElementById('invGrowth').value);
                 const matDate = document.getElementById('invMaturity').value;
+                const planType = document.getElementById('invPlanType').value;
                 
                 let rawInvested = document.getElementById('invInvested').value;
                 const investedAmt = rawInvested ? parseFloat(rawInvested) : null;
@@ -1343,6 +1350,7 @@
                     rawAssetType: rType,
                     rawCategory: rCategory,
                     rawSector: rSector,
+                    planType: planType,
                     isManuallyEdited: true,
                     source: "Manual"
                 };
@@ -1391,6 +1399,7 @@
                 document.getElementById('invInvested').value = inv.investedValue || "";
                 document.getElementById('invGrowth').value = inv.growthRate || inv.growthRate === 0 ? inv.growthRate : app.defaultRates[inv.type];
                 document.getElementById('invMaturity').value = inv.maturityDate || "";
+                document.getElementById('invPlanType').value = inv.planType || 'Unknown';
                 
                 document.getElementById('invRawClass').value = inv.rawAssetClass || inv.type;
                 document.getElementById('invRawType').value = inv.rawAssetType || '';
@@ -1574,7 +1583,7 @@
                         const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
                         
                         let headerRowIndex = -1;
-                        let isZerodha = false, isUpstox = false, isScripbox = false, isGrowwMF = false, isGrowwStocks = false;
+                        let isZerodhaConsole = false, isZerodhaKite = false, isUpstox = false, isScripbox = false, isGrowwMF = false, isGrowwStocks = false;
                         
                         let globalClientId = "";
                         let upstoxProfileName = "Main Portfolio";
@@ -1603,18 +1612,20 @@
                                     }
                                 }
 
-                                if(rowStr.includes("investment") && rowStr.includes("market value")) {
-                                    headerRowIndex = i; isZerodha = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "INDmoney"; break;
-                                } else if (rowStr.includes("symbol") && rowStr.includes("quantity available")) {
-                                    headerRowIndex = i; isZerodha = true; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Zerodha"; break;
+                                if(rowStr.includes("investment") && rowStr.includes("market value") && rowStr.includes("asset type")) {
+                                    headerRowIndex = i; isZerodhaConsole = false; isZerodhaKite = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "INDmoney"; break;
+                                } else if (rowStr.includes("symbol") && rowStr.includes("quantity available") && rowStr.includes("average price")) {
+                                    headerRowIndex = i; isZerodhaConsole = true; isZerodhaKite = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Zerodha"; break;
+                                } else if (rowStr.includes("instrument") && rowStr.includes("qty.") && rowStr.includes("avg. cost") && rowStr.includes("ltp")) {
+                                    headerRowIndex = i; isZerodhaKite = true; isZerodhaConsole = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Zerodha"; break;
                                 } else if (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation") && rowStr.includes("current qty")) {
-                                    headerRowIndex = i; isUpstox = true; isZerodha = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Upstox"; break;
+                                    headerRowIndex = i; isUpstox = true; isZerodhaConsole = false; isZerodhaKite = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Upstox"; break;
                                 } else if (rowStr.includes("portfolio name") && rowStr.includes("security name") && rowStr.includes("current value")) {
-                                    headerRowIndex = i; isScripbox = true; isZerodha = false; isUpstox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Scripbox"; break;
+                                    headerRowIndex = i; isScripbox = true; isZerodhaConsole = false; isZerodhaKite = false; isUpstox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Scripbox"; break;
                                 } else if (rowStr.includes("scheme name") && rowStr.includes("invested value") && rowStr.includes("current value") && rowStr.includes("xirr")) {
-                                    headerRowIndex = i; isGrowwMF = true; isScripbox = false; isZerodha = false; isUpstox = false; isGrowwStocks = false; detectedSource = "Groww-MF"; break;
+                                    headerRowIndex = i; isGrowwMF = true; isScripbox = false; isZerodhaConsole = false; isZerodhaKite = false; isUpstox = false; isGrowwStocks = false; detectedSource = "Groww-MF"; break;
                                 } else if (rowStr.includes("stock name") && rowStr.includes("isin") && rowStr.includes("buy value") && rowStr.includes("closing value")) {
-                                    headerRowIndex = i; isGrowwStocks = true; isGrowwMF = false; isScripbox = false; isZerodha = false; isUpstox = false; detectedSource = "Groww-Stocks"; break;
+                                    headerRowIndex = i; isGrowwStocks = true; isGrowwMF = false; isScripbox = false; isZerodhaConsole = false; isZerodhaKite = false; isUpstox = false; detectedSource = "Groww-Stocks"; break;
                                 }
                             }
                         }
@@ -1640,8 +1651,16 @@
                                 let isLossMaking = false;
                                 let calcRate = NaN;
                                 let invested = NaN;
+                                let dPlanType = "Unknown";
 
                                 function strValSafe(v) { return v ? v.toString().trim() : ""; }
+                                
+                                function inferPlanType(name) {
+                                    let lowName = name.toLowerCase();
+                                    if (lowName.includes('direct')) return 'Direct';
+                                    if (lowName.includes('regular')) return 'Regular';
+                                    return 'Unknown';
+                                }
 
                                 if (isScripbox) {
                                     invName = rowObj["Security Name"];
@@ -1655,6 +1674,7 @@
                                     rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
                                     rawCategory = strValSafe(rowObj["Sub-Asset Class"]) || "NA";
                                     rawSector = "NA";
+                                    dPlanType = inferPlanType(invName);
 
                                     let xirrVal = app.parseCurrencyStr(rowObj["Xirr(%)"]);
                                     if (!isNaN(xirrVal)) {
@@ -1678,6 +1698,7 @@
                                     rawClass = strValSafe(rowObj["Category"]) || "Other";
                                     rawCategory = strValSafe(rowObj["Sub-category"]) || "NA";
                                     rawSector = "NA";
+                                    dPlanType = inferPlanType(invName);
                                     
                                     let rawXirr = app.parseCurrencyStr(rowObj["XIRR"]);
                                     if (!isNaN(rawXirr)) {
@@ -1699,18 +1720,7 @@
                                     mVal = app.parseCurrencyStr(rowObj["Valuation"]);
                                     profileName = upstoxProfileName;
                                     rawType = "STOCK"; rawClass = "Equity"; rawCategory = "NA"; rawSector = "NA";
-                                } else if (!isZerodha) {
-                                    invName = rowObj["Investment"];
-                                    mVal = app.parseCurrencyStr(rowObj["Market Value"]);
-                                    invested = app.parseCurrencyStr(rowObj["Invested Amount"]);
-                                    if(isNaN(mVal)) mVal = invested;
-                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && ((mVal - invested) / invested) * 100 < 0) isLossMaking = true;
-                                    profileName = rowObj["First Name"] ? strValSafe(rowObj["First Name"]) : "Main Portfolio";
-                                    rawType = strValSafe(rowObj["Asset Type"]) || "Other";
-                                    rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
-                                    rawCategory = strValSafe(rowObj["Category"]) || "NA";
-                                    rawSector = "NA";
-                                } else {
+                                } else if (isZerodhaConsole) {
                                     invName = rowObj["Symbol"];
                                     let qty = app.parseCurrencyStr(rowObj["Quantity Available"]);
                                     let price = app.parseCurrencyStr(rowObj["Previous Closing Price"]);
@@ -1725,6 +1735,7 @@
                                     rawSector = strValSafe(rowObj["Sector"]) || "NA";
                                     if (sheetName.toLowerCase().includes("mutual fund") || instType.includes(" - ")) {
                                         rawType = "MF";
+                                        dPlanType = inferPlanType(invName);
                                         if (instType.includes(" - ")) {
                                             let parts = instType.split(" - ");
                                             rawClass = parts[0].trim(); rawCategory = parts[1].trim();
@@ -1733,6 +1744,37 @@
                                         }
                                     } else {
                                         rawType = "STOCK"; rawClass = "Equity"; rawCategory = "NA"; 
+                                    }
+                                } else if (isZerodhaKite) {
+                                    invName = rowObj["Instrument"];
+                                    let qty = app.parseCurrencyStr(rowObj["Qty."]);
+                                    let price = app.parseCurrencyStr(rowObj["LTP"]);
+                                    let avgPrice = app.parseCurrencyStr(rowObj["Avg. cost"]);
+                                    mVal = app.parseCurrencyStr(rowObj["Cur. val"]);
+                                    if (isNaN(mVal)) mVal = qty * price;
+                                    invested = qty * avgPrice;
+                                    let pnl = app.parseCurrencyStr(rowObj["P&L"]);
+                                    if (!isNaN(pnl) && pnl < 0) isLossMaking = true;
+                                    if (globalClientId) profileName = `Zerodha - ${globalClientId}`; 
+                                    
+                                    if (invName && invName.toLowerCase().includes("mutual fund")) {
+                                        rawType = "MF"; rawClass = "Mutual Fund"; rawCategory = "NA"; dPlanType = inferPlanType(invName);
+                                    } else {
+                                        rawType = "STOCK"; rawClass = "Equity"; rawCategory = "NA"; 
+                                    }
+                                } else { // INDMoney fallback
+                                    invName = rowObj["Investment"];
+                                    mVal = app.parseCurrencyStr(rowObj["Market Value"]);
+                                    invested = app.parseCurrencyStr(rowObj["Invested Amount"]);
+                                    if(isNaN(mVal)) mVal = invested;
+                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && ((mVal - invested) / invested) * 100 < 0) isLossMaking = true;
+                                    profileName = rowObj["First Name"] ? strValSafe(rowObj["First Name"]) : "Main Portfolio";
+                                    rawType = strValSafe(rowObj["Asset Type"]) || "Other";
+                                    rawClass = strValSafe(rowObj["Asset Class"]) || "Other";
+                                    rawCategory = strValSafe(rowObj["Category"]) || "NA";
+                                    rawSector = "NA";
+                                    if (rawType.toLowerCase().includes("mf") || rawType.toLowerCase().includes("mutual fund")) {
+                                        dPlanType = inferPlanType(invName);
                                     }
                                 }
 
@@ -1781,6 +1823,7 @@
                                         rawSector = existingManual.rawSector;
                                         maturityDate = existingManual.maturityDate;
                                         objId = existingManual.id;
+                                        dPlanType = existingManual.planType || dPlanType;
                                         isManuallyEdited = true;
                                     }
 
@@ -1801,6 +1844,7 @@
                                         rawAssetType: rawType,
                                         rawCategory: rawCategory,
                                         rawSector: rawSector,
+                                        planType: dPlanType,
                                         isManuallyEdited: isManuallyEdited,
                                         linkedGoalId: retainedGoalId,
                                         source: detectedSource
@@ -2449,6 +2493,12 @@
                             }
                         }
                         
+                        let planTypeBadge = "";
+                        if (inv.planType && inv.planType !== 'Unknown' && inv.type === 'MF') {
+                            let pColor = inv.planType === 'Direct' ? 'var(--success-color)' : 'var(--warning-color)';
+                            planTypeBadge = `<span class="badge" style="margin-left:5px; border-bottom:1px solid ${pColor}; background:transparent;">${inv.planType}</span>`;
+                        }
+                        
                         let splitActionHtml = inv.splitParentId 
                             ? `<button class="icon-btn" onclick="event.stopPropagation(); app.unsplitAsset('${inv.id}')" title="Merge Back to Original Asset" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: rgba(56, 189, 248, 0.1); padding: 0.2rem 0.5rem; border-radius: 12px; color: var(--accent-color); border: 1px solid var(--accent-color);">Merge</button>` 
                             : `<button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Allocate/Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Allocate</button>`;
@@ -2459,6 +2509,7 @@
                                     <div class="name-cell">
                                         ${inv.name} ${warningIcon}
                                         <span class="badge" style="border-left: 2px solid ${app.getTypeColor(inv.type)}">${displayClass}</span>
+                                        ${planTypeBadge}
                                     </div>
                                 </td>
                                 <td><span class="badge" style="${goalStyle} white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; display: inline-block; vertical-align: bottom;" title="${goalBadge}">${goalBadge}</span></td>
