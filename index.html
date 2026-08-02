@@ -751,7 +751,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.59</div>
+        <div>Anantha Wealth OS V2.60</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -855,9 +855,9 @@
             },
 
             migrateData() {
-                const savedV2_59 = localStorage.getItem('ananthaDataV2_59');
-                if (savedV2_59) {
-                    app.data = JSON.parse(savedV2_59);
+                const savedV2_60 = localStorage.getItem('ananthaDataV2_60');
+                if (savedV2_60) {
+                    app.data = JSON.parse(savedV2_60);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -877,7 +877,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_58') || localStorage.getItem('ananthaDataV2_57') || localStorage.getItem('ananthaDataV2_56') || localStorage.getItem('ananthaDataV2_55');
+                const savedOld = localStorage.getItem('ananthaDataV2_59') || localStorage.getItem('ananthaDataV2_58') || localStorage.getItem('ananthaDataV2_57') || localStorage.getItem('ananthaDataV2_56') || localStorage.getItem('ananthaDataV2_55');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -887,7 +887,6 @@
                         if (!i.source) i.source = i.isManuallyEdited ? 'Manual' : 'Legacy';
                         if (!i.planType) i.planType = 'Unknown';
                         
-                        // Fix for the 152% XIRR anomaly bug imported previously
                         if ((i.growthRate > 50 || i.growthRate < -15) && !i.isManuallyEdited) {
                             let sysType = i.type || 'equity';
                             i.growthRate = app.defaultRates[sysType] || 7.0;
@@ -941,7 +940,21 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_59', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_60', JSON.stringify(app.data));
+            },
+
+            formatCurrency(amount) {
+                if (isNaN(amount) || amount === null) return "0";
+                return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(amount));
+            },
+
+            parseCurrencyStr(val) {
+                if (typeof val === 'number') return val;
+                if (typeof val === 'string') {
+                    const cleaned = val.replace(/,/g, '').replace(/[^0-9.-]/g, '');
+                    return parseFloat(cleaned);
+                }
+                return NaN;
             },
 
             exportData() {
@@ -1712,6 +1725,7 @@
                                 let rawCategory = "NA";
                                 let rawSector = "NA";
                                 let isLossMaking = false;
+                                let calcRate = NaN;
                                 let invested = NaN;
                                 let dPlanType = "Unknown";
 
@@ -1728,6 +1742,7 @@
                                     invName = rowObj["Security Name"];
                                     mVal = app.parseCurrencyStr(rowObj["Current Value"]);
                                     invested = app.parseCurrencyStr(rowObj["Amount Invested"]);
+                                    let days = app.parseCurrencyStr(rowObj["Weighted avg days"]);
                                     
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
                                     profileName = strValSafe(rowObj["Portfolio Name"]) || "Main Portfolio";
@@ -1737,6 +1752,17 @@
                                     rawSector = "NA";
                                     dPlanType = inferPlanType(invName);
 
+                                    let xirrVal = app.parseCurrencyStr(rowObj["Xirr(%)"]);
+                                    if (!isNaN(xirrVal)) {
+                                        calcRate = Math.abs(xirrVal) < 2 ? xirrVal * 100 : xirrVal;
+                                    } else if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && mVal > 0) {
+                                        if (!isNaN(days) && days > 0) {
+                                            let years = days / 365.25;
+                                            calcRate = (Math.pow(mVal / invested, 1 / years) - 1) * 100;
+                                        } else {
+                                            calcRate = ((mVal - invested) / invested) * 100;
+                                        }
+                                    }
                                 } else if (isGrowwMF) {
                                     invName = strValSafe(rowObj["Scheme Name"]);
                                     mVal = app.parseCurrencyStr(rowObj["Current Value"]);
@@ -1750,6 +1776,10 @@
                                     rawSector = "NA";
                                     dPlanType = inferPlanType(invName);
                                     
+                                    let rawXirr = app.parseCurrencyStr(rowObj["XIRR"]);
+                                    if (!isNaN(rawXirr)) {
+                                        calcRate = Math.abs(rawXirr) < 2 ? rawXirr * 100 : rawXirr;
+                                    }
                                 } else if (isGrowwStocks) {
                                     invName = strValSafe(rowObj["Stock Name"]);
                                     mVal = app.parseCurrencyStr(rowObj["Closing value"]);
@@ -1848,8 +1878,9 @@
                                         else if (aClassStr.includes('hybrid') || aClassStr.includes('balanced') || aCatStr.includes('hybrid')) invType = 'hybrid';
                                     }
                                     
-                                    // Base rate is default mapping
-                                    let rate = app.defaultRates[invType] !== undefined ? app.defaultRates[invType] : 7.0;
+                                    let rate = app.defaultRates[invType];
+                                    if(rate === undefined) rate = 7.0;
+                                    if (!isNaN(calcRate)) rate = calcRate;
 
                                     let matchKey = `${profileName.toLowerCase()}|${invName.toLowerCase()}`;
                                     let existingManual = manualOverrides[matchKey];
@@ -1870,6 +1901,10 @@
                                         objId = existingManual.id;
                                         dPlanType = existingManual.planType || dPlanType;
                                         isManuallyEdited = true;
+                                    }
+
+                                    if (isLossMaking && !isManuallyEdited && isNaN(calcRate)) {
+                                        rate = -1.0; 
                                     }
 
                                     newInvestments.push({
