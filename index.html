@@ -201,7 +201,7 @@
             }
             .tab-btn svg { width: 22px; height: 22px; margin-bottom: 2px; }
             .tab-btn.active { background-color: rgba(56, 189, 248, 0.1); color: var(--accent-color); border-bottom: none; }
-            .app-footer { display: none; }
+            .app-footer { padding-bottom: 80px; display: block; }
             .toast { bottom: 85px; }
             @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 85px; opacity: 1; } }
             @keyframes fadeout { from { bottom: 85px; opacity: 1; } to { bottom: 0; opacity: 0; } }
@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -685,7 +685,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.48</div>
+        <div>Anantha Wealth OS V2.49</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -782,10 +782,15 @@
                 setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
             },
 
+            toTitleCase(str) {
+                if(!str) return 'Main Portfolio';
+                return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+            },
+
             migrateData() {
-                const savedV2_48 = localStorage.getItem('ananthaDataV2_48');
-                if (savedV2_48) {
-                    this.data = JSON.parse(savedV2_48);
+                const savedV2_49 = localStorage.getItem('ananthaDataV2_49');
+                if (savedV2_49) {
+                    this.data = JSON.parse(savedV2_49);
                     this.activeView = this.data.activeView || 'home';
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -805,9 +810,17 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_47') || localStorage.getItem('ananthaDataV2_46') || localStorage.getItem('ananthaDataV2_45');
+                const savedOld = localStorage.getItem('ananthaDataV2_48') || localStorage.getItem('ananthaDataV2_47') || localStorage.getItem('ananthaDataV2_46');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
+                    
+                    // Normalize Profiles
+                    this.data.profiles = [...new Set(this.data.profiles.map(p => this.toTitleCase(p)))];
+                    this.data.investments.forEach(i => {
+                        i.profile = this.toTitleCase(i.profile);
+                        if (!i.source) i.source = i.isManuallyEdited ? 'Manual' : 'Legacy';
+                    });
+
                     this.activeView = this.data.activeView || 'home';
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -855,7 +868,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_48', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_49', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -892,7 +905,7 @@
             createProfile(event) {
                 event.preventDefault();
                 const input = document.getElementById('settingsNewProfileName');
-                const name = input.value.trim();
+                const name = this.toTitleCase(input.value.trim());
                 
                 if (name && !this.data.profiles.includes(name)) {
                     this.data.profiles.push(name);
@@ -1005,9 +1018,8 @@
                 
                 if (years <= 0) return val;
                 
-                // BUG FIX: Prevent negative base which causes massive positive FV when raised to an even power
                 let multiplier = 1 + (rate / 100);
-                if (multiplier < 0) return 0; // Asset value cannot logically drop below zero
+                if (multiplier < 0) return 0;
                 
                 return val * Math.pow(multiplier, years);
             },
@@ -1041,12 +1053,14 @@
                     rawAssetType: rType,
                     rawCategory: rCategory,
                     rawSector: rSector,
-                    isManuallyEdited: true 
+                    isManuallyEdited: true,
+                    source: "Manual"
                 };
 
                 if (this.editingInvId) {
                     const index = this.data.investments.findIndex(i => i.id === this.editingInvId);
                     invData.linkedGoalId = this.data.investments[index].linkedGoalId; 
+                    invData.splitParentId = this.data.investments[index].splitParentId;
                     this.data.investments[index] = invData;
                 } else {
                     this.data.investments.push(invData);
@@ -1105,13 +1119,31 @@
             },
 
             deleteInv(id) {
-                if(confirm("Delete this asset from your portfolio?")) {
+                const inv = this.data.investments.find(i => i.id === id);
+                if (!inv) return;
+                
+                let msg = "Delete this asset from your portfolio?";
+                if (inv.splitParentId && this.data.investments.some(i => i.id === inv.splitParentId)) {
+                    msg = "This is a split asset. Deleting it will restore its value back to the original parent asset. Proceed?";
+                }
+                
+                if(confirm(msg)) {
+                    if (inv.splitParentId) {
+                         let parent = this.data.investments.find(i => i.id === inv.splitParentId);
+                         if (parent) {
+                             parent.value += inv.value;
+                             if (parent.investedValue != null && inv.investedValue != null) {
+                                 parent.investedValue += inv.investedValue;
+                             }
+                         }
+                    }
                     this.data.investments = this.data.investments.filter(i => i.id !== id);
                     if(this.editingInvId === id) this.closeAssetModal();
                     this.saveState();
                     this.renderInvestments();
                     this.renderDashboard();
-                    this.showToast("Asset removed.");
+                    this.renderGoals();
+                    this.showToast("Asset removed" + (inv.splitParentId ? " and value restored to parent." : "."));
                 }
             },
 
@@ -1155,11 +1187,13 @@
 
                 let newAsset = JSON.parse(JSON.stringify(orig)); 
                 newAsset.id = Date.now().toString() + Math.random().toString().slice(2,8);
+                newAsset.name = orig.name + " (Split)";
                 newAsset.value = orig.value * splitFactor;
                 if (newAsset.investedValue != null && !isNaN(newAsset.investedValue)) {
                     newAsset.investedValue = orig.investedValue * splitFactor;
                 }
                 newAsset.linkedGoalId = goalId;
+                newAsset.splitParentId = orig.id;
                 newAsset.isManuallyEdited = true;
 
                 orig.value = orig.value * (1 - splitFactor);
@@ -1177,9 +1211,33 @@
                 this.renderGoals();
                 this.showToast(`Asset split by ${pct}% and assigned to goal!`);
             },
+            unsplitAsset(id) {
+                const inv = this.data.investments.find(i => i.id === id);
+                if (!inv || !inv.splitParentId) return;
+                
+                let parent = this.data.investments.find(i => i.id === inv.splitParentId);
+                if (!parent) {
+                    this.showToast("Original parent asset no longer exists.", true);
+                    return;
+                }
+                
+                if (confirm(`Merge ₹${this.formatCurrency(inv.value)} back into original asset '${parent.name}'?`)) {
+                    parent.value += inv.value;
+                    if (parent.investedValue != null && inv.investedValue != null) {
+                        parent.investedValue += inv.investedValue;
+                    }
+                    
+                    this.data.investments = this.data.investments.filter(i => i.id !== id);
+                    this.saveState();
+                    this.renderInvestments();
+                    this.renderDashboard();
+                    this.renderGoals();
+                    this.showToast("Asset successfully merged back.");
+                }
+            },
 
             /* -------------------------------------------------------------------------- */
-            /* SMART PLATFORM-AWARE BULK UPLOAD WITH TAG & OVERRIDE PERSISTENCE           */
+            /* SMART PLATFORM-AWARE BULK UPLOAD WITH CHANNEL SPECIFIC DELETION            */
             /* -------------------------------------------------------------------------- */
             handleBulkUpload(event) {
                 const file = event.target.files[0];
@@ -1204,6 +1262,8 @@
                             assetGoalTags[key] = i.linkedGoalId;
                         }
                     });
+                    
+                    let detectedSource = "Unknown";
                     
                     workbook.SheetNames.forEach(sheetName => {
                         if (sheetName.toLowerCase() === 'combined') return; 
@@ -1246,17 +1306,17 @@
                                 }
 
                                 if(rowStr.includes("investment") && rowStr.includes("market value")) {
-                                    headerRowIndex = i; isZerodha = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; break;
+                                    headerRowIndex = i; isZerodha = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "INDmoney"; break;
                                 } else if (rowStr.includes("symbol") && rowStr.includes("quantity available")) {
-                                    headerRowIndex = i; isZerodha = true; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; break;
+                                    headerRowIndex = i; isZerodha = true; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Zerodha"; break;
                                 } else if (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation") && rowStr.includes("current qty")) {
-                                    headerRowIndex = i; isUpstox = true; isZerodha = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; break;
+                                    headerRowIndex = i; isUpstox = true; isZerodha = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Upstox"; break;
                                 } else if (rowStr.includes("portfolio name") && rowStr.includes("security name") && rowStr.includes("current value")) {
-                                    headerRowIndex = i; isScripbox = true; isZerodha = false; isUpstox = false; isGrowwMF = false; isGrowwStocks = false; break;
+                                    headerRowIndex = i; isScripbox = true; isZerodha = false; isUpstox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Scripbox"; break;
                                 } else if (rowStr.includes("scheme name") && rowStr.includes("invested value") && rowStr.includes("current value") && rowStr.includes("xirr")) {
-                                    headerRowIndex = i; isGrowwMF = true; isScripbox = false; isZerodha = false; isUpstox = false; isGrowwStocks = false; break;
+                                    headerRowIndex = i; isGrowwMF = true; isScripbox = false; isZerodha = false; isUpstox = false; isGrowwStocks = false; detectedSource = "Groww-MF"; break;
                                 } else if (rowStr.includes("stock name") && rowStr.includes("isin") && rowStr.includes("buy value") && rowStr.includes("closing value")) {
-                                    headerRowIndex = i; isGrowwStocks = true; isGrowwMF = false; isScripbox = false; isZerodha = false; isUpstox = false; break;
+                                    headerRowIndex = i; isGrowwStocks = true; isGrowwMF = false; isScripbox = false; isZerodha = false; isUpstox = false; detectedSource = "Groww-Stocks"; break;
                                 }
                             }
                         }
@@ -1300,7 +1360,6 @@
 
                                     let xirrVal = this.parseCurrencyStr(rowObj["Xirr(%)"]);
                                     if (!isNaN(xirrVal)) {
-                                        // BUG FIX: Ensure we safely handle raw percentages and avoid double-multiplying massive negative drops.
                                         calcRate = Math.abs(xirrVal) < 2 ? xirrVal * 100 : xirrVal;
                                     } else if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && mVal > 0) {
                                         if (!isNaN(days) && days > 0) {
@@ -1380,6 +1439,7 @@
                                 }
 
                                 if (invName && !isNaN(mVal)) {
+                                    profileName = app.toTitleCase(profileName);
                                     newProfiles.add(profileName);
                                     let aTypeStr = rawType.toUpperCase();
                                     let aClassStr = rawClass.toLowerCase();
@@ -1444,7 +1504,8 @@
                                         rawCategory: rawCategory,
                                         rawSector: rawSector,
                                         isManuallyEdited: isManuallyEdited,
-                                        linkedGoalId: retainedGoalId 
+                                        linkedGoalId: retainedGoalId,
+                                        source: detectedSource
                                     });
                                 }
                             }
@@ -1453,7 +1514,20 @@
                     
                     if(newInvestments.length > 0) {
                         let importedProfiles = Array.from(newProfiles);
-                        this.data.investments = this.data.investments.filter(i => !importedProfiles.includes(i.profile || 'Main Portfolio'));
+                        
+                        // Clean older data ONLY from the same channel/source, OR legacy undefined sources
+                        this.data.investments = this.data.investments.filter(i => {
+                            let pName = i.profile || 'Main Portfolio';
+                            let isProfileMatch = importedProfiles.includes(pName);
+                            let isSourceMatch = (i.source === detectedSource || i.source === 'Legacy');
+                            
+                            // Remove older auto-imported items that match profile & source
+                            if (isProfileMatch && isSourceMatch && !i.isManuallyEdited) {
+                                return false; 
+                            }
+                            return true;
+                        });
+
                         this.data.investments = [...this.data.investments, ...newInvestments];
 
                         importedProfiles.forEach(p => {
@@ -1480,7 +1554,7 @@
                         this.renderDashboard();
                         
                         this.switchView('home');
-                        this.showToast(`Imported ${newInvestments.length} assets. Tags preserved!`);
+                        this.showToast(`Imported ${newInvestments.length} assets from ${detectedSource}.`);
                     } else {
                         this.showToast("No valid asset data found in the template.", true);
                     }
@@ -2068,7 +2142,7 @@
                             actualGrowthColor = inv.actualGrowthPct < 0 ? 'var(--danger-color)' : 'var(--success-color)';
                         }
                         
-                        let goalBadge = "Unassigned";
+                        let goalBadge = "UNASSIGNED";
                         let goalStyle = "background: var(--surface-light); color: var(--text-secondary);";
                         if (inv.linkedGoalId) {
                             const goal = this.data.goals.find(g => g.id === inv.linkedGoalId);
@@ -2077,6 +2151,10 @@
                                 goalStyle = "background: rgba(56, 189, 248, 0.2); color: var(--accent-color); border: 1px solid var(--accent-color);";
                             }
                         }
+                        
+                        let splitActionHtml = inv.splitParentId 
+                            ? `<button class="icon-btn" onclick="event.stopPropagation(); app.unsplitAsset('${inv.id}')" title="Merge Back to Original Asset" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: rgba(56, 189, 248, 0.1); padding: 0.2rem 0.5rem; border-radius: 12px; color: var(--accent-color); border: 1px solid var(--accent-color);">Merge</button>` 
+                            : `<button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Split</button>`;
 
                         tbodyHtml += `
                             <tr class="${rowClass}" onclick="app.editInv('${inv.id}')">
@@ -2086,13 +2164,13 @@
                                         <span class="badge" style="border-left: 2px solid ${app.getTypeColor(inv.type)}">${displayClass}</span>
                                     </div>
                                 </td>
-                                <td><span class="badge" style="${goalStyle} white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; display: inline-block; vertical-align: bottom;">${goalBadge}</span></td>
+                                <td><span class="badge" style="${goalStyle} white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; display: inline-block; vertical-align: bottom;" title="${goalBadge}">${goalBadge}</span></td>
                                 <td>₹${this.formatCurrency(inv.value)}</td>
                                 <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
                                 <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
                                 <td class="highlight-val">₹${this.formatCurrency(inv.computedFV)}</td>
                                 <td style="text-align: center; white-space: nowrap;">
-                                    <button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Split</button>
+                                    ${splitActionHtml}
                                     <button class="icon-btn" onclick="event.stopPropagation(); app.editInv('${inv.id}')" style="margin-right: 5px;">✎</button>
                                     <button class="icon-btn delete" onclick="event.stopPropagation(); app.deleteInv('${inv.id}')">✕</button>
                                 </td>
