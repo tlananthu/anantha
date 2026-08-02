@@ -119,7 +119,7 @@
 
         /* Goal Table Progress Bars */
         .goal-progress-track { width: 100%; background: var(--surface-light); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
-        .goal-progress-fill { height: 100%; transition: width 0.5s ease; }
+        .goal-progress-fill { height: 100%; background: var(--success-color); transition: width 0.5s ease; }
 
         /* Unified Filter Panel */
         .filter-panel { background: var(--surface-light); border: 1px solid var(--accent-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; display: none; animation: fadeIn 0.2s ease-in-out; }
@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -685,7 +685,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.47</div>
+        <div>Anantha Wealth OS V2.48</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -733,27 +733,15 @@
             splittingInvId: null,
             currentYear: new Date().getFullYear(),
             
-            // App State
             activeView: 'home',
             sortColumn: 'year',
             sortAsc: true,
             invSortColumn: 'fv',
             invSortAsc: false,
             
-            // Filters
-            dashProfileFilters: [],
-            dashClassFilters: [],
-            dashTypeFilters: [],
-            dashCategoryFilters: [],
-            dashSectorFilters: [],
-
-            invProfileFilters: [],
-            invClassFilters: [],
-            invTypeFilters: [],
-            invCategoryFilters: [],
-            invSectorFilters: [],
+            dashProfileFilters: [], dashClassFilters: [], dashTypeFilters: [], dashCategoryFilters: [], dashSectorFilters: [],
+            invProfileFilters: [], invClassFilters: [], invTypeFilters: [], invCategoryFilters: [], invSectorFilters: [],
             
-            // Unified Filter Panel State
             currentFilterMode: 'dash',
             tempFilters: { profiles: [], classes: [], types: [], categories: [], sectors: [] },
 
@@ -780,9 +768,7 @@
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        document.getElementById('installAppContainer').style.display = 'none';
-                    }
+                    if (outcome === 'accepted') document.getElementById('installAppContainer').style.display = 'none';
                     deferredPrompt = null;
                 }
             },
@@ -797,16 +783,15 @@
             },
 
             migrateData() {
-                const savedV2_47 = localStorage.getItem('ananthaDataV2_47');
-                if (savedV2_47) {
-                    this.data = JSON.parse(savedV2_47);
+                const savedV2_48 = localStorage.getItem('ananthaDataV2_48');
+                if (savedV2_48) {
+                    this.data = JSON.parse(savedV2_48);
                     this.activeView = this.data.activeView || 'home';
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
                     this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
                     this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-
                     this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
                     this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
@@ -820,7 +805,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_46') || localStorage.getItem('ananthaDataV2_45') || localStorage.getItem('ananthaDataV2_44');
+                const savedOld = localStorage.getItem('ananthaDataV2_47') || localStorage.getItem('ananthaDataV2_46') || localStorage.getItem('ananthaDataV2_45');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     this.activeView = this.data.activeView || 'home';
@@ -829,7 +814,6 @@
                     this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
                     this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
                     this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-
                     this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
                     this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
                     this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
@@ -845,16 +829,9 @@
                 }
                 
                 this.dashProfileFilters = [...this.data.profiles];
-                this.dashClassFilters = [];
-                this.dashTypeFilters = [];
-                this.dashCategoryFilters = [];
-                this.dashSectorFilters = [];
-
+                this.dashClassFilters = []; this.dashTypeFilters = []; this.dashCategoryFilters = []; this.dashSectorFilters = [];
                 this.invProfileFilters = [...this.data.profiles];
-                this.invClassFilters = [];
-                this.invTypeFilters = [];
-                this.invCategoryFilters = [];
-                this.invSectorFilters = [];
+                this.invClassFilters = []; this.invTypeFilters = []; this.invCategoryFilters = []; this.invSectorFilters = [];
                 return true; 
             },
 
@@ -878,7 +855,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_47', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_48', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1027,7 +1004,12 @@
                 }
                 
                 if (years <= 0) return val;
-                return val * Math.pow(1 + (rate / 100), years);
+                
+                // BUG FIX: Prevent negative base which causes massive positive FV when raised to an even power
+                let multiplier = 1 + (rate / 100);
+                if (multiplier < 0) return 0; // Asset value cannot logically drop below zero
+                
+                return val * Math.pow(multiplier, years);
             },
 
             handleInvSave(event) {
@@ -1317,8 +1299,9 @@
                                     rawSector = "NA";
 
                                     let xirrVal = this.parseCurrencyStr(rowObj["Xirr(%)"]);
-                                    if (!isNaN(xirrVal) && xirrVal > 0) {
-                                        calcRate = xirrVal;
+                                    if (!isNaN(xirrVal)) {
+                                        // BUG FIX: Ensure we safely handle raw percentages and avoid double-multiplying massive negative drops.
+                                        calcRate = Math.abs(xirrVal) < 2 ? xirrVal * 100 : xirrVal;
                                     } else if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && mVal > 0) {
                                         if (!isNaN(days) && days > 0) {
                                             let years = days / 365.25;
@@ -1341,7 +1324,7 @@
                                     
                                     let rawXirr = this.parseCurrencyStr(rowObj["XIRR"]);
                                     if (!isNaN(rawXirr)) {
-                                        calcRate = rawXirr < 2 ? rawXirr * 100 : rawXirr;
+                                        calcRate = Math.abs(rawXirr) < 2 ? rawXirr * 100 : rawXirr;
                                     }
                                 } else if (isGrowwStocks) {
                                     invName = strValSafe(rowObj["Stock Name"]);
@@ -1584,6 +1567,7 @@
                 this.saveState();
                 this.closeAssignModal();
                 this.renderGoals();
+                this.renderInvestments();
                 this.showToast("Goal buckets updated successfully.");
             },
 
@@ -1839,6 +1823,7 @@
                     if(this.editingGoalId === id) this.closeGoalModal();
                     this.saveState();
                     this.renderGoals();
+                    this.renderInvestments();
                     this.renderDashboard();
                     this.showToast("Goal removed.");
                 }
