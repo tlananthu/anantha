@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -585,6 +585,28 @@
                 </form>
             </div>
         </div>
+        
+        <!-- Justification / Projection Math Modal -->
+        <div class="modal-overlay" id="justificationModal">
+            <div class="modal-content" style="max-width: 500px;">
+                <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
+                <h3 style="margin-bottom: 0.5rem;">📊 Projection Math</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">How the engine calculates the Projected Future Value (FV) for <strong id="justAssetName" style="color: var(--text-primary);"></strong>.</p>
+                
+                <div style="background: var(--surface-light); padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1rem; margin-bottom: 1.5rem;">
+                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Current Valuation (PV): <span id="justPV" style="color: var(--text-primary); float: right;"></span></div>
+                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Expected Growth (r): <span id="justRate" style="color: var(--success-color); float: right;"></span></div>
+                    <div style="margin-bottom: 1rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">Time Horizon (n): <span id="justYears" style="color: var(--text-primary); float: right;"></span></div>
+                    
+                    <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Calculation:</div>
+                    <div id="justFormula" style="color: var(--text-secondary); margin-bottom: 1rem; word-break: break-all;"></div>
+                    
+                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem;">Projected FV: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
+                </div>
+                
+                <button class="btn-action" onclick="app.closeJustificationModal()">Close</button>
+            </div>
+        </div>
 
         <!-- Split Asset Modal -->
         <div class="modal-overlay" id="splitAssetModal">
@@ -729,7 +751,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.58</div>
+        <div>Anantha Wealth OS V2.59</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -833,9 +855,9 @@
             },
 
             migrateData() {
-                const savedV2_58 = localStorage.getItem('ananthaDataV2_58');
-                if (savedV2_58) {
-                    app.data = JSON.parse(savedV2_58);
+                const savedV2_59 = localStorage.getItem('ananthaDataV2_59');
+                if (savedV2_59) {
+                    app.data = JSON.parse(savedV2_59);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -855,7 +877,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_57') || localStorage.getItem('ananthaDataV2_56') || localStorage.getItem('ananthaDataV2_55') || localStorage.getItem('ananthaDataV2_54') || localStorage.getItem('ananthaDataV2_53');
+                const savedOld = localStorage.getItem('ananthaDataV2_58') || localStorage.getItem('ananthaDataV2_57') || localStorage.getItem('ananthaDataV2_56') || localStorage.getItem('ananthaDataV2_55');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -864,6 +886,12 @@
                         i.profile = app.toTitleCase(i.profile);
                         if (!i.source) i.source = i.isManuallyEdited ? 'Manual' : 'Legacy';
                         if (!i.planType) i.planType = 'Unknown';
+                        
+                        // Fix for the 152% XIRR anomaly bug imported previously
+                        if ((i.growthRate > 50 || i.growthRate < -15) && !i.isManuallyEdited) {
+                            let sysType = i.type || 'equity';
+                            i.growthRate = app.defaultRates[sysType] || 7.0;
+                        }
                     });
 
                     app.activeView = app.data.activeView || 'home';
@@ -913,7 +941,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_58', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_59', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1315,6 +1343,41 @@
                 return val * Math.pow(multiplier, years);
             },
 
+            openJustificationModal(id) {
+                const inv = app.data.investments.find(i => i.id === id);
+                if (!inv) return;
+                
+                let years = 0;
+                let endYear = app.currentYear;
+                if (inv.maturityDate) {
+                    const matDate = new Date(inv.maturityDate);
+                    years = (matDate - new Date()) / (1000 * 60 * 60 * 24 * 365.25);
+                    endYear = matDate.getFullYear();
+                } else {
+                    endYear = app.getMaxGoalYear();
+                    years = endYear - app.currentYear;
+                }
+                
+                years = Math.max(0, years);
+                
+                document.getElementById('justAssetName').innerText = inv.name;
+                document.getElementById('justPV').innerText = `₹${app.formatCurrency(inv.value)}`;
+                document.getElementById('justRate').innerText = `${inv.growthRate}%`;
+                document.getElementById('justYears').innerText = `${years.toFixed(1)} Years (Target: ${endYear})`;
+                
+                let multiplier = 1 + (inv.growthRate / 100);
+                let fv = inv.value * Math.pow(multiplier, years);
+                if (multiplier < 0) fv = 0;
+                
+                document.getElementById('justFormula').innerText = `FV = ₹${app.formatCurrency(inv.value)} × (1 + ${inv.growthRate/100})^${years.toFixed(1)}`;
+                document.getElementById('justFV').innerText = `₹${app.formatCurrency(fv)}`;
+                
+                document.getElementById('justificationModal').style.display = 'flex';
+            },
+            closeJustificationModal() {
+                document.getElementById('justificationModal').style.display = 'none';
+            },
+
             handleInvTypeChange() {
                 const type = document.getElementById('invType').value;
                 document.getElementById('invGrowth').value = app.defaultRates[type] || 0;
@@ -1649,7 +1712,6 @@
                                 let rawCategory = "NA";
                                 let rawSector = "NA";
                                 let isLossMaking = false;
-                                let calcRate = NaN;
                                 let invested = NaN;
                                 let dPlanType = "Unknown";
 
@@ -1666,7 +1728,6 @@
                                     invName = rowObj["Security Name"];
                                     mVal = app.parseCurrencyStr(rowObj["Current Value"]);
                                     invested = app.parseCurrencyStr(rowObj["Amount Invested"]);
-                                    let days = app.parseCurrencyStr(rowObj["Weighted avg days"]);
                                     
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
                                     profileName = strValSafe(rowObj["Portfolio Name"]) || "Main Portfolio";
@@ -1676,17 +1737,6 @@
                                     rawSector = "NA";
                                     dPlanType = inferPlanType(invName);
 
-                                    let xirrVal = app.parseCurrencyStr(rowObj["Xirr(%)"]);
-                                    if (!isNaN(xirrVal)) {
-                                        calcRate = Math.abs(xirrVal) < 2 ? xirrVal * 100 : xirrVal;
-                                    } else if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && mVal > 0) {
-                                        if (!isNaN(days) && days > 0) {
-                                            let years = days / 365.25;
-                                            calcRate = (Math.pow(mVal / invested, 1 / years) - 1) * 100;
-                                        } else {
-                                            calcRate = ((mVal - invested) / invested) * 100;
-                                        }
-                                    }
                                 } else if (isGrowwMF) {
                                     invName = strValSafe(rowObj["Scheme Name"]);
                                     mVal = app.parseCurrencyStr(rowObj["Current Value"]);
@@ -1700,10 +1750,6 @@
                                     rawSector = "NA";
                                     dPlanType = inferPlanType(invName);
                                     
-                                    let rawXirr = app.parseCurrencyStr(rowObj["XIRR"]);
-                                    if (!isNaN(rawXirr)) {
-                                        calcRate = Math.abs(rawXirr) < 2 ? rawXirr * 100 : rawXirr;
-                                    }
                                 } else if (isGrowwStocks) {
                                     invName = strValSafe(rowObj["Stock Name"]);
                                     mVal = app.parseCurrencyStr(rowObj["Closing value"]);
@@ -1802,9 +1848,8 @@
                                         else if (aClassStr.includes('hybrid') || aClassStr.includes('balanced') || aCatStr.includes('hybrid')) invType = 'hybrid';
                                     }
                                     
-                                    let rate = app.defaultRates[invType];
-                                    if(rate === undefined) rate = 7.0;
-                                    if (!isNaN(calcRate)) rate = calcRate;
+                                    // Base rate is default mapping
+                                    let rate = app.defaultRates[invType] !== undefined ? app.defaultRates[invType] : 7.0;
 
                                     let matchKey = `${profileName.toLowerCase()}|${invName.toLowerCase()}`;
                                     let existingManual = manualOverrides[matchKey];
@@ -1825,10 +1870,6 @@
                                         objId = existingManual.id;
                                         dPlanType = existingManual.planType || dPlanType;
                                         isManuallyEdited = true;
-                                    }
-
-                                    if (isLossMaking && !isManuallyEdited && isNaN(calcRate)) {
-                                        rate = -1.0; 
                                     }
 
                                     newInvestments.push({
@@ -2470,7 +2511,7 @@
                         
                         if (inv.growthRate < 0) {
                             rowClass += " loss-making-row";
-                            warningIcon = `<span title="Loss making asset (Negative Growth Based on File)" style="cursor:help; margin-left:5px;">❗</span>`;
+                            warningIcon = `<span title="Loss making asset" style="cursor:help; margin-left:5px;">❗</span>`;
                         } else if (inv.growthRate < 7.0 && inv.type !== 'vehicle') {
                             rowClass += " low-growth-row";
                             warningIcon = `<span title="Losing potential to inflation (Growth < 7.0%)" style="cursor:help; margin-left:5px;">⚠️</span>`;
@@ -2502,6 +2543,8 @@
                         let splitActionHtml = inv.splitParentId 
                             ? `<button class="icon-btn" onclick="event.stopPropagation(); app.unsplitAsset('${inv.id}')" title="Merge Back to Original Asset" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: rgba(56, 189, 248, 0.1); padding: 0.2rem 0.5rem; border-radius: 12px; color: var(--accent-color); border: 1px solid var(--accent-color);">Merge</button>` 
                             : `<button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Allocate/Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Allocate</button>`;
+
+                        splitActionHtml += `<button class="icon-btn" onclick="event.stopPropagation(); app.openJustificationModal('${inv.id}')" title="View Projection Math" style="margin-right: 5px; font-size: 1rem;">📊</button>`;
 
                         tbodyHtml += `
                             <tr class="${rowClass}" onclick="app.editInv('${inv.id}')">
@@ -2933,11 +2976,13 @@
             const assignModal = document.getElementById('assignAssetsModal');
             const splitModal = document.getElementById('splitAssetModal');
             const smartAllocateModal = document.getElementById('smartAllocateModal');
+            const justificationModal = document.getElementById('justificationModal');
             if (event.target === assetModal) app.closeAssetModal();
             if (event.target === goalModal) app.closeGoalModal();
             if (event.target === assignModal) app.closeAssignModal();
             if (event.target === splitModal) app.closeSplitModal();
             if (event.target === smartAllocateModal) app.closeSmartAllocateModal();
+            if (event.target === justificationModal) app.closeJustificationModal();
         }
 
         document.addEventListener('DOMContentLoaded', () => app.init());
