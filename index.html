@@ -34,7 +34,7 @@
             font-family: var(--font-family);
             line-height: 1.6;
             padding: 2rem;
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
             min-height: 100vh;
             display: flex;
@@ -133,7 +133,7 @@
         .table-container { width: 100%; overflow-x: auto; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 1rem; }
         .table-header-row { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.5rem 0.5rem; flex-wrap: wrap; gap: 1rem; }
         
-        .data-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 750px; }
         .data-table th, .data-table td { padding: 1.25rem 1rem; text-align: right; border-bottom: 1px solid var(--surface-light); }
         .data-table th:first-child, .data-table td:first-child { text-align: left; }
         .data-table th { background: var(--surface-light); color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; cursor: pointer; user-select: none; transition: background 0.2s, color 0.2s; }
@@ -164,7 +164,7 @@
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 550px; border: 1px solid var(--border-color); position: relative; max-height: 85vh; display: flex; flex-direction: column; overflow-y: auto; }
+        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; border: 1px solid var(--border-color); position: relative; max-height: 85vh; display: flex; flex-direction: column; overflow-y: auto; }
         .modal-content h3 { margin-bottom: 1.5rem; color: var(--accent-color); font-size: 1.2rem; margin-top: 0; }
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
@@ -186,50 +186,25 @@
 
         /* Mobile App Bottom Navigation */
         @media (max-width: 768px) {
-            body {
-                padding: 1rem 1rem 80px 1rem; 
-            }
+            body { padding: 1rem 1rem 80px 1rem; }
             .nav-tabs {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
+                position: fixed; bottom: 0; left: 0; width: 100%;
                 background-color: var(--surface-color);
                 border-top: 1px solid var(--border-color);
-                border-bottom: none;
-                margin: 0;
-                padding: 0.5rem 0.25rem;
-                justify-content: space-between;
-                z-index: 1000;
+                border-bottom: none; margin: 0; padding: 0.5rem 0.25rem;
+                justify-content: space-between; z-index: 1000;
                 box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
-                overflow-x: visible;
-                gap: 0;
+                overflow-x: visible; gap: 0;
             }
             .tab-btn {
-                flex: 1;
-                flex-direction: column;
-                gap: 0.25rem;
-                padding: 0.5rem 0.25rem;
-                font-size: 0.65rem;
-                border-bottom: none; 
-                border-radius: 8px;
-                white-space: normal;
-                line-height: 1.1;
-                justify-content: center;
-                height: 55px;
+                flex: 1; flex-direction: column; gap: 0.25rem; padding: 0.5rem 0.25rem;
+                font-size: 0.65rem; border-bottom: none; border-radius: 8px;
+                white-space: normal; line-height: 1.1; justify-content: center; height: 55px;
             }
             .tab-btn svg { width: 22px; height: 22px; margin-bottom: 2px; }
-            .tab-btn.active {
-                background-color: rgba(56, 189, 248, 0.1);
-                color: var(--accent-color);
-                border-bottom: none;
-            }
-            .app-footer {
-                display: none;
-            }
-            .toast {
-                bottom: 85px; 
-            }
+            .tab-btn.active { background-color: rgba(56, 189, 248, 0.1); color: var(--accent-color); border-bottom: none; }
+            .app-footer { display: none; }
+            .toast { bottom: 85px; }
             @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 85px; opacity: 1; } }
             @keyframes fadeout { from { bottom: 85px; opacity: 1; } to { bottom: 0; opacity: 0; } }
         }
@@ -432,6 +407,7 @@
                         <tr>
                             <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name" class="sort-icon"></span></th>
                             <th onclick="app.sortInvestments('value')">Valuation <span id="sort-inv-value" class="sort-icon"></span></th>
+                            <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth" class="sort-icon"></span></th>
                             <th onclick="app.sortInvestments('growth')">Expected Growth <span id="sort-inv-growth" class="sort-icon"></span></th>
                             <th onclick="app.sortInvestments('maturity')">Maturity <span id="sort-inv-maturity" class="sort-icon"></span></th>
                             <th onclick="app.sortInvestments('fv')">Projected FV <span id="sort-inv-fv" class="sort-icon"></span></th>
@@ -473,6 +449,7 @@
                             <li><strong>Zerodha</strong></li>
                             <li><strong>Upstox</strong></li>
                             <li><strong>Scripbox</strong></li>
+                            <li><strong>Groww</strong> <span style="color:var(--success-color);font-size:0.7rem;font-weight:bold;">NEW!</span></li>
                         </ul>
                         <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning-color); font-style: italic;">
                             The engine will auto-create asset profiles based on the Client ID or Portfolio Name found in the file.
@@ -574,9 +551,15 @@
                         <input type="text" id="invName" required placeholder="e.g., SBI FD, HDFC Flexi-Cap">
                     </div>
                     
-                    <div class="form-group">
-                        <label for="invValue">Current Valuation (₹)</label>
-                        <input type="number" id="invValue" required placeholder="500000" min="0" step="any">
+                    <div class="row-group">
+                        <div class="form-group">
+                            <label for="invInvested">Invested Amount (₹) [Optional]</label>
+                            <input type="number" id="invInvested" placeholder="400000" min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="invValue">Current Valuation (₹)</label>
+                            <input type="number" id="invValue" required placeholder="500000" min="0" step="any">
+                        </div>
                     </div>
 
                     <div class="row-group">
@@ -695,7 +678,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.45</div>
+        <div>Anantha Wealth OS V2.46</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -809,9 +792,9 @@
             },
 
             migrateData() {
-                const savedV2_45 = localStorage.getItem('ananthaDataV2_45');
-                if (savedV2_45) {
-                    this.data = JSON.parse(savedV2_45);
+                const savedV2_46 = localStorage.getItem('ananthaDataV2_46');
+                if (savedV2_46) {
+                    this.data = JSON.parse(savedV2_46);
                     this.activeView = this.data.activeView || 'home';
                     
                     this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
@@ -834,7 +817,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_44') || localStorage.getItem('ananthaDataV2_43') || localStorage.getItem('ananthaDataV2_42');
+                const savedOld = localStorage.getItem('ananthaDataV2_45') || localStorage.getItem('ananthaDataV2_44') || localStorage.getItem('ananthaDataV2_43');
                 if (savedOld) {
                     this.data = JSON.parse(savedOld);
                     
@@ -896,7 +879,7 @@
                 this.data.invSortColumn = this.invSortColumn;
                 this.data.invSortAsc = this.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_45', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_46', JSON.stringify(this.data));
             },
 
             formatCurrency(amount) {
@@ -1062,6 +1045,9 @@
                 const val = parseFloat(document.getElementById('invValue').value);
                 const rate = parseFloat(document.getElementById('invGrowth').value);
                 const matDate = document.getElementById('invMaturity').value;
+                
+                let rawInvested = document.getElementById('invInvested').value;
+                const investedAmt = rawInvested ? parseFloat(rawInvested) : null;
 
                 let rClass = document.getElementById('invRawClass').value.trim();
                 let rType = document.getElementById('invRawType').value.trim() || 'Other';
@@ -1074,6 +1060,7 @@
                     name: document.getElementById('invName').value,
                     type: type,
                     value: val,
+                    investedValue: investedAmt,
                     growthRate: rate,
                     maturityDate: matDate,
                     rawAssetClass: rClass || type,
@@ -1123,6 +1110,7 @@
                 document.getElementById('invName').value = inv.name;
                 document.getElementById('invType').value = inv.type;
                 document.getElementById('invValue').value = inv.value;
+                document.getElementById('invInvested').value = inv.investedValue || "";
                 document.getElementById('invGrowth').value = inv.growthRate || inv.growthRate === 0 ? inv.growthRate : this.defaultRates[inv.type];
                 document.getElementById('invMaturity').value = inv.maturityDate || "";
                 
@@ -1190,8 +1178,12 @@
                         let isZerodha = false;
                         let isUpstox = false;
                         let isScripbox = false;
+                        let isGrowwMF = false;
+                        let isGrowwStocks = false;
+                        
                         let globalClientId = "";
                         let upstoxProfileName = "Main Portfolio";
+                        let growwProfileName = "Main Portfolio";
 
                         for(let i=0; i<rows.length; i++) {
                             if(rows[i]) {
@@ -1213,22 +1205,31 @@
                                         upstoxProfileName = strVal(rows[i][1]);
                                     }
                                 }
+                                
+                                // Groww Generic Profile Extraction
+                                if (rows[i][0] && strVal(rows[i][0]).toLowerCase() === "name") {
+                                    if (rows[i].length > 1 && strVal(rows[i][1])) {
+                                        growwProfileName = strVal(rows[i][1]);
+                                    }
+                                }
 
                                 if(rowStr.includes("investment") && rowStr.includes("market value")) {
-                                    headerRowIndex = i;
-                                    isZerodha = false; isUpstox = false; isScripbox = false;
+                                    headerRowIndex = i; isZerodha = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false;
                                     break;
                                 } else if (rowStr.includes("symbol") && rowStr.includes("quantity available")) {
-                                    headerRowIndex = i;
-                                    isZerodha = true; isUpstox = false; isScripbox = false;
+                                    headerRowIndex = i; isZerodha = true; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false;
                                     break;
                                 } else if (rowStr.includes("isin") && rowStr.includes("scrip name") && rowStr.includes("valuation") && rowStr.includes("current qty")) {
-                                    headerRowIndex = i;
-                                    isUpstox = true; isZerodha = false; isScripbox = false;
+                                    headerRowIndex = i; isUpstox = true; isZerodha = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false;
                                     break;
                                 } else if (rowStr.includes("portfolio name") && rowStr.includes("security name") && rowStr.includes("current value")) {
-                                    headerRowIndex = i;
-                                    isScripbox = true; isZerodha = false; isUpstox = false;
+                                    headerRowIndex = i; isScripbox = true; isZerodha = false; isUpstox = false; isGrowwMF = false; isGrowwStocks = false;
+                                    break;
+                                } else if (rowStr.includes("scheme name") && rowStr.includes("invested value") && rowStr.includes("current value") && rowStr.includes("xirr")) {
+                                    headerRowIndex = i; isGrowwMF = true; isScripbox = false; isZerodha = false; isUpstox = false; isGrowwStocks = false;
+                                    break;
+                                } else if (rowStr.includes("stock name") && rowStr.includes("isin") && rowStr.includes("buy value") && rowStr.includes("closing value")) {
+                                    headerRowIndex = i; isGrowwStocks = true; isGrowwMF = false; isScripbox = false; isZerodha = false; isUpstox = false;
                                     break;
                                 }
                             }
@@ -1254,13 +1255,14 @@
                                 let rawSector = "NA";
                                 let isLossMaking = false;
                                 let calcRate = NaN;
+                                let invested = NaN;
 
                                 function strValSafe(v) { return v ? v.toString().trim() : ""; }
 
                                 if (isScripbox) {
                                     invName = rowObj["Security Name"];
                                     mVal = this.parseCurrencyStr(rowObj["Current Value"]);
-                                    let invested = this.parseCurrencyStr(rowObj["Amount Invested"]);
+                                    invested = this.parseCurrencyStr(rowObj["Amount Invested"]);
                                     let days = this.parseCurrencyStr(rowObj["Weighted avg days"]);
                                     
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
@@ -1281,6 +1283,33 @@
                                             calcRate = ((mVal - invested) / invested) * 100;
                                         }
                                     }
+                                } else if (isGrowwMF) {
+                                    invName = strValSafe(rowObj["Scheme Name"]);
+                                    mVal = this.parseCurrencyStr(rowObj["Current Value"]);
+                                    invested = this.parseCurrencyStr(rowObj["Invested Value"]);
+                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
+                                    
+                                    profileName = growwProfileName;
+                                    rawType = "MF";
+                                    rawClass = strValSafe(rowObj["Category"]) || "Other";
+                                    rawCategory = strValSafe(rowObj["Sub-category"]) || "NA";
+                                    rawSector = "NA";
+                                    
+                                    let rawXirr = this.parseCurrencyStr(rowObj["XIRR"]);
+                                    if (!isNaN(rawXirr)) {
+                                        calcRate = rawXirr < 2 ? rawXirr * 100 : rawXirr;
+                                    }
+                                } else if (isGrowwStocks) {
+                                    invName = strValSafe(rowObj["Stock Name"]);
+                                    mVal = this.parseCurrencyStr(rowObj["Closing value"]);
+                                    invested = this.parseCurrencyStr(rowObj["Buy value"]);
+                                    if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
+                                    
+                                    profileName = growwProfileName;
+                                    rawType = "STOCK";
+                                    rawClass = "Equity";
+                                    rawCategory = "NA";
+                                    rawSector = "NA";
                                 } else if (isUpstox) {
                                     invName = rowObj["Scrip Name"];
                                     mVal = this.parseCurrencyStr(rowObj["Valuation"]);
@@ -1289,7 +1318,7 @@
                                 } else if (!isZerodha) {
                                     invName = rowObj["Investment"];
                                     mVal = this.parseCurrencyStr(rowObj["Market Value"]);
-                                    let invested = this.parseCurrencyStr(rowObj["Invested Amount"]);
+                                    invested = this.parseCurrencyStr(rowObj["Invested Amount"]);
                                     if(isNaN(mVal)) mVal = invested;
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && ((mVal - invested) / invested) * 100 < 0) isLossMaking = true;
                                     profileName = rowObj["First Name"] ? strValSafe(rowObj["First Name"]) : "Main Portfolio";
@@ -1304,6 +1333,7 @@
                                     let avgPrice = this.parseCurrencyStr(rowObj["Average Price"]);
                                     mVal = qty * price;
                                     if (isNaN(mVal) || mVal === 0) mVal = qty * avgPrice;
+                                    invested = qty * avgPrice;
                                     let pnl = this.parseCurrencyStr(rowObj["Unrealized P&L"]);
                                     if (!isNaN(pnl) && pnl < 0) isLossMaking = true;
                                     if (globalClientId) profileName = `Zerodha - ${globalClientId}`; 
@@ -1379,6 +1409,7 @@
                                         name: invName,
                                         type: invType,
                                         value: mVal,
+                                        investedValue: isNaN(invested) ? null : invested,
                                         growthRate: rate,
                                         maturityDate: maturityDate,
                                         rawAssetClass: rawClass,
@@ -1936,7 +1967,7 @@
                 if(!tbody) return;
                 tbody.innerHTML = '';
                 
-                ['name', 'value', 'growth', 'maturity', 'fv'].forEach(col => {
+                ['name', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
                     const iconEl = document.getElementById(`sort-inv-${col}`);
                     if(iconEl) {
                         if (this.invSortColumn === col) iconEl.innerText = this.invSortAsc ? ' ▲' : ' ▼';
@@ -1954,7 +1985,7 @@
                 });
 
                 if (filteredInvestments.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No assets match your selected filters.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">No assets match your selected filters.</td></tr>`;
                     return;
                 }
 
@@ -1962,7 +1993,12 @@
                     let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
                     let matDisplay = inv.maturityDate ? new Date(inv.maturityDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '';
                     let sortMat = inv.maturityDate ? new Date(inv.maturityDate).getTime() : 9999999999999; 
-                    return { ...inv, computedFV: fv, matDisplay: matDisplay, sortMat: sortMat };
+                    
+                    let actualGrowthPct = null;
+                    if (inv.investedValue && inv.investedValue > 0) {
+                        actualGrowthPct = ((inv.value - inv.investedValue) / inv.investedValue) * 100;
+                    }
+                    return { ...inv, computedFV: fv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct };
                 });
 
                 processedInv.sort((a, b) => {
@@ -1970,6 +2006,7 @@
                     if (this.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
                     else if (this.invSortColumn === 'value') { valA = a.value; valB = b.value; }
                     else if (this.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
+                    else if (this.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
                     else if (this.invSortColumn === 'maturity') { valA = a.sortMat; valB = b.sortMat; }
                     else if (this.invSortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
 
@@ -1997,6 +2034,13 @@
                         warningIcon = `<span title="Losing potential to inflation (Growth < 7.0%)" style="cursor:help; margin-left:5px;">⚠️</span>`;
                     }
                     
+                    let actualGrowthDisplay = "N/A";
+                    let actualGrowthColor = "var(--text-secondary)";
+                    if (inv.actualGrowthPct !== null) {
+                        actualGrowthDisplay = (inv.actualGrowthPct > 0 ? "+" : "") + inv.actualGrowthPct.toFixed(1) + "%";
+                        actualGrowthColor = inv.actualGrowthPct < 0 ? 'var(--danger-color)' : 'var(--success-color)';
+                    }
+                    
                     const tr = document.createElement('tr');
                     tr.className = rowClass;
                     tr.setAttribute('onclick', `app.editInv('${inv.id}')`);
@@ -2010,6 +2054,7 @@
                             </div>
                         </td>
                         <td>${this.formatCurrency(inv.value)}</td>
+                        <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
                         <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
                         <td style="color: var(--text-secondary);">${inv.matDisplay}</td>
                         <td class="highlight-val">${this.formatCurrency(inv.computedFV)}</td>
@@ -2026,6 +2071,7 @@
                 totalRow.innerHTML = `
                     <td>TOTAL (Filtered)</td>
                     <td>${this.formatCurrency(totalCV)}</td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td class="highlight-val">${this.formatCurrency(totalFV)}</td>
