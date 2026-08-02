@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -457,6 +457,24 @@
                 </div>
 
                 <div class="settings-card" style="height: fit-content;">
+                    <h2>Backup & Restore</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">
+                        Export your entire portfolio, custom profiles, goals, and manual overrides into a single JSON file. Use this file to restore your data or transfer it to another device.
+                    </p>
+                    
+                    <div style="display: flex; gap: 1rem; flex-direction: column;">
+                        <button onclick="app.exportData()" class="btn-action" style="background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--accent-color);">
+                            ⬇️ Download Full Backup (JSON)
+                        </button>
+                        
+                        <input type="file" id="jsonUpload" accept=".json" style="display:none;" onchange="app.importData(event)">
+                        <button onclick="if(confirm('Warning: Restoring from a backup will completely overwrite all your current data. Do you want to proceed?')) document.getElementById('jsonUpload').click()" class="btn-action" style="background-color: rgba(244, 63, 94, 0.1); color: var(--danger-color); border: 1px solid rgba(244, 63, 94, 0.2);">
+                            ⬆️ Restore from Backup
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-card" style="height: fit-content; grid-column: 1 / -1;">
                     <h2>Profile Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
                         Create, view, merge, and delete asset owner profiles. Deleting a profile will permanently remove all assets associated with it.
@@ -706,7 +724,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.53</div>
+        <div>Anantha Wealth OS V2.54</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -810,9 +828,9 @@
             },
 
             migrateData() {
-                const savedV2_53 = localStorage.getItem('ananthaDataV2_53');
-                if (savedV2_53) {
-                    app.data = JSON.parse(savedV2_53);
+                const savedV2_54 = localStorage.getItem('ananthaDataV2_54');
+                if (savedV2_54) {
+                    app.data = JSON.parse(savedV2_54);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -832,7 +850,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_52') || localStorage.getItem('ananthaDataV2_51') || localStorage.getItem('ananthaDataV2_50');
+                const savedOld = localStorage.getItem('ananthaDataV2_53') || localStorage.getItem('ananthaDataV2_52') || localStorage.getItem('ananthaDataV2_51');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -889,21 +907,70 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_53', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_54', JSON.stringify(app.data));
             },
 
-            formatCurrency(amount) {
-                if (isNaN(amount) || amount === null) return "0";
-                return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(amount));
+            exportData() {
+                const dataStr = JSON.stringify(app.data, null, 2);
+                const blob = new Blob([dataStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                
+                const date = new Date();
+                const dateString = `${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
+                
+                a.href = url;
+                a.download = `wealth_os_backup_${dateString}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                app.showToast("Backup downloaded successfully.");
             },
 
-            parseCurrencyStr(val) {
-                if (typeof val === 'number') return val;
-                if (typeof val === 'string') {
-                    const cleaned = val.replace(/,/g, '').replace(/[^0-9.-]/g, '');
-                    return parseFloat(cleaned);
-                }
-                return NaN;
+            importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        if (!importedData || typeof importedData !== 'object' || !Array.isArray(importedData.investments)) {
+                            throw new Error("Invalid backup file format.");
+                        }
+                        
+                        if (!importedData.profiles) importedData.profiles = ['Main Portfolio'];
+                        if (!importedData.goals) importedData.goals = [];
+                        
+                        app.data = importedData;
+                        
+                        app.dashProfileFilters = [...app.data.profiles];
+                        app.dashClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                        app.dashTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                        app.dashCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                        app.dashSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
+
+                        app.invProfileFilters = [...app.data.profiles];
+                        app.invClassFilters = [...app.dashClassFilters];
+                        app.invTypeFilters = [...app.dashTypeFilters];
+                        app.invCategoryFilters = [...app.dashCategoryFilters];
+                        app.invSectorFilters = [...app.dashSectorFilters];
+
+                        app.saveState();
+                        app.updateProfileDropdowns();
+                        app.renderAll();
+                        
+                        app.showToast("Data restored successfully from backup.");
+                    } catch (error) {
+                        console.error(error);
+                        app.showToast("Failed to restore data. Invalid file.", true);
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = ''; 
             },
 
             /* -------------------------------------------------------------------------- */
