@@ -173,7 +173,7 @@
         .btn-upload:hover { border-color: var(--accent-color); }
         
         /* Settings Card specific styles */
-        .settings-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+        .settings-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
         .settings-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; }
 
         /* Toast */
@@ -237,7 +237,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -477,13 +477,13 @@
                     </div>
                 </div>
                 
-                <div class="settings-card" style="height: fit-content; grid-column: 1 / -1;">
+                <div class="settings-card" style="height: fit-content;">
                     <h2>Backup & Restore</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">
                         Export your entire portfolio, custom profiles, goals, and manual overrides into a single JSON file. Use this file to restore your data or transfer it to another device.
                     </p>
                     
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
                         <button onclick="app.exportData()" class="btn-action" style="background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--accent-color);">
                             ⬇️ Download Full Backup (JSON)
                         </button>
@@ -729,7 +729,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.57</div>
+        <div>Anantha Wealth OS V2.58</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -833,9 +833,9 @@
             },
 
             migrateData() {
-                const savedV2_57 = localStorage.getItem('ananthaDataV2_57');
-                if (savedV2_57) {
-                    app.data = JSON.parse(savedV2_57);
+                const savedV2_58 = localStorage.getItem('ananthaDataV2_58');
+                if (savedV2_58) {
+                    app.data = JSON.parse(savedV2_58);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -855,7 +855,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_56') || localStorage.getItem('ananthaDataV2_55') || localStorage.getItem('ananthaDataV2_54') || localStorage.getItem('ananthaDataV2_53');
+                const savedOld = localStorage.getItem('ananthaDataV2_57') || localStorage.getItem('ananthaDataV2_56') || localStorage.getItem('ananthaDataV2_55') || localStorage.getItem('ananthaDataV2_54') || localStorage.getItem('ananthaDataV2_53');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -913,21 +913,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_57', JSON.stringify(app.data));
-            },
-
-            formatCurrency(amount) {
-                if (isNaN(amount) || amount === null) return "0";
-                return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(amount));
-            },
-
-            parseCurrencyStr(val) {
-                if (typeof val === 'number') return val;
-                if (typeof val === 'string') {
-                    const cleaned = val.replace(/,/g, '').replace(/[^0-9.-]/g, '');
-                    return parseFloat(cleaned);
-                }
-                return NaN;
+                localStorage.setItem('ananthaDataV2_58', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1620,13 +1606,9 @@
                                     if (rows[i].length > 1 && strVal(rows[i][1])) upstoxProfileName = strVal(rows[i][1]);
                                 }
                                 
-                                if (rowStr.includes("personal details") && rows[i+1] && strVal(rows[i+1][0]).toLowerCase() === "name") {
-                                    growwProfileName = strVal(rows[i+1][1]);
-                                }
-                                if (rowStr.includes("unique client code")) {
-                                    let sheetHeaders = Object.keys(rows[0] || {});
-                                    if (sheetHeaders.length > 1 && !sheetHeaders[1].toLowerCase().includes("unnamed")) {
-                                         growwProfileName = strVal(sheetHeaders[1]); 
+                                if (rows[i][0] && strVal(rows[i][0]).toLowerCase() === "name") {
+                                    if (rows[i].length > 1 && strVal(rows[i][1])) {
+                                        growwProfileName = strVal(rows[i][1]);
                                     }
                                 }
 
