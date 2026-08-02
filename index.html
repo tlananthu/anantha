@@ -51,7 +51,7 @@
         .tab-btn { display: flex; align-items: center; gap: 0.5rem; background: transparent; border: none; color: var(--text-secondary); padding: 1rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; border-radius: 0; white-space: nowrap; transition: color 0.2s; }
         .tab-btn.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
         .tab-btn:hover:not(.active) { color: var(--text-primary); }
-        .tab-btn svg { width: 18px; height: 18px; }
+        .tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
         
         .view { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view.active { display: block; }
@@ -457,24 +457,6 @@
                 </div>
 
                 <div class="settings-card" style="height: fit-content;">
-                    <h2>Backup & Restore</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">
-                        Export your entire portfolio, custom profiles, goals, and manual overrides into a single JSON file. Use this file to restore your data or transfer it to another device.
-                    </p>
-                    
-                    <div style="display: flex; gap: 1rem; flex-direction: column;">
-                        <button onclick="app.exportData()" class="btn-action" style="background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--accent-color);">
-                            ⬇️ Download Full Backup (JSON)
-                        </button>
-                        
-                        <input type="file" id="jsonUpload" accept=".json" style="display:none;" onchange="app.importData(event)">
-                        <button onclick="if(confirm('Warning: Restoring from a backup will completely overwrite all your current data. Do you want to proceed?')) document.getElementById('jsonUpload').click()" class="btn-action" style="background-color: rgba(244, 63, 94, 0.1); color: var(--danger-color); border: 1px solid rgba(244, 63, 94, 0.2);">
-                            ⬆️ Restore from Backup
-                        </button>
-                    </div>
-                </div>
-
-                <div class="settings-card" style="height: fit-content; grid-column: 1 / -1;">
                     <h2>Profile Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
                         Create, view, merge, and delete asset owner profiles. Deleting a profile will permanently remove all assets associated with it.
@@ -492,6 +474,24 @@
                             </div>
                             <button type="submit" class="btn-action" style="background-color: var(--success-color);">+ Add</button>
                         </form>
+                    </div>
+                </div>
+                
+                <div class="settings-card" style="height: fit-content; grid-column: 1 / -1;">
+                    <h2>Backup & Restore</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">
+                        Export your entire portfolio, custom profiles, goals, and manual overrides into a single JSON file. Use this file to restore your data or transfer it to another device.
+                    </p>
+                    
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button onclick="app.exportData()" class="btn-action" style="background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--accent-color);">
+                            ⬇️ Download Full Backup (JSON)
+                        </button>
+                        
+                        <input type="file" id="jsonUpload" accept=".json" style="display:none;" onchange="app.importData(event)">
+                        <button onclick="if(confirm('Warning: Restoring from a backup will completely overwrite all your current data. Do you want to proceed?')) document.getElementById('jsonUpload').click()" class="btn-action" style="background-color: rgba(244, 63, 94, 0.1); color: var(--danger-color); border: 1px solid rgba(244, 63, 94, 0.2);">
+                            ⬆️ Restore from Backup
+                        </button>
                     </div>
                 </div>
                 
@@ -729,7 +729,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.56</div>
+        <div>Anantha Wealth OS V2.57</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -799,14 +799,14 @@
             profileColors: ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#f43f5e', '#ec4899', '#14b8a6', '#6366f1'],
 
             init() {
-                let isFreshInstall = this.migrateData();
-                if (isFreshInstall || this.data.investments.length === 0) {
-                    this.activeView = 'settings';
+                let isFreshInstall = app.migrateData();
+                if (isFreshInstall || app.data.investments.length === 0) {
+                    app.activeView = 'settings';
                 }
-                this.updateProfileDropdowns();
-                this.toggleGoalFields();
-                this.renderAll();
-                this.switchView(this.activeView);
+                app.updateProfileDropdowns();
+                app.toggleGoalFields();
+                app.renderAll();
+                app.switchView(app.activeView);
             },
 
             async installPWA() {
@@ -833,87 +833,87 @@
             },
 
             migrateData() {
-                const savedV2_56 = localStorage.getItem('ananthaDataV2_56');
-                if (savedV2_56) {
-                    this.data = JSON.parse(savedV2_56);
-                    this.activeView = this.data.activeView || 'home';
-                    this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
-                    this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                    this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                    this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                    this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-                    this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
-                    this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                    this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                    this.invCategoryFilters = this.data.invCategoryFilters !== undefined ? this.data.invCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                    this.invSectorFilters = this.data.invSectorFilters !== undefined ? this.data.invSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-                    this.allocationGroupBy = this.data.allocationGroupBy || 'class';
-                    this.sortColumn = this.data.sortColumn || 'year';
-                    this.sortAsc = this.data.sortAsc !== undefined ? this.data.sortAsc : true;
-                    this.invSortColumn = this.data.invSortColumn || 'fv';
-                    this.invSortAsc = this.data.invSortAsc !== undefined ? this.data.invSortAsc : false;
+                const savedV2_57 = localStorage.getItem('ananthaDataV2_57');
+                if (savedV2_57) {
+                    app.data = JSON.parse(savedV2_57);
+                    app.activeView = app.data.activeView || 'home';
+                    app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
+                    app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.dashTypeFilters = app.data.dashTypeFilters !== undefined ? app.data.dashTypeFilters : [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.dashCategoryFilters = app.data.dashCategoryFilters !== undefined ? app.data.dashCategoryFilters : [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.dashSectorFilters = app.data.dashSectorFilters !== undefined ? app.data.dashSectorFilters : [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.invProfileFilters = app.data.invProfileFilters !== undefined ? app.data.invProfileFilters : [...app.data.profiles];
+                    app.invClassFilters = app.data.invClassFilters !== undefined ? app.data.invClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.invTypeFilters = app.data.invTypeFilters !== undefined ? app.data.invTypeFilters : [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.invCategoryFilters = app.data.invCategoryFilters !== undefined ? app.data.invCategoryFilters : [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.invSectorFilters = app.data.invSectorFilters !== undefined ? app.data.invSectorFilters : [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.allocationGroupBy = app.data.allocationGroupBy || 'class';
+                    app.sortColumn = app.data.sortColumn || 'year';
+                    app.sortAsc = app.data.sortAsc !== undefined ? app.data.sortAsc : true;
+                    app.invSortColumn = app.data.invSortColumn || 'fv';
+                    app.invSortAsc = app.data.invSortAsc !== undefined ? app.data.invSortAsc : false;
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_55') || localStorage.getItem('ananthaDataV2_54') || localStorage.getItem('ananthaDataV2_53') || localStorage.getItem('ananthaDataV2_52');
+                const savedOld = localStorage.getItem('ananthaDataV2_56') || localStorage.getItem('ananthaDataV2_55') || localStorage.getItem('ananthaDataV2_54') || localStorage.getItem('ananthaDataV2_53');
                 if (savedOld) {
-                    this.data = JSON.parse(savedOld);
+                    app.data = JSON.parse(savedOld);
                     
-                    this.data.profiles = [...new Set(this.data.profiles.map(p => this.toTitleCase(p)))];
-                    this.data.investments.forEach(i => {
-                        i.profile = this.toTitleCase(i.profile);
+                    app.data.profiles = [...new Set(app.data.profiles.map(p => app.toTitleCase(p)))];
+                    app.data.investments.forEach(i => {
+                        i.profile = app.toTitleCase(i.profile);
                         if (!i.source) i.source = i.isManuallyEdited ? 'Manual' : 'Legacy';
                         if (!i.planType) i.planType = 'Unknown';
                     });
 
-                    this.activeView = this.data.activeView || 'home';
-                    this.dashProfileFilters = this.data.dashProfileFilters !== undefined ? this.data.dashProfileFilters : [...this.data.profiles];
-                    this.dashClassFilters = this.data.dashClassFilters !== undefined ? this.data.dashClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                    this.dashTypeFilters = this.data.dashTypeFilters !== undefined ? this.data.dashTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                    this.dashCategoryFilters = this.data.dashCategoryFilters !== undefined ? this.data.dashCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                    this.dashSectorFilters = this.data.dashSectorFilters !== undefined ? this.data.dashSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-                    this.invProfileFilters = this.data.invProfileFilters !== undefined ? this.data.invProfileFilters : [...this.data.profiles];
-                    this.invClassFilters = this.data.invClassFilters !== undefined ? this.data.invClassFilters : [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                    this.invTypeFilters = this.data.invTypeFilters !== undefined ? this.data.invTypeFilters : [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                    this.invCategoryFilters = this.data.invCategoryFilters !== undefined ? this.data.invCategoryFilters : [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                    this.invSectorFilters = this.data.invSectorFilters !== undefined ? this.data.invSectorFilters : [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
-                    this.allocationGroupBy = this.data.allocationGroupBy || 'class';
-                    this.sortColumn = this.data.sortColumn || 'year';
-                    this.sortAsc = this.data.sortAsc !== undefined ? this.data.sortAsc : true;
-                    this.invSortColumn = this.data.invSortColumn || 'fv';
-                    this.invSortAsc = this.data.invSortAsc !== undefined ? this.data.invSortAsc : false;
-                    this.saveState();
+                    app.activeView = app.data.activeView || 'home';
+                    app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
+                    app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.dashTypeFilters = app.data.dashTypeFilters !== undefined ? app.data.dashTypeFilters : [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.dashCategoryFilters = app.data.dashCategoryFilters !== undefined ? app.data.dashCategoryFilters : [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.dashSectorFilters = app.data.dashSectorFilters !== undefined ? app.data.dashSectorFilters : [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.invProfileFilters = app.data.invProfileFilters !== undefined ? app.data.invProfileFilters : [...app.data.profiles];
+                    app.invClassFilters = app.data.invClassFilters !== undefined ? app.data.invClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.invTypeFilters = app.data.invTypeFilters !== undefined ? app.data.invTypeFilters : [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.invCategoryFilters = app.data.invCategoryFilters !== undefined ? app.data.invCategoryFilters : [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.invSectorFilters = app.data.invSectorFilters !== undefined ? app.data.invSectorFilters : [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.allocationGroupBy = app.data.allocationGroupBy || 'class';
+                    app.sortColumn = app.data.sortColumn || 'year';
+                    app.sortAsc = app.data.sortAsc !== undefined ? app.data.sortAsc : true;
+                    app.invSortColumn = app.data.invSortColumn || 'fv';
+                    app.invSortAsc = app.data.invSortAsc !== undefined ? app.data.invSortAsc : false;
+                    app.saveState();
                     return false; 
                 }
                 
-                this.dashProfileFilters = [...this.data.profiles];
-                this.dashClassFilters = []; this.dashTypeFilters = []; this.dashCategoryFilters = []; this.dashSectorFilters = [];
-                this.invProfileFilters = [...this.data.profiles];
-                this.invClassFilters = []; this.invTypeFilters = []; this.invCategoryFilters = []; this.invSectorFilters = [];
+                app.dashProfileFilters = [...app.data.profiles];
+                app.dashClassFilters = []; app.dashTypeFilters = []; app.dashCategoryFilters = []; app.dashSectorFilters = [];
+                app.invProfileFilters = [...app.data.profiles];
+                app.invClassFilters = []; app.invTypeFilters = []; app.invCategoryFilters = []; app.invSectorFilters = [];
                 return true; 
             },
 
             saveState() {
-                this.data.activeView = this.activeView;
-                this.data.dashProfileFilters = this.dashProfileFilters;
-                this.data.dashClassFilters = this.dashClassFilters;
-                this.data.dashTypeFilters = this.dashTypeFilters;
-                this.data.dashCategoryFilters = this.dashCategoryFilters;
-                this.data.dashSectorFilters = this.dashSectorFilters;
+                app.data.activeView = app.activeView;
+                app.data.dashProfileFilters = app.dashProfileFilters;
+                app.data.dashClassFilters = app.dashClassFilters;
+                app.data.dashTypeFilters = app.dashTypeFilters;
+                app.data.dashCategoryFilters = app.dashCategoryFilters;
+                app.data.dashSectorFilters = app.dashSectorFilters;
 
-                this.data.invProfileFilters = this.invProfileFilters;
-                this.data.invClassFilters = this.invClassFilters;
-                this.data.invTypeFilters = this.invTypeFilters;
-                this.data.invCategoryFilters = this.invCategoryFilters;
-                this.data.invSectorFilters = this.invSectorFilters;
+                app.data.invProfileFilters = app.invProfileFilters;
+                app.data.invClassFilters = app.invClassFilters;
+                app.data.invTypeFilters = app.invTypeFilters;
+                app.data.invCategoryFilters = app.invCategoryFilters;
+                app.data.invSectorFilters = app.invSectorFilters;
                 
-                this.data.allocationGroupBy = this.allocationGroupBy;
-                this.data.sortColumn = this.sortColumn;
-                this.data.sortAsc = this.sortAsc;
-                this.data.invSortColumn = this.invSortColumn;
-                this.data.invSortAsc = this.invSortAsc;
+                app.data.allocationGroupBy = app.allocationGroupBy;
+                app.data.sortColumn = app.sortColumn;
+                app.data.sortAsc = app.sortAsc;
+                app.data.invSortColumn = app.invSortColumn;
+                app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_56', JSON.stringify(this.data));
+                localStorage.setItem('ananthaDataV2_57', JSON.stringify(app.data));
             },
 
             formatCurrency(amount) {
@@ -931,7 +931,7 @@
             },
 
             exportData() {
-                const dataStr = JSON.stringify(this.data, null, 2);
+                const dataStr = JSON.stringify(app.data, null, 2);
                 const blob = new Blob([dataStr], { type: "application/json" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -946,7 +946,7 @@
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                this.showToast("Backup downloaded successfully.");
+                app.showToast("Backup downloaded successfully.");
             },
 
             importData(event) {
@@ -965,28 +965,28 @@
                         if (!importedData.profiles) importedData.profiles = ['Main Portfolio'];
                         if (!importedData.goals) importedData.goals = [];
                         
-                        this.data = importedData;
+                        app.data = importedData;
                         
-                        this.dashProfileFilters = [...this.data.profiles];
-                        this.dashClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                        this.dashTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                        this.dashCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                        this.dashSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
+                        app.dashProfileFilters = [...app.data.profiles];
+                        app.dashClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                        app.dashTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                        app.dashCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                        app.dashSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
 
-                        this.invProfileFilters = [...this.data.profiles];
-                        this.invClassFilters = [...this.dashClassFilters];
-                        this.invTypeFilters = [...this.dashTypeFilters];
-                        this.invCategoryFilters = [...this.dashCategoryFilters];
-                        this.invSectorFilters = [...this.dashSectorFilters];
+                        app.invProfileFilters = [...app.data.profiles];
+                        app.invClassFilters = [...app.dashClassFilters];
+                        app.invTypeFilters = [...app.dashTypeFilters];
+                        app.invCategoryFilters = [...app.dashCategoryFilters];
+                        app.invSectorFilters = [...app.dashSectorFilters];
 
-                        this.saveState();
-                        this.updateProfileDropdowns();
-                        this.renderAll();
+                        app.saveState();
+                        app.updateProfileDropdowns();
+                        app.renderAll();
                         
-                        this.showToast("Data restored successfully from backup.");
+                        app.showToast("Data restored successfully from backup.");
                     } catch (error) {
                         console.error(error);
-                        this.showToast("Failed to restore data. Invalid file.", true);
+                        app.showToast("Failed to restore data. Invalid file.", true);
                     }
                 };
                 reader.readAsText(file);
@@ -1001,31 +1001,31 @@
                 const currentFormVal = formSelect.value;
                 formSelect.innerHTML = '';
                 
-                this.data.profiles.forEach(profileName => {
+                app.data.profiles.forEach(profileName => {
                     const formOpt = document.createElement('option');
                     formOpt.value = profileName;
                     formOpt.innerText = profileName;
                     formSelect.appendChild(formOpt);
                 });
-                if(currentFormVal && this.data.profiles.includes(currentFormVal)) formSelect.value = currentFormVal;
+                if(currentFormVal && app.data.profiles.includes(currentFormVal)) formSelect.value = currentFormVal;
             },
 
             createProfile(event) {
                 event.preventDefault();
                 const input = document.getElementById('settingsNewProfileName');
-                const name = this.toTitleCase(input.value.trim());
+                const name = app.toTitleCase(input.value.trim());
                 
-                if (name && !this.data.profiles.includes(name)) {
-                    this.data.profiles.push(name);
-                    this.dashProfileFilters.push(name);
-                    this.invProfileFilters.push(name);
-                    this.saveState();
-                    this.updateProfileDropdowns();
+                if (name && !app.data.profiles.includes(name)) {
+                    app.data.profiles.push(name);
+                    app.dashProfileFilters.push(name);
+                    app.invProfileFilters.push(name);
+                    app.saveState();
+                    app.updateProfileDropdowns();
                     input.value = '';
-                    this.renderAll();
-                    this.showToast(`Profile '${name}' added successfully.`);
-                } else if (this.data.profiles.includes(name)) {
-                    this.showToast("A profile with this name already exists.", true);
+                    app.renderAll();
+                    app.showToast(`Profile '${name}' added successfully.`);
+                } else if (app.data.profiles.includes(name)) {
+                    app.showToast("A profile with this name already exists.", true);
                 }
             },
 
@@ -1033,41 +1033,41 @@
                 let newName = prompt(`Enter new name for profile '${oldName}'.\n(If you enter an existing profile name, they will be intelligently merged together):`, oldName);
                 if (!newName || newName.trim() === '' || newName.trim().toLowerCase() === oldName.toLowerCase()) return;
                 
-                newName = this.toTitleCase(newName.trim());
+                newName = app.toTitleCase(newName.trim());
 
-                this.data.investments.forEach(inv => {
+                app.data.investments.forEach(inv => {
                     if (inv.profile === oldName) inv.profile = newName;
                 });
 
-                this.data.profiles = this.data.profiles.filter(p => p !== oldName);
-                if (!this.data.profiles.includes(newName)) this.data.profiles.push(newName);
+                app.data.profiles = app.data.profiles.filter(p => p !== oldName);
+                if (!app.data.profiles.includes(newName)) app.data.profiles.push(newName);
 
-                this.dashProfileFilters = this.dashProfileFilters.map(p => p === oldName ? newName : p);
-                this.dashProfileFilters = [...new Set(this.dashProfileFilters)]; 
+                app.dashProfileFilters = app.dashProfileFilters.map(p => p === oldName ? newName : p);
+                app.dashProfileFilters = [...new Set(app.dashProfileFilters)]; 
 
-                this.invProfileFilters = this.invProfileFilters.map(p => p === oldName ? newName : p);
-                this.invProfileFilters = [...new Set(this.invProfileFilters)]; 
+                app.invProfileFilters = app.invProfileFilters.map(p => p === oldName ? newName : p);
+                app.invProfileFilters = [...new Set(app.invProfileFilters)]; 
 
-                this.saveState();
-                this.updateProfileDropdowns();
-                this.renderAll();
-                this.showToast(`Profile renamed to '${newName}'.`);
+                app.saveState();
+                app.updateProfileDropdowns();
+                app.renderAll();
+                app.showToast(`Profile renamed to '${newName}'.`);
             },
 
             deleteFullProfile(pName) {
-                if (this.data.profiles.length <= 1) {
-                    this.showToast("You must have at least one profile to use the system.", true);
+                if (app.data.profiles.length <= 1) {
+                    app.showToast("You must have at least one profile to use the system.", true);
                     return;
                 }
                 if (confirm(`Are you sure you want to completely delete the profile '${pName}' and ALL its associated assets?`)) {
-                    this.data.profiles = this.data.profiles.filter(p => p !== pName);
-                    this.data.investments = this.data.investments.filter(i => (i.profile || 'Main Portfolio') !== pName);
-                    this.dashProfileFilters = this.dashProfileFilters.filter(f => f !== pName);
-                    this.invProfileFilters = this.invProfileFilters.filter(f => f !== pName);
-                    this.saveState();
-                    this.updateProfileDropdowns();
-                    this.renderAll();
-                    this.showToast(`Profile '${pName}' and assets deleted.`);
+                    app.data.profiles = app.data.profiles.filter(p => p !== pName);
+                    app.data.investments = app.data.investments.filter(i => (i.profile || 'Main Portfolio') !== pName);
+                    app.dashProfileFilters = app.dashProfileFilters.filter(f => f !== pName);
+                    app.invProfileFilters = app.invProfileFilters.filter(f => f !== pName);
+                    app.saveState();
+                    app.updateProfileDropdowns();
+                    app.renderAll();
+                    app.showToast(`Profile '${pName}' and assets deleted.`);
                 }
             },
 
@@ -1075,7 +1075,7 @@
                 const container = document.getElementById('settingsProfileList');
                 if(!container) return;
                 container.innerHTML = '';
-                this.data.profiles.forEach(p => {
+                app.data.profiles.forEach(p => {
                     container.innerHTML += `
                         <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-light); padding: 0.8rem 1.2rem; border: 1px solid var(--border-color); border-radius: 6px;">
                             <span style="font-weight: 600; color: var(--text-primary); text-transform: uppercase; font-size: 0.9rem;">${p}</span>
@@ -1089,15 +1089,15 @@
 
                 const onboard = document.getElementById('onboardingCard');
                 if (onboard) {
-                    if (this.data.investments.length === 0) onboard.style.display = 'block';
+                    if (app.data.investments.length === 0) onboard.style.display = 'block';
                     else onboard.style.display = 'none';
                 }
             },
 
             switchView(viewId) {
-                this.activeView = viewId;
-                this.saveState();
-                this.closeFilterPanel(); 
+                app.activeView = viewId;
+                app.saveState();
+                app.closeFilterPanel(); 
 
                 document.querySelectorAll('.tab-btn').forEach(btn => {
                     btn.classList.remove('active');
@@ -1110,43 +1110,43 @@
                 const viewEl = document.getElementById(`view-${viewId}`);
                 if(viewEl) viewEl.classList.add('active');
 
-                if (viewId === 'home') this.renderDashboard();
-                if (viewId === 'investments') this.renderInvestments();
-                if (viewId === 'settings') this.renderSettingsProfiles();
-                if (viewId === 'goals') this.renderGoals();
+                if (viewId === 'home') app.renderDashboard();
+                if (viewId === 'investments') app.renderInvestments();
+                if (viewId === 'settings') app.renderSettingsProfiles();
+                if (viewId === 'goals') app.renderGoals();
             },
 
             /* -------------------------------------------------------------------------- */
             /* SMART ALLOCATE ENGINE (OPTION 4 / ADVANCED RECOMMENDATIONS)                */
             /* -------------------------------------------------------------------------- */
             openSmartAllocateModal() {
-                this.generateSmartRecommendations();
+                app.generateSmartRecommendations();
                 document.getElementById('smartAllocateModal').style.display = 'flex';
             },
 
             closeSmartAllocateModal() {
                 document.getElementById('smartAllocateModal').style.display = 'none';
-                this.currentRecommendations = [];
+                app.currentRecommendations = [];
             },
 
             generateSmartRecommendations() {
                 let recs = [];
                 let usedAssetIds = new Set();
                 
-                let goalsWithShortage = this.data.goals.map(g => {
-                    let tYear = g.targetYear || (this.currentYear + (g.yrs || g.yTo || 0));
-                    let yrsToGoal = tYear - this.currentYear;
+                let goalsWithShortage = app.data.goals.map(g => {
+                    let tYear = g.targetYear || (app.currentYear + (g.yrs || g.yTo || 0));
+                    let yrsToGoal = tYear - app.currentYear;
                     let assignedFV = 0;
-                    this.data.investments.forEach(inv => {
-                        if(inv.linkedGoalId === g.id) assignedFV += this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                    app.data.investments.forEach(inv => {
+                        if(inv.linkedGoalId === g.id) assignedFV += app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
                     });
                     let reqFv = g.fv || g.targetValue || 0;
                     let shortage = reqFv - assignedFV;
                     return { ...g, yrsToGoal, shortage, origShortage: shortage };
                 }).filter(g => g.shortage > 0);
 
-                let availableAssets = this.data.investments.filter(i => !i.linkedGoalId).map(inv => {
-                    return { ...inv, computedFV: this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate), origFV: this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate) };
+                let availableAssets = app.data.investments.filter(i => !i.linkedGoalId).map(inv => {
+                    return { ...inv, computedFV: app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate), origFV: app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate) };
                 });
 
                 availableAssets.sort((a,b) => b.computedFV - a.computedFV);
@@ -1210,19 +1210,19 @@
                     });
                 });
 
-                this.currentRecommendations = recs;
-                this.renderRecommendationsUI();
+                app.currentRecommendations = recs;
+                app.renderRecommendationsUI();
             },
 
             renderRecommendationsUI() {
                 const container = document.getElementById('smartAllocateList');
                 container.innerHTML = '';
-                if (this.currentRecommendations.length === 0) {
+                if (app.currentRecommendations.length === 0) {
                     container.innerHTML = `<span style="color:var(--text-secondary); text-align:center; padding:1rem;">No optimal recommendations found. All goals are funded, or no suitable unassigned assets exist.</span>`;
                     return;
                 }
 
-                this.currentRecommendations.forEach((rec, idx) => {
+                app.currentRecommendations.forEach((rec, idx) => {
                     container.innerHTML += `
                         <label style="display:flex; align-items:flex-start; justify-content:space-between; background:var(--surface-color); padding:0.8rem; border-radius:4px; cursor:pointer; border:1px solid var(--border-color);">
                             <div style="display:flex; align-items:flex-start; gap:0.6rem; flex:1;">
@@ -1232,7 +1232,7 @@
                                         Allocate ${rec.pct.toFixed(0)}% of <span style="color:var(--accent-color);">${rec.asset.name}</span>
                                     </span>
                                     <span style="font-size:0.85rem; color:var(--text-secondary);">
-                                        ➔ To: <strong>${rec.goal.name}</strong> (Fills ₹${this.formatCurrency(rec.fvAdded)} of need)
+                                        ➔ To: <strong>${rec.goal.name}</strong> (Fills ₹${app.formatCurrency(rec.fvAdded)} of need)
                                     </span>
                                     <span style="font-size:0.75rem; color:var(--success-color); background:rgba(52, 211, 153, 0.1); padding:0.2rem 0.4rem; border-radius:4px; width:fit-content; margin-top:0.2rem;">
                                         💡 ${rec.reason}
@@ -1250,8 +1250,8 @@
                 
                 checkboxes.forEach(cb => {
                     if (cb.checked) {
-                        const rec = this.currentRecommendations[parseInt(cb.value)];
-                        const inv = this.data.investments.find(i => i.id === rec.asset.id);
+                        const rec = app.currentRecommendations[parseInt(cb.value)];
+                        const inv = app.data.investments.find(i => i.id === rec.asset.id);
                         if (!inv) return;
 
                         if (rec.pct >= 99) {
@@ -1275,16 +1275,16 @@
                             }
                             inv.isManuallyEdited = true;
                             
-                            this.data.investments.push(newAsset);
+                            app.data.investments.push(newAsset);
                         }
                         appliedCount++;
                     }
                 });
 
-                this.saveState();
-                this.closeSmartAllocateModal();
-                this.renderAll();
-                this.showToast(`Applied ${appliedCount} recommendations successfully!`);
+                app.saveState();
+                app.closeSmartAllocateModal();
+                app.renderAll();
+                app.showToast(`Applied ${appliedCount} recommendations successfully!`);
             },
 
 
@@ -1297,13 +1297,13 @@
             },
             closeAssetModal() { 
                 document.getElementById('assetModal').style.display = 'none'; 
-                this.cancelInvEdit(); 
+                app.cancelInvEdit(); 
             },
             
             getMaxGoalYear() {
-                let maxYear = this.currentYear + 10; 
-                if (this.data.goals && this.data.goals.length > 0) {
-                    const goalYears = this.data.goals.map(g => g.targetYear || this.currentYear);
+                let maxYear = app.currentYear + 10; 
+                if (app.data.goals && app.data.goals.length > 0) {
+                    const goalYears = app.data.goals.map(g => g.targetYear || app.currentYear);
                     maxYear = Math.max(...goalYears);
                 }
                 return maxYear;
@@ -1318,7 +1318,7 @@
                     const today = new Date();
                     years = (matDate - today) / (1000 * 60 * 60 * 24 * 365.25);
                 } else {
-                    years = this.getMaxGoalYear() - this.currentYear;
+                    years = app.getMaxGoalYear() - app.currentYear;
                 }
                 
                 if (years <= 0) return val;
@@ -1331,7 +1331,7 @@
 
             handleInvTypeChange() {
                 const type = document.getElementById('invType').value;
-                document.getElementById('invGrowth').value = this.defaultRates[type] || 0;
+                document.getElementById('invGrowth').value = app.defaultRates[type] || 0;
             },
 
             handleInvSave(event) {
@@ -1352,7 +1352,7 @@
                 let rSector = document.getElementById('invRawSector').value.trim() || 'NA';
 
                 let invData = {
-                    id: this.editingInvId || Date.now().toString(),
+                    id: app.editingInvId || Date.now().toString(),
                     profile: profile,
                     name: document.getElementById('invName').value,
                     type: type,
@@ -1369,49 +1369,49 @@
                     source: "Manual"
                 };
 
-                if (this.editingInvId) {
-                    const index = this.data.investments.findIndex(i => i.id === this.editingInvId);
-                    invData.linkedGoalId = this.data.investments[index].linkedGoalId; 
-                    invData.splitParentId = this.data.investments[index].splitParentId;
-                    this.data.investments[index] = invData;
+                if (app.editingInvId) {
+                    const index = app.data.investments.findIndex(i => i.id === app.editingInvId);
+                    invData.linkedGoalId = app.data.investments[index].linkedGoalId; 
+                    invData.splitParentId = app.data.investments[index].splitParentId;
+                    app.data.investments[index] = invData;
                 } else {
-                    this.data.investments.push(invData);
+                    app.data.investments.push(invData);
                 }
                 
                 const cMatch = invData.rawAssetClass;
-                if (!this.invClassFilters.includes(cMatch)) this.invClassFilters.push(cMatch);
-                if (!this.dashClassFilters.includes(cMatch)) this.dashClassFilters.push(cMatch);
+                if (!app.invClassFilters.includes(cMatch)) app.invClassFilters.push(cMatch);
+                if (!app.dashClassFilters.includes(cMatch)) app.dashClassFilters.push(cMatch);
                 
-                if (!this.invTypeFilters.includes(rType)) this.invTypeFilters.push(rType);
-                if (!this.dashTypeFilters.includes(rType)) this.dashTypeFilters.push(rType);
+                if (!app.invTypeFilters.includes(rType)) app.invTypeFilters.push(rType);
+                if (!app.dashTypeFilters.includes(rType)) app.dashTypeFilters.push(rType);
 
-                if (!this.invCategoryFilters.includes(rCategory)) this.invCategoryFilters.push(rCategory);
-                if (!this.dashCategoryFilters.includes(rCategory)) this.dashCategoryFilters.push(rCategory);
+                if (!app.invCategoryFilters.includes(rCategory)) app.invCategoryFilters.push(rCategory);
+                if (!app.dashCategoryFilters.includes(rCategory)) app.dashCategoryFilters.push(rCategory);
 
-                if (!this.invSectorFilters.includes(rSector)) this.invSectorFilters.push(rSector);
-                if (!this.dashSectorFilters.includes(rSector)) this.dashSectorFilters.push(rSector);
+                if (!app.invSectorFilters.includes(rSector)) app.invSectorFilters.push(rSector);
+                if (!app.dashSectorFilters.includes(rSector)) app.dashSectorFilters.push(rSector);
 
-                this.saveState();
-                this.closeAssetModal();
-                this.renderInvestments();
-                this.renderDashboard();
-                this.showToast("Asset saved successfully.");
+                app.saveState();
+                app.closeAssetModal();
+                app.renderInvestments();
+                app.renderDashboard();
+                app.showToast("Asset saved successfully.");
             },
 
             editInv(id) {
-                const inv = this.data.investments.find(i => i.id === id);
+                const inv = app.data.investments.find(i => i.id === id);
                 if (!inv) return;
                 
-                this.editingInvId = id;
+                app.editingInvId = id;
                 document.getElementById('invFormTitle').innerText = "Edit Asset";
                 document.getElementById('invSubmitBtn').innerText = "Update Asset";
                 
-                document.getElementById('invProfile').value = inv.profile || this.data.profiles[0];
+                document.getElementById('invProfile').value = inv.profile || app.data.profiles[0];
                 document.getElementById('invName').value = inv.name;
                 document.getElementById('invType').value = inv.type;
                 document.getElementById('invValue').value = inv.value;
                 document.getElementById('invInvested').value = inv.investedValue || "";
-                document.getElementById('invGrowth').value = inv.growthRate || inv.growthRate === 0 ? inv.growthRate : this.defaultRates[inv.type];
+                document.getElementById('invGrowth').value = inv.growthRate || inv.growthRate === 0 ? inv.growthRate : app.defaultRates[inv.type];
                 document.getElementById('invMaturity').value = inv.maturityDate || "";
                 document.getElementById('invPlanType').value = inv.planType || 'Unknown';
                 
@@ -1420,29 +1420,29 @@
                 document.getElementById('invRawCategory').value = inv.rawCategory || 'NA';
                 document.getElementById('invRawSector').value = inv.rawSector || 'NA';
 
-                this.openAssetModal();
+                app.openAssetModal();
             },
 
             cancelInvEdit() {
-                this.editingInvId = null;
+                app.editingInvId = null;
                 document.getElementById('invFormTitle').innerText = "Log New Asset";
                 document.getElementById('invSubmitBtn').innerText = "Save Asset";
                 document.getElementById('invForm').reset();
-                this.handleInvTypeChange(); 
+                app.handleInvTypeChange(); 
             },
 
             deleteInv(id) {
-                const inv = this.data.investments.find(i => i.id === id);
+                const inv = app.data.investments.find(i => i.id === id);
                 if (!inv) return;
                 
                 let msg = "Delete this asset from your portfolio?";
-                if (inv.splitParentId && this.data.investments.some(i => i.id === inv.splitParentId)) {
+                if (inv.splitParentId && app.data.investments.some(i => i.id === inv.splitParentId)) {
                     msg = "This is a split asset. Deleting it will restore its value back to the original parent asset. Proceed?";
                 }
                 
                 if(confirm(msg)) {
                     if (inv.splitParentId) {
-                         let parent = this.data.investments.find(i => i.id === inv.splitParentId);
+                         let parent = app.data.investments.find(i => i.id === inv.splitParentId);
                          if (parent) {
                              parent.value += inv.value;
                              if (parent.investedValue != null && inv.investedValue != null) {
@@ -1450,13 +1450,13 @@
                              }
                          }
                     }
-                    this.data.investments = this.data.investments.filter(i => i.id !== id);
-                    if(this.editingInvId === id) this.closeAssetModal();
-                    this.saveState();
-                    this.renderInvestments();
-                    this.renderDashboard();
-                    this.renderGoals();
-                    this.showToast("Asset removed" + (inv.splitParentId ? " and value restored to parent." : "."));
+                    app.data.investments = app.data.investments.filter(i => i.id !== id);
+                    if(app.editingInvId === id) app.closeAssetModal();
+                    app.saveState();
+                    app.renderInvestments();
+                    app.renderDashboard();
+                    app.renderGoals();
+                    app.showToast("Asset removed" + (inv.splitParentId ? " and value restored to parent." : "."));
                 }
             },
 
@@ -1464,14 +1464,14 @@
             /* SPLIT ASSET LOGIC                                                          */
             /* -------------------------------------------------------------------------- */
             openSplitModal(id) {
-                const inv = this.data.investments.find(i => i.id === id);
+                const inv = app.data.investments.find(i => i.id === id);
                 if (!inv) return;
-                this.splittingInvId = id;
-                document.getElementById('splitModalDesc').innerText = `Allocating: ${inv.name} (Current Val: ₹${this.formatCurrency(inv.value)})`;
+                app.splittingInvId = id;
+                document.getElementById('splitModalDesc').innerText = `Allocating: ${inv.name} (Current Val: ₹${app.formatCurrency(inv.value)})`;
 
                 const goalSelect = document.getElementById('splitGoal');
                 goalSelect.innerHTML = '<option value="">-- Select Goal to Assign To --</option>';
-                this.data.goals.forEach(g => {
+                app.data.goals.forEach(g => {
                     goalSelect.innerHTML += `<option value="${g.id}">${g.name}</option>`;
                 });
 
@@ -1480,31 +1480,31 @@
             },
             closeSplitModal() {
                 document.getElementById('splitAssetModal').style.display = 'none';
-                this.splittingInvId = null;
+                app.splittingInvId = null;
             },
             handleSplitSave(e) {
                 e.preventDefault();
-                if (!this.splittingInvId) return;
+                if (!app.splittingInvId) return;
                 const pct = parseFloat(document.getElementById('splitPercentage').value);
                 const goalId = document.getElementById('splitGoal').value;
                 if (!goalId) {
-                    this.showToast("Please select a goal.", true);
+                    app.showToast("Please select a goal.", true);
                     return;
                 }
 
-                const origIdx = this.data.investments.findIndex(i => i.id === this.splittingInvId);
+                const origIdx = app.data.investments.findIndex(i => i.id === app.splittingInvId);
                 if (origIdx === -1) return;
 
-                const orig = this.data.investments[origIdx];
+                const orig = app.data.investments[origIdx];
                 
                 if (pct === 100) {
                     orig.linkedGoalId = goalId;
-                    this.saveState();
-                    this.closeSplitModal();
-                    this.renderInvestments();
-                    this.renderDashboard();
-                    this.renderGoals();
-                    this.showToast(`Asset fully allocated to goal!`);
+                    app.saveState();
+                    app.closeSplitModal();
+                    app.renderInvestments();
+                    app.renderDashboard();
+                    app.renderGoals();
+                    app.showToast(`Asset fully allocated to goal!`);
                     return;
                 }
 
@@ -1527,37 +1527,37 @@
                 }
                 orig.isManuallyEdited = true;
 
-                this.data.investments.push(newAsset);
+                app.data.investments.push(newAsset);
                 
-                this.saveState();
-                this.closeSplitModal();
-                this.renderInvestments();
-                this.renderDashboard();
-                this.renderGoals();
-                this.showToast(`Asset split by ${pct}% and allocated!`);
+                app.saveState();
+                app.closeSplitModal();
+                app.renderInvestments();
+                app.renderDashboard();
+                app.renderGoals();
+                app.showToast(`Asset split by ${pct}% and allocated!`);
             },
             unsplitAsset(id) {
-                const inv = this.data.investments.find(i => i.id === id);
+                const inv = app.data.investments.find(i => i.id === id);
                 if (!inv || !inv.splitParentId) return;
                 
-                let parent = this.data.investments.find(i => i.id === inv.splitParentId);
+                let parent = app.data.investments.find(i => i.id === inv.splitParentId);
                 if (!parent) {
-                    this.showToast("Original parent asset no longer exists.", true);
+                    app.showToast("Original parent asset no longer exists.", true);
                     return;
                 }
                 
-                if (confirm(`Merge ₹${this.formatCurrency(inv.value)} back into original asset '${parent.name}'?`)) {
+                if (confirm(`Merge ₹${app.formatCurrency(inv.value)} back into original asset '${parent.name}'?`)) {
                     parent.value += inv.value;
                     if (parent.investedValue != null && inv.investedValue != null) {
                         parent.investedValue += inv.investedValue;
                     }
                     
-                    this.data.investments = this.data.investments.filter(i => i.id !== id);
-                    this.saveState();
-                    this.renderInvestments();
-                    this.renderDashboard();
-                    this.renderGoals();
-                    this.showToast("Asset successfully merged back.");
+                    app.data.investments = app.data.investments.filter(i => i.id !== id);
+                    app.saveState();
+                    app.renderInvestments();
+                    app.renderDashboard();
+                    app.renderGoals();
+                    app.showToast("Asset successfully merged back.");
                 }
             },
 
@@ -1578,7 +1578,7 @@
 
                     let manualOverrides = {};
                     let assetGoalTags = {};
-                    this.data.investments.forEach(i => {
+                    app.data.investments.forEach(i => {
                         let key = `${(i.profile || 'Main Portfolio').toLowerCase()}|${i.name.toLowerCase()}`;
                         if (i.isManuallyEdited) {
                             manualOverrides[key] = i;
@@ -1603,7 +1603,7 @@
                         let upstoxProfileName = "Main Portfolio";
                         let growwProfileName = "Main Portfolio";
 
-                        for(let i=0; i < Math.min(10, rows.length); i++) {
+                        for(let i=0; i < Math.min(100, rows.length); i++) {
                             if(rows[i]) {
                                 const rowStr = rows[i].join(" ").toLowerCase();
                                 function strVal(v) { return v ? v.toString().trim() : ""; }
@@ -1620,13 +1620,17 @@
                                     if (rows[i].length > 1 && strVal(rows[i][1])) upstoxProfileName = strVal(rows[i][1]);
                                 }
                                 
-                                if (rows[i][0] && strVal(rows[i][0]).toLowerCase() === "name") {
-                                    if (rows[i].length > 1 && strVal(rows[i][1])) {
-                                        growwProfileName = strVal(rows[i][1]);
+                                if (rowStr.includes("personal details") && rows[i+1] && strVal(rows[i+1][0]).toLowerCase() === "name") {
+                                    growwProfileName = strVal(rows[i+1][1]);
+                                }
+                                if (rowStr.includes("unique client code")) {
+                                    let sheetHeaders = Object.keys(rows[0] || {});
+                                    if (sheetHeaders.length > 1 && !sheetHeaders[1].toLowerCase().includes("unnamed")) {
+                                         growwProfileName = strVal(sheetHeaders[1]); 
                                     }
                                 }
 
-                                if(rowStr.includes("investment") && rowStr.includes("market value") && rowStr.includes("asset type")) {
+                                if(rowStr.includes("investment") && rowStr.includes("market value") && rowStr.includes("invested amount")) {
                                     headerRowIndex = i; isZerodhaConsole = false; isZerodhaKite = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "INDmoney"; break;
                                 } else if (rowStr.includes("symbol") && rowStr.includes("quantity available") && rowStr.includes("average price")) {
                                     headerRowIndex = i; isZerodhaConsole = true; isZerodhaKite = false; isUpstox = false; isScripbox = false; isGrowwMF = false; isGrowwStocks = false; detectedSource = "Zerodha"; break;
@@ -1678,9 +1682,9 @@
 
                                 if (isScripbox) {
                                     invName = rowObj["Security Name"];
-                                    mVal = this.parseCurrencyStr(rowObj["Current Value"]);
-                                    invested = this.parseCurrencyStr(rowObj["Amount Invested"]);
-                                    let days = this.parseCurrencyStr(rowObj["Weighted avg days"]);
+                                    mVal = app.parseCurrencyStr(rowObj["Current Value"]);
+                                    invested = app.parseCurrencyStr(rowObj["Amount Invested"]);
+                                    let days = app.parseCurrencyStr(rowObj["Weighted avg days"]);
                                     
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
                                     profileName = strValSafe(rowObj["Portfolio Name"]) || "Main Portfolio";
@@ -1690,7 +1694,7 @@
                                     rawSector = "NA";
                                     dPlanType = inferPlanType(invName);
 
-                                    let xirrVal = this.parseCurrencyStr(rowObj["Xirr(%)"]);
+                                    let xirrVal = app.parseCurrencyStr(rowObj["Xirr(%)"]);
                                     if (!isNaN(xirrVal)) {
                                         calcRate = Math.abs(xirrVal) < 2 ? xirrVal * 100 : xirrVal;
                                     } else if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && mVal > 0) {
@@ -1703,8 +1707,8 @@
                                     }
                                 } else if (isGrowwMF) {
                                     invName = strValSafe(rowObj["Scheme Name"]);
-                                    mVal = this.parseCurrencyStr(rowObj["Current Value"]);
-                                    invested = this.parseCurrencyStr(rowObj["Invested Value"]);
+                                    mVal = app.parseCurrencyStr(rowObj["Current Value"]);
+                                    invested = app.parseCurrencyStr(rowObj["Invested Value"]);
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
                                     
                                     profileName = growwProfileName;
@@ -1714,14 +1718,14 @@
                                     rawSector = "NA";
                                     dPlanType = inferPlanType(invName);
                                     
-                                    let rawXirr = this.parseCurrencyStr(rowObj["XIRR"]);
+                                    let rawXirr = app.parseCurrencyStr(rowObj["XIRR"]);
                                     if (!isNaN(rawXirr)) {
                                         calcRate = Math.abs(rawXirr) < 2 ? rawXirr * 100 : rawXirr;
                                     }
                                 } else if (isGrowwStocks) {
                                     invName = strValSafe(rowObj["Stock Name"]);
-                                    mVal = this.parseCurrencyStr(rowObj["Closing value"]);
-                                    invested = this.parseCurrencyStr(rowObj["Buy value"]);
+                                    mVal = app.parseCurrencyStr(rowObj["Closing value"]);
+                                    invested = app.parseCurrencyStr(rowObj["Buy value"]);
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && (mVal - invested) < 0) isLossMaking = true;
                                     
                                     profileName = growwProfileName;
@@ -1731,18 +1735,18 @@
                                     rawSector = "NA";
                                 } else if (isUpstox) {
                                     invName = rowObj["Scrip Name"];
-                                    mVal = this.parseCurrencyStr(rowObj["Valuation"]);
+                                    mVal = app.parseCurrencyStr(rowObj["Valuation"]);
                                     profileName = upstoxProfileName;
                                     rawType = "STOCK"; rawClass = "Equity"; rawCategory = "NA"; rawSector = "NA";
                                 } else if (isZerodhaConsole) {
                                     invName = rowObj["Symbol"];
-                                    let qty = this.parseCurrencyStr(rowObj["Quantity Available"]);
-                                    let price = this.parseCurrencyStr(rowObj["Previous Closing Price"]);
-                                    let avgPrice = this.parseCurrencyStr(rowObj["Average Price"]);
+                                    let qty = app.parseCurrencyStr(rowObj["Quantity Available"]);
+                                    let price = app.parseCurrencyStr(rowObj["Previous Closing Price"]);
+                                    let avgPrice = app.parseCurrencyStr(rowObj["Average Price"]);
                                     mVal = qty * price;
                                     if (isNaN(mVal) || mVal === 0) mVal = qty * avgPrice;
                                     invested = qty * avgPrice;
-                                    let pnl = this.parseCurrencyStr(rowObj["Unrealized P&L"]);
+                                    let pnl = app.parseCurrencyStr(rowObj["Unrealized P&L"]);
                                     if (!isNaN(pnl) && pnl < 0) isLossMaking = true;
                                     if (globalClientId) profileName = `Zerodha - ${globalClientId}`; 
                                     let instType = strValSafe(rowObj["Instrument Type"]);
@@ -1761,13 +1765,13 @@
                                     }
                                 } else if (isZerodhaKite) {
                                     invName = rowObj["Instrument"];
-                                    let qty = this.parseCurrencyStr(rowObj["Qty."]);
-                                    let price = this.parseCurrencyStr(rowObj["LTP"]);
-                                    let avgPrice = this.parseCurrencyStr(rowObj["Avg. cost"]);
-                                    mVal = this.parseCurrencyStr(rowObj["Cur. val"]);
+                                    let qty = app.parseCurrencyStr(rowObj["Qty."]);
+                                    let price = app.parseCurrencyStr(rowObj["LTP"]);
+                                    let avgPrice = app.parseCurrencyStr(rowObj["Avg. cost"]);
+                                    mVal = app.parseCurrencyStr(rowObj["Cur. val"]);
                                     if (isNaN(mVal)) mVal = qty * price;
                                     invested = qty * avgPrice;
-                                    let pnl = this.parseCurrencyStr(rowObj["P&L"]);
+                                    let pnl = app.parseCurrencyStr(rowObj["P&L"]);
                                     if (!isNaN(pnl) && pnl < 0) isLossMaking = true;
                                     if (globalClientId) profileName = `Zerodha - ${globalClientId}`; 
                                     
@@ -1778,8 +1782,8 @@
                                     }
                                 } else { // INDMoney fallback
                                     invName = rowObj["Investment"];
-                                    mVal = this.parseCurrencyStr(rowObj["Market Value"]);
-                                    invested = this.parseCurrencyStr(rowObj["Invested Amount"]);
+                                    mVal = app.parseCurrencyStr(rowObj["Market Value"]);
+                                    invested = app.parseCurrencyStr(rowObj["Invested Amount"]);
                                     if(isNaN(mVal)) mVal = invested;
                                     if (!isNaN(mVal) && !isNaN(invested) && invested > 0 && ((mVal - invested) / invested) * 100 < 0) isLossMaking = true;
                                     profileName = rowObj["First Name"] ? strValSafe(rowObj["First Name"]) : "Main Portfolio";
@@ -1793,7 +1797,7 @@
                                 }
 
                                 if (invName && !isNaN(mVal)) {
-                                    profileName = this.toTitleCase(profileName);
+                                    profileName = app.toTitleCase(profileName);
                                     newProfiles.add(profileName);
                                     let aTypeStr = rawType.toUpperCase();
                                     let aClassStr = rawClass.toLowerCase();
@@ -1816,7 +1820,7 @@
                                         else if (aClassStr.includes('hybrid') || aClassStr.includes('balanced') || aCatStr.includes('hybrid')) invType = 'hybrid';
                                     }
                                     
-                                    let rate = this.defaultRates[invType];
+                                    let rate = app.defaultRates[invType];
                                     if(rate === undefined) rate = 7.0;
                                     if (!isNaN(calcRate)) rate = calcRate;
 
@@ -1871,7 +1875,7 @@
                     if(newInvestments.length > 0) {
                         let importedProfiles = Array.from(newProfiles);
                         
-                        this.data.investments = this.data.investments.filter(i => {
+                        app.data.investments = app.data.investments.filter(i => {
                             let pName = i.profile || 'Main Portfolio';
                             let isProfileMatch = importedProfiles.includes(pName);
                             let isSourceMatch = (i.source === detectedSource || i.source === 'Legacy');
@@ -1882,36 +1886,36 @@
                             return true;
                         });
 
-                        this.data.investments = [...this.data.investments, ...newInvestments];
+                        app.data.investments = [...app.data.investments, ...newInvestments];
 
                         importedProfiles.forEach(p => {
-                            if(!this.data.profiles.includes(p)) {
-                                this.data.profiles.push(p);
-                                this.dashProfileFilters.push(p);
-                                this.invProfileFilters.push(p);
+                            if(!app.data.profiles.includes(p)) {
+                                app.data.profiles.push(p);
+                                app.dashProfileFilters.push(p);
+                                app.invProfileFilters.push(p);
                             }
                         });
 
-                        this.invClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                        this.invTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                        this.invCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                        this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
+                        app.invClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                        app.invTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                        app.invCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                        app.invSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
 
-                        this.dashClassFilters = [...this.invClassFilters];
-                        this.dashTypeFilters = [...this.invTypeFilters];
-                        this.dashCategoryFilters = [...this.invCategoryFilters];
-                        this.dashSectorFilters = [...this.invSectorFilters];
+                        app.dashClassFilters = [...app.invClassFilters];
+                        app.dashTypeFilters = [...app.invTypeFilters];
+                        app.dashCategoryFilters = [...app.invCategoryFilters];
+                        app.dashSectorFilters = [...app.invSectorFilters];
                         
-                        this.saveState();
-                        this.updateProfileDropdowns();
-                        this.renderInvestments();
-                        this.renderDashboard();
-                        this.renderSettingsProfiles();
+                        app.saveState();
+                        app.updateProfileDropdowns();
+                        app.renderInvestments();
+                        app.renderDashboard();
+                        app.renderSettingsProfiles();
                         
-                        this.switchView('home');
-                        this.showToast(`Imported ${newInvestments.length} assets from ${detectedSource}.`);
+                        app.switchView('home');
+                        app.showToast(`Imported ${newInvestments.length} assets from ${detectedSource}.`);
                     } else {
-                        this.showToast("No valid asset data found in the template.", true);
+                        app.showToast("No valid asset data found in the template.", true);
                     }
                 };
                 reader.readAsArrayBuffer(file);
@@ -1919,38 +1923,38 @@
             },
 
             sortInvestments(column) {
-                if (this.invSortColumn === column) {
-                    this.invSortAsc = !this.invSortAsc;
+                if (app.invSortColumn === column) {
+                    app.invSortAsc = !app.invSortAsc;
                 } else {
-                    this.invSortColumn = column;
-                    this.invSortAsc = true;
+                    app.invSortColumn = column;
+                    app.invSortAsc = true;
                 }
-                this.saveState();
-                this.renderInvestments();
+                app.saveState();
+                app.renderInvestments();
             },
 
             /* -------------------------------------------------------------------------- */
             /* GOAL BUCKET ASSIGNMENTS                                                    */
             /* -------------------------------------------------------------------------- */
             openAssignModal(goalId) {
-                this.assigningGoalId = goalId;
-                const goal = this.data.goals.find(g => g.id === goalId);
+                app.assigningGoalId = goalId;
+                const goal = app.data.goals.find(g => g.id === goalId);
                 if (!goal) return;
 
                 document.getElementById('assignModalTitle').innerText = `Bucket Assets into: ${goal.name}`;
                 const container = document.getElementById('assignAssetsList');
                 container.innerHTML = '';
 
-                if (this.data.investments.length === 0) {
+                if (app.data.investments.length === 0) {
                     container.innerHTML = `<span style="color:var(--text-secondary); text-align:center; padding:1rem;">No assets registered in portfolio yet. Upload a file or add assets first.</span>`;
                 } else {
-                    this.data.investments.forEach(inv => {
+                    app.data.investments.forEach(inv => {
                         const isAssignedToThis = inv.linkedGoalId === goalId;
                         const isAssignedToOther = inv.linkedGoalId && inv.linkedGoalId !== goalId;
                         
                         let assignedNotice = "";
                         if (isAssignedToOther) {
-                            const otherGoal = this.data.goals.find(g => g.id === inv.linkedGoalId);
+                            const otherGoal = app.data.goals.find(g => g.id === inv.linkedGoalId);
                             assignedNotice = `<span style="font-size:0.75rem; color:var(--warning-color); font-style:italic;">(Linked to: ${otherGoal ? otherGoal.name : 'Another Goal'})</span>`;
                         }
 
@@ -1961,7 +1965,7 @@
                                     <span style="font-size:0.9rem; font-weight:500; color:var(--text-primary);">${inv.name}</span>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:0.8rem;">
-                                    <span style="font-size:0.85rem; color:var(--accent-color); font-weight:600;">₹${this.formatCurrency(inv.value)}</span>
+                                    <span style="font-size:0.85rem; color:var(--accent-color); font-weight:600;">₹${app.formatCurrency(inv.value)}</span>
                                     ${assignedNotice}
                                 </div>
                             </label>
@@ -1974,51 +1978,51 @@
 
             closeAssignModal() {
                 document.getElementById('assignAssetsModal').style.display = 'none';
-                this.assigningGoalId = null;
+                app.assigningGoalId = null;
             },
 
             saveGoalAssignments() {
-                if (!this.assigningGoalId) return;
+                if (!app.assigningGoalId) return;
                 const checkboxes = document.querySelectorAll('.assign-asset-checkbox');
                 
                 checkboxes.forEach(cb => {
                     const invId = cb.value;
-                    const inv = this.data.investments.find(i => i.id === invId);
+                    const inv = app.data.investments.find(i => i.id === invId);
                     if (inv) {
                         if (cb.checked) {
-                            inv.linkedGoalId = this.assigningGoalId;
-                        } else if (inv.linkedGoalId === this.assigningGoalId) {
+                            inv.linkedGoalId = app.assigningGoalId;
+                        } else if (inv.linkedGoalId === app.assigningGoalId) {
                             inv.linkedGoalId = null; 
                         }
                     }
                 });
 
-                this.saveState();
-                this.closeAssignModal();
-                this.renderGoals();
-                this.renderInvestments();
-                this.showToast("Goal buckets updated successfully.");
+                app.saveState();
+                app.closeAssignModal();
+                app.renderGoals();
+                app.renderInvestments();
+                app.showToast("Goal buckets updated successfully.");
             },
 
             /* -------------------------------------------------------------------------- */
             /* GOAL MODAL & FIELDS HANDLING                                              */
             /* -------------------------------------------------------------------------- */
             openGoalModal() {
-                this.editingGoalId = null;
-                this.editingBatchId = null;
+                app.editingGoalId = null;
+                app.editingBatchId = null;
                 document.getElementById('goalFormTitle').innerText = "Define Target Goal";
                 document.getElementById('goalSubmitBtn').innerText = "Calculate & Save";
                 document.getElementById('goalForm').reset();
                 document.getElementById('goalType').value = 'standard';
-                this.toggleGoalFields();
+                app.toggleGoalFields();
                 document.getElementById('goalModal').style.display = 'flex';
                 document.getElementById('goalName').focus();
             },
 
             closeGoalModal() {
                 document.getElementById('goalModal').style.display = 'none';
-                this.editingGoalId = null;
-                this.editingBatchId = null;
+                app.editingGoalId = null;
+                app.editingBatchId = null;
             },
 
             toggleGoalFields() {
@@ -2059,8 +2063,8 @@
                     nameLabel.innerText = "Child Name";
                     nameInput.placeholder = "e.g., Arjun";
                     
-                    if (!this.editingBatchId) {
-                        this.generateEduTimeline();
+                    if (!app.editingBatchId) {
+                        app.generateEduTimeline();
                     }
                 }
             },
@@ -2081,7 +2085,7 @@
                 stages.push({ name: `PG (Lump Sum)`, yearOffset: Math.max(4, 16 - grade) });
 
                 stages.forEach((stage) => {
-                    const targetYear = this.currentYear + stage.yearOffset;
+                    const targetYear = app.currentYear + stage.yearOffset;
                     container.innerHTML += `
                         <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-light); padding:0.6rem; border-radius:4px; border: 1px solid transparent; transition: 0.2s;">
                             <div style="display:flex; flex-direction:column; flex:1;">
@@ -2112,12 +2116,12 @@
                 
                 if (type === 'education') {
                     const inputs = document.querySelectorAll('.edu-cost-input');
-                    const batchId = this.editingBatchId || Date.now().toString();
+                    const batchId = app.editingBatchId || Date.now().toString();
                     const grade = parseInt(document.getElementById('eduCurrentGrade').value) || 1;
                     let addedCount = 0;
                     
-                    if (this.editingBatchId) {
-                        this.data.goals = this.data.goals.filter(g => g.batchId !== this.editingBatchId);
+                    if (app.editingBatchId) {
+                        app.data.goals = app.data.goals.filter(g => g.batchId !== app.editingBatchId);
                     }
                     
                     inputs.forEach(input => {
@@ -2141,19 +2145,19 @@
                                 targetYear: targetYear,
                                 fv: cost * Math.pow((1 + (inf / 100)), yrs)
                             };
-                            this.data.goals.push(goalData);
+                            app.data.goals.push(goalData);
                             addedCount++;
                         }
                     });
                     
-                    if(addedCount === 0 && !this.editingBatchId) {
+                    if(addedCount === 0 && !app.editingBatchId) {
                         alert("Please enter a cost for at least one educational stage to save the plan.");
                         return;
                     }
 
                 } else {
                     let goalData = {
-                        id: this.editingGoalId || Date.now().toString(),
+                        id: app.editingGoalId || Date.now().toString(),
                         type: type,
                         name: baseName,
                         inflation: inf
@@ -2164,39 +2168,39 @@
                         goalData.yrs = parseInt(document.getElementById('years').value);
                         goalData.cExp = goalData.cv; 
                         goalData.fv = goalData.cv * Math.pow((1+(inf/100)), goalData.yrs);
-                        goalData.targetYear = this.currentYear + goalData.yrs;
+                        goalData.targetYear = app.currentYear + goalData.yrs;
                     } else if (type === 'retirement') {
                         goalData.exp = parseFloat(document.getElementById('monthlyExpenses').value);
                         goalData.yTo = parseInt(document.getElementById('yearsToRetire').value);
                         goalData.yIn = parseInt(document.getElementById('yearsInRetirement').value);
                         goalData.pRet = parseFloat(document.getElementById('postRetirementReturn').value);
                         goalData.cExp = goalData.exp * 12; 
-                        goalData.fv = this.calcRetFV(goalData.exp, goalData.yTo, goalData.yIn, inf, goalData.pRet);
-                        goalData.targetYear = this.currentYear + goalData.yTo;
+                        goalData.fv = app.calcRetFV(goalData.exp, goalData.yTo, goalData.yIn, inf, goalData.pRet);
+                        goalData.targetYear = app.currentYear + goalData.yTo;
                     } 
 
-                    if (this.editingGoalId) {
-                        const idx = this.data.goals.findIndex(g => g.id === this.editingGoalId);
-                        this.data.goals[idx] = goalData;
+                    if (app.editingGoalId) {
+                        const idx = app.data.goals.findIndex(g => g.id === app.editingGoalId);
+                        app.data.goals[idx] = goalData;
                     } else {
-                        this.data.goals.push(goalData);
+                        app.data.goals.push(goalData);
                     }
                 }
 
-                this.saveState();
-                this.closeGoalModal();
-                this.renderGoals();
-                this.renderDashboard();
-                this.showToast("Goal saved successfully.");
+                app.saveState();
+                app.closeGoalModal();
+                app.renderGoals();
+                app.renderDashboard();
+                app.showToast("Goal saved successfully.");
             },
 
             editGoal(id) {
-                const g = this.data.goals.find(g => g.id === id);
+                const g = app.data.goals.find(g => g.id === id);
                 if (!g) return;
 
                 if (g.type === 'edu_stage' && g.batchId) {
-                    this.editingBatchId = g.batchId;
-                    this.editingGoalId = null;
+                    app.editingBatchId = g.batchId;
+                    app.editingGoalId = null;
                     
                     document.getElementById('goalFormTitle').innerText = "Edit Education Plan";
                     document.getElementById('goalSubmitBtn').innerText = "Update Entire Plan";
@@ -2204,13 +2208,13 @@
                     document.getElementById('goalType').value = 'education';
                     document.getElementById('eduCurrentGrade').value = g.batchGrade || 1;
                     
-                    this.generateEduTimeline();
-                    this.toggleGoalFields();
+                    app.generateEduTimeline();
+                    app.toggleGoalFields();
                     
                     document.getElementById('goalName').value = g.batchName;
                     document.getElementById('inflation').value = g.inflation;
 
-                    const batchGoals = this.data.goals.filter(goal => goal.batchId === g.batchId);
+                    const batchGoals = app.data.goals.filter(goal => goal.batchId === g.batchId);
                     batchGoals.forEach(bg => {
                         const input = document.querySelector(`.edu-cost-input[data-name="${bg.stageName}"]`);
                         if (input) input.value = bg.cExp;
@@ -2220,20 +2224,20 @@
                     return;
                 }
 
-                this.editingGoalId = id;
-                this.editingBatchId = null;
+                app.editingGoalId = id;
+                app.editingBatchId = null;
                 document.getElementById('goalFormTitle').innerText = "Edit Goal";
                 document.getElementById('goalSubmitBtn').innerText = "Update Goal";
                 
                 document.getElementById('goalType').value = g.type === 'edu_stage' ? 'edu_stage' : g.type;
-                this.toggleGoalFields();
+                app.toggleGoalFields();
                 
                 document.getElementById('goalName').value = g.name;
                 document.getElementById('inflation').value = g.inflation;
 
                 if (g.type === 'standard' || g.type === 'edu_stage') {
                     document.getElementById('currentValue').value = g.cv || g.cExp || g.pv || g.currentValue;
-                    document.getElementById('years').value = g.yrs || (g.targetYear ? g.targetYear - this.currentYear : 0);
+                    document.getElementById('years').value = g.yrs || (g.targetYear ? g.targetYear - app.currentYear : 0);
                 } else if (g.type === 'retirement') {
                     document.getElementById('monthlyExpenses').value = g.exp;
                     document.getElementById('yearsToRetire').value = g.yTo;
@@ -2245,48 +2249,48 @@
 
             deleteGoal(id) {
                 if(confirm("Remove this specific goal? Unassigned assets will be unlinked.")) {
-                    this.data.goals = this.data.goals.filter(g => g.id !== id);
-                    this.data.investments.forEach(inv => {
+                    app.data.goals = app.data.goals.filter(g => g.id !== id);
+                    app.data.investments.forEach(inv => {
                         if (inv.linkedGoalId === id) inv.linkedGoalId = null;
                     });
-                    if(this.editingGoalId === id) this.closeGoalModal();
-                    this.saveState();
-                    this.renderGoals();
-                    this.renderInvestments();
-                    this.renderDashboard();
-                    this.showToast("Goal removed.");
+                    if(app.editingGoalId === id) app.closeGoalModal();
+                    app.saveState();
+                    app.renderGoals();
+                    app.renderInvestments();
+                    app.renderDashboard();
+                    app.showToast("Goal removed.");
                 }
             },
 
             sortGoals(column) {
-                if (this.sortColumn === column) {
-                    this.sortAsc = !this.sortAsc; 
+                if (app.sortColumn === column) {
+                    app.sortAsc = !app.sortAsc; 
                 } else {
-                    this.sortColumn = column;
-                    this.sortAsc = true; 
+                    app.sortColumn = column;
+                    app.sortAsc = true; 
                 }
-                this.saveState();
-                this.renderGoals();
+                app.saveState();
+                app.renderGoals();
             },
 
             /* -------------------------------------------------------------------------- */
             /* UNIFIED CASCADING FILTER PANEL LOGIC                                       */
             /* -------------------------------------------------------------------------- */
             openFilterPanel(mode) {
-                this.currentFilterMode = mode;
+                app.currentFilterMode = mode;
                 
                 if (mode === 'dash') {
-                    this.tempFilters.profiles = [...this.dashProfileFilters];
-                    this.tempFilters.classes = [...this.dashClassFilters];
-                    this.tempFilters.types = [...this.dashTypeFilters];
-                    this.tempFilters.categories = [...this.dashCategoryFilters];
-                    this.tempFilters.sectors = [...this.dashSectorFilters];
+                    app.tempFilters.profiles = [...app.dashProfileFilters];
+                    app.tempFilters.classes = [...app.dashClassFilters];
+                    app.tempFilters.types = [...app.dashTypeFilters];
+                    app.tempFilters.categories = [...app.dashCategoryFilters];
+                    app.tempFilters.sectors = [...app.dashSectorFilters];
                 } else {
-                    this.tempFilters.profiles = [...this.invProfileFilters];
-                    this.tempFilters.classes = [...this.invClassFilters];
-                    this.tempFilters.types = [...this.invTypeFilters];
-                    this.tempFilters.categories = [...this.invCategoryFilters];
-                    this.tempFilters.sectors = [...this.invSectorFilters];
+                    app.tempFilters.profiles = [...app.invProfileFilters];
+                    app.tempFilters.classes = [...app.invClassFilters];
+                    app.tempFilters.types = [...app.invTypeFilters];
+                    app.tempFilters.categories = [...app.invCategoryFilters];
+                    app.tempFilters.sectors = [...app.invSectorFilters];
                 }
 
                 const panel = document.getElementById('globalFilterPanel');
@@ -2298,7 +2302,7 @@
                     document.getElementById('invFilterContainer').appendChild(panel);
                 }
 
-                this.renderFilterPanel();
+                app.renderFilterPanel();
             },
 
             closeFilterPanel() {
@@ -2307,57 +2311,57 @@
             },
 
             applyFilters() {
-                if (this.currentFilterMode === 'dash') {
-                    this.dashProfileFilters = [...this.tempFilters.profiles];
-                    this.dashClassFilters = [...this.tempFilters.classes];
-                    this.dashTypeFilters = [...this.tempFilters.types];
-                    this.dashCategoryFilters = [...this.tempFilters.categories];
-                    this.dashSectorFilters = [...this.tempFilters.sectors];
-                    this.renderDashboard();
+                if (app.currentFilterMode === 'dash') {
+                    app.dashProfileFilters = [...app.tempFilters.profiles];
+                    app.dashClassFilters = [...app.tempFilters.classes];
+                    app.dashTypeFilters = [...app.tempFilters.types];
+                    app.dashCategoryFilters = [...app.tempFilters.categories];
+                    app.dashSectorFilters = [...app.tempFilters.sectors];
+                    app.renderDashboard();
                 } else {
-                    this.invProfileFilters = [...this.tempFilters.profiles];
-                    this.invClassFilters = [...this.tempFilters.classes];
-                    this.invTypeFilters = [...this.tempFilters.types];
-                    this.invCategoryFilters = [...this.tempFilters.categories];
-                    this.invSectorFilters = [...this.tempFilters.sectors];
-                    this.renderInvestments();
+                    app.invProfileFilters = [...app.tempFilters.profiles];
+                    app.invClassFilters = [...app.tempFilters.classes];
+                    app.invTypeFilters = [...app.tempFilters.types];
+                    app.invCategoryFilters = [...app.tempFilters.categories];
+                    app.invSectorFilters = [...app.tempFilters.sectors];
+                    app.renderInvestments();
                 }
-                this.closeFilterPanel();
-                this.saveState();
+                app.closeFilterPanel();
+                app.saveState();
             },
 
             updateTempFilter(level, val, isChecked) {
                 if(isChecked) {
-                    if (!this.tempFilters[level].includes(val)) this.tempFilters[level].push(val);
+                    if (!app.tempFilters[level].includes(val)) app.tempFilters[level].push(val);
                 } else {
-                    this.tempFilters[level] = this.tempFilters[level].filter(x => x !== val);
+                    app.tempFilters[level] = app.tempFilters[level].filter(x => x !== val);
                 }
-                this.renderFilterPanel();
+                app.renderFilterPanel();
             },
 
             selectAllTemp(level, isAll) {
                 if(level === 'profiles') {
-                    this.tempFilters.profiles = isAll ? [...this.data.profiles] : [];
+                    app.tempFilters.profiles = isAll ? [...app.data.profiles] : [];
                 } else if (level === 'classes') {
-                    let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
-                    this.tempFilters.classes = isAll ? [...new Set(dataP.map(i => i.rawAssetClass || i.type))] : [];
+                    let dataP = app.data.investments.filter(i => app.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
+                    app.tempFilters.classes = isAll ? [...new Set(dataP.map(i => i.rawAssetClass || i.type))] : [];
                 } else if (level === 'types') {
-                    let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
-                    let dataC = dataP.filter(i => this.tempFilters.classes.includes(i.rawAssetClass || i.type));
-                    this.tempFilters.types = isAll ? [...new Set(dataC.map(i => i.rawAssetType || 'Other'))] : [];
+                    let dataP = app.data.investments.filter(i => app.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
+                    let dataC = dataP.filter(i => app.tempFilters.classes.includes(i.rawAssetClass || i.type));
+                    app.tempFilters.types = isAll ? [...new Set(dataC.map(i => i.rawAssetType || 'Other'))] : [];
                 } else if (level === 'categories') {
-                    let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
-                    let dataC = dataP.filter(i => this.tempFilters.classes.includes(i.rawAssetClass || i.type));
-                    let dataT = dataC.filter(i => this.tempFilters.types.includes(i.rawAssetType || 'Other'));
-                    this.tempFilters.categories = isAll ? [...new Set(dataT.map(i => i.rawCategory || 'NA'))] : [];
+                    let dataP = app.data.investments.filter(i => app.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
+                    let dataC = dataP.filter(i => app.tempFilters.classes.includes(i.rawAssetClass || i.type));
+                    let dataT = dataC.filter(i => app.tempFilters.types.includes(i.rawAssetType || 'Other'));
+                    app.tempFilters.categories = isAll ? [...new Set(dataT.map(i => i.rawCategory || 'NA'))] : [];
                 } else if (level === 'sectors') {
-                    let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
-                    let dataC = dataP.filter(i => this.tempFilters.classes.includes(i.rawAssetClass || i.type));
-                    let dataT = dataC.filter(i => this.tempFilters.types.includes(i.rawAssetType || 'Other'));
-                    let dataCat = dataT.filter(i => this.tempFilters.categories.includes(i.rawCategory || 'NA'));
-                    this.tempFilters.sectors = isAll ? [...new Set(dataCat.map(i => i.rawSector || 'NA'))] : [];
+                    let dataP = app.data.investments.filter(i => app.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
+                    let dataC = dataP.filter(i => app.tempFilters.classes.includes(i.rawAssetClass || i.type));
+                    let dataT = dataC.filter(i => app.tempFilters.types.includes(i.rawAssetType || 'Other'));
+                    let dataCat = dataT.filter(i => app.tempFilters.categories.includes(i.rawCategory || 'NA'));
+                    app.tempFilters.sectors = isAll ? [...new Set(dataCat.map(i => i.rawSector || 'NA'))] : [];
                 }
-                this.renderFilterPanel();
+                app.renderFilterPanel();
             },
 
             renderFilterPanel() {
@@ -2369,55 +2373,55 @@
                 if(!fpProf || !fpClass || !fpType || !fpCat || !fpSec) return;
 
                 let profHtml = '';
-                [...this.data.profiles].sort().forEach(p => {
-                    let checked = this.tempFilters.profiles.includes(p) ? 'checked' : '';
+                [...app.data.profiles].sort().forEach(p => {
+                    let checked = app.tempFilters.profiles.includes(p) ? 'checked' : '';
                     profHtml += `<label><input type="checkbox" value="${p}" ${checked} onchange="app.updateTempFilter('profiles', this.value, this.checked)"> ${p}</label>`;
                 });
                 fpProf.innerHTML = profHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">No profiles</span>';
 
-                let dataP = this.data.investments.filter(i => this.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
+                let dataP = app.data.investments.filter(i => app.tempFilters.profiles.includes(i.profile || 'Main Portfolio'));
                 
                 let availClasses = [...new Set(dataP.map(i => i.rawAssetClass || i.type))].sort();
                 let classHtml = '';
                 availClasses.forEach(c => {
-                    let checked = this.tempFilters.classes.includes(c) ? 'checked' : '';
+                    let checked = app.tempFilters.classes.includes(c) ? 'checked' : '';
                     classHtml += `<label><input type="checkbox" value="${c}" ${checked} onchange="app.updateTempFilter('classes', this.value, this.checked)"> ${c}</label>`;
                 });
                 fpClass.innerHTML = classHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">Select profiles first</span>';
 
-                let dataC = dataP.filter(i => this.tempFilters.classes.includes(i.rawAssetClass || i.type));
+                let dataC = dataP.filter(i => app.tempFilters.classes.includes(i.rawAssetClass || i.type));
 
                 let availTypes = [...new Set(dataC.map(i => i.rawAssetType || 'Other'))].sort();
                 let typeHtml = '';
                 availTypes.forEach(t => {
-                    let checked = this.tempFilters.types.includes(t) ? 'checked' : '';
+                    let checked = app.tempFilters.types.includes(t) ? 'checked' : '';
                     typeHtml += `<label><input type="checkbox" value="${t}" ${checked} onchange="app.updateTempFilter('types', this.value, this.checked)"> ${t}</label>`;
                 });
                 fpType.innerHTML = typeHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">Select classes first</span>';
 
-                let dataT = dataC.filter(i => this.tempFilters.types.includes(i.rawAssetType || 'Other'));
+                let dataT = dataC.filter(i => app.tempFilters.types.includes(i.rawAssetType || 'Other'));
 
                 let availCats = [...new Set(dataT.map(i => i.rawCategory || 'NA'))].sort();
                 let catHtml = '';
                 availCats.forEach(c => {
-                    let checked = this.tempFilters.categories.includes(c) ? 'checked' : '';
+                    let checked = app.tempFilters.categories.includes(c) ? 'checked' : '';
                     catHtml += `<label><input type="checkbox" value="${c}" ${checked} onchange="app.updateTempFilter('categories', this.value, this.checked)"> ${c}</label>`;
                 });
                 fpCat.innerHTML = catHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">Select types first</span>';
                 
-                let dataCat = dataT.filter(i => this.tempFilters.categories.includes(i.rawCategory || 'NA'));
+                let dataCat = dataT.filter(i => app.tempFilters.categories.includes(i.rawCategory || 'NA'));
                 
                 let availSectors = [...new Set(dataCat.map(i => i.rawSector || 'NA'))].sort();
                 let secHtml = '';
                 availSectors.forEach(s => {
-                    let checked = this.tempFilters.sectors.includes(s) ? 'checked' : '';
+                    let checked = app.tempFilters.sectors.includes(s) ? 'checked' : '';
                     secHtml += `<label><input type="checkbox" value="${s}" ${checked} onchange="app.updateTempFilter('sectors', this.value, this.checked)"> ${s}</label>`;
                 });
                 fpSec.innerHTML = secHtml || '<span style="color:var(--text-secondary);font-size:0.8rem;">Select categories first</span>';
             },
 
             renderInvestments() {
-                this.renderPortfolioTable();
+                app.renderPortfolioTable();
             },
 
             renderPortfolioTable() {
@@ -2425,7 +2429,7 @@
                 if(!container) return;
                 container.innerHTML = '';
 
-                const activeProfiles = this.data.profiles.filter(p => this.invProfileFilters.includes(p));
+                const activeProfiles = app.data.profiles.filter(p => app.invProfileFilters.includes(p));
 
                 if (activeProfiles.length === 0) {
                     container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No profiles match your selected filters.</div>`;
@@ -2433,19 +2437,19 @@
                 }
 
                 activeProfiles.forEach(profile => {
-                    let profInvs = this.data.investments.filter(i => i.profile === profile || (!i.profile && profile === 'Main Portfolio'));
+                    let profInvs = app.data.investments.filter(i => i.profile === profile || (!i.profile && profile === 'Main Portfolio'));
 
                     profInvs = profInvs.filter(i => {
-                        return this.invClassFilters.includes(i.rawAssetClass || i.type) &&
-                               this.invTypeFilters.includes(i.rawAssetType || 'Other') &&
-                               this.invCategoryFilters.includes(i.rawCategory || 'NA') &&
-                               this.invSectorFilters.includes(i.rawSector || 'NA');
+                        return app.invClassFilters.includes(i.rawAssetClass || i.type) &&
+                               app.invTypeFilters.includes(i.rawAssetType || 'Other') &&
+                               app.invCategoryFilters.includes(i.rawCategory || 'NA') &&
+                               app.invSectorFilters.includes(i.rawSector || 'NA');
                     });
 
                     if (profInvs.length === 0) return; 
 
                     const processedInv = profInvs.map(inv => {
-                        let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                        let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
                         let matDisplay = inv.maturityDate ? new Date(inv.maturityDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '';
                         let sortMat = inv.maturityDate ? new Date(inv.maturityDate).getTime() : 9999999999999; 
                         
@@ -2458,15 +2462,15 @@
 
                     processedInv.sort((a, b) => {
                         let valA, valB;
-                        if (this.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
-                        else if (this.invSortColumn === 'value') { valA = a.value; valB = b.value; }
-                        else if (this.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
-                        else if (this.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
-                        else if (this.invSortColumn === 'maturity') { valA = a.sortMat; valB = b.sortMat; }
-                        else if (this.invSortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
+                        if (app.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+                        else if (app.invSortColumn === 'value') { valA = a.value; valB = b.value; }
+                        else if (app.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
+                        else if (app.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
+                        else if (app.invSortColumn === 'maturity') { valA = a.sortMat; valB = b.sortMat; }
+                        else if (app.invSortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
 
-                        if (valA < valB) return this.invSortAsc ? -1 : 1;
-                        if (valA > valB) return this.invSortAsc ? 1 : -1;
+                        if (valA < valB) return app.invSortAsc ? -1 : 1;
+                        if (valA > valB) return app.invSortAsc ? 1 : -1;
                         return 0;
                     });
 
@@ -2500,7 +2504,7 @@
                         let goalBadge = "UNASSIGNED";
                         let goalStyle = "background: var(--surface-light); color: var(--text-secondary);";
                         if (inv.linkedGoalId) {
-                            const goal = this.data.goals.find(g => g.id === inv.linkedGoalId);
+                            const goal = app.data.goals.find(g => g.id === inv.linkedGoalId);
                             if (goal) {
                                 goalBadge = goal.name;
                                 goalStyle = "background: rgba(56, 189, 248, 0.2); color: var(--accent-color); border: 1px solid var(--accent-color);";
@@ -2522,15 +2526,15 @@
                                 <td>
                                     <div class="name-cell">
                                         ${inv.name} ${warningIcon}
-                                        <span class="badge" style="border-left: 2px solid ${this.getTypeColor(inv.type)}">${displayClass}</span>
+                                        <span class="badge" style="border-left: 2px solid ${app.getTypeColor(inv.type)}">${displayClass}</span>
                                         ${planTypeBadge}
                                     </div>
                                 </td>
                                 <td><span class="badge" style="${goalStyle} white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; display: inline-block; vertical-align: bottom;" title="${goalBadge}">${goalBadge}</span></td>
-                                <td>₹${this.formatCurrency(inv.value)}</td>
+                                <td>₹${app.formatCurrency(inv.value)}</td>
                                 <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
                                 <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
-                                <td class="highlight-val">₹${this.formatCurrency(inv.computedFV)}</td>
+                                <td class="highlight-val">₹${app.formatCurrency(inv.computedFV)}</td>
                                 <td style="text-align: center; white-space: nowrap;">
                                     ${splitActionHtml}
                                     <button class="icon-btn" onclick="event.stopPropagation(); app.editInv('${inv.id}')" style="margin-right: 5px;">✎</button>
@@ -2551,7 +2555,7 @@
                                         👤 ${profile}
                                     </h3>
                                     <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">
-                                        Assigned to Goals: <strong style="color: var(--text-primary);">₹${this.formatCurrency(totalAssignedFV)}</strong> of ₹${this.formatCurrency(totalFV)} Projected FV
+                                        Assigned to Goals: <strong style="color: var(--text-primary);">₹${app.formatCurrency(totalAssignedFV)}</strong> of ₹${app.formatCurrency(totalFV)} Projected FV
                                     </div>
                                 </div>
                                 <div style="width: 200px; min-width: 150px;">
@@ -2582,10 +2586,10 @@
                                         ${tbodyHtml}
                                         <tr class="total-row">
                                             <td colspan="2">TOTAL</td>
-                                            <td>₹${this.formatCurrency(totalCV)}</td>
+                                            <td>₹${app.formatCurrency(totalCV)}</td>
                                             <td></td>
                                             <td></td>
-                                            <td class="highlight-val">₹${this.formatCurrency(totalFV)}</td>
+                                            <td class="highlight-val">₹${app.formatCurrency(totalFV)}</td>
                                             <td></td>
                                         </tr>
                                     </tbody>
@@ -2601,7 +2605,7 @@
                     activeProfiles.forEach(profile => {
                         const iconEl = document.getElementById(`sort-inv-${col}-${profile.replace(/\s+/g,'-')}`);
                         if(iconEl) {
-                            if (this.invSortColumn === col) iconEl.innerText = this.invSortAsc ? ' ▲' : ' ▼';
+                            if (app.invSortColumn === col) iconEl.innerText = app.invSortAsc ? ' ▲' : ' ▼';
                             else iconEl.innerText = '';
                         }
                     });
@@ -2625,32 +2629,32 @@
             /* ALLOCATION GROUPING LOGIC & CROSS-LINKING                                  */
             /* -------------------------------------------------------------------------- */
             setAllocationGroupBy(group) {
-                this.allocationGroupBy = group;
-                this.saveState();
-                this.renderDashboard();
+                app.allocationGroupBy = group;
+                app.saveState();
+                app.renderDashboard();
             },
 
             goToPortfolioFilter(grouping, keyStr) {
                 if (grouping === 'class') {
-                    this.invClassFilters = [keyStr];
-                    this.invTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                    this.invCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                    this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.invClassFilters = [keyStr];
+                    app.invTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.invCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.invSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
                 } else if (grouping === 'type') {
-                    this.invTypeFilters = [keyStr];
-                    this.invClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                    this.invCategoryFilters = [...new Set(this.data.investments.map(i => i.rawCategory || 'NA'))];
-                    this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.invTypeFilters = [keyStr];
+                    app.invClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.invCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.invSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
                 } else if (grouping === 'category') {
-                    this.invCategoryFilters = [keyStr];
-                    this.invClassFilters = [...new Set(this.data.investments.map(i => i.rawAssetClass || i.type))];
-                    this.invTypeFilters = [...new Set(this.data.investments.map(i => i.rawAssetType || 'Other'))];
-                    this.invSectorFilters = [...new Set(this.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.invCategoryFilters = [keyStr];
+                    app.invClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.invTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.invSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
                 }
                 
-                this.invProfileFilters = [...this.dashProfileFilters];
-                this.saveState();
-                this.switchView('investments');
+                app.invProfileFilters = [...app.dashProfileFilters];
+                app.saveState();
+                app.switchView('investments');
             },
 
             renderAllocationTable(tbodyId, colHeaderId, investmentsList, isDashboard = false) {
@@ -2658,13 +2662,13 @@
                 let totalVal = 0;
 
                 investmentsList.forEach(inv => {
-                    let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
                     totalVal += (inv.value || 0);
 
                     let key = 'Other';
-                    if (this.allocationGroupBy === 'class') key = inv.rawAssetClass || inv.type;
-                    else if (this.allocationGroupBy === 'type') key = inv.rawAssetType || 'Other';
-                    else if (this.allocationGroupBy === 'category') key = inv.rawCategory || 'NA';
+                    if (app.allocationGroupBy === 'class') key = inv.rawAssetClass || inv.type;
+                    else if (app.allocationGroupBy === 'type') key = inv.rawAssetType || 'Other';
+                    else if (app.allocationGroupBy === 'category') key = inv.rawCategory || 'NA';
 
                     if (!key || key.trim() === '') key = 'Uncategorized';
 
@@ -2681,9 +2685,9 @@
                 
                 const colHeader = document.getElementById(colHeaderId);
                 if (colHeader) {
-                    if (this.allocationGroupBy === 'class') colHeader.innerText = 'Asset Class';
-                    else if (this.allocationGroupBy === 'type') colHeader.innerText = 'Asset Type';
-                    else if (this.allocationGroupBy === 'category') colHeader.innerText = 'Category';
+                    if (app.allocationGroupBy === 'class') colHeader.innerText = 'Asset Class';
+                    else if (app.allocationGroupBy === 'type') colHeader.innerText = 'Asset Type';
+                    else if (app.allocationGroupBy === 'category') colHeader.innerText = 'Category';
                 }
 
                 const sortedTypes = Object.keys(typeTotals).sort((a, b) => typeTotals[b].cv - typeTotals[a].cv);
@@ -2716,15 +2720,15 @@
                     if (isDashboard) {
                         tr.className += " clickable-row";
                         const safeKey = typeKey.replace(/'/g, "\\'");
-                        tr.setAttribute('onclick', `app.goToPortfolioFilter('${this.allocationGroupBy}', '${safeKey}')`);
+                        tr.setAttribute('onclick', `app.goToPortfolioFilter('${app.allocationGroupBy}', '${safeKey}')`);
                         tr.title = `View ${typeKey} in Portfolio`;
                     }
 
                     tr.innerHTML = `
                         <td style="text-transform: capitalize; font-weight: 500;">${typeKey} ${warningIcon}</td>
-                        <td>₹${this.formatCurrency(data.cv)}</td>
+                        <td>₹${app.formatCurrency(data.cv)}</td>
                         <td style="color: ${avgGrowth < 0 ? 'var(--danger-color)' : 'var(--text-primary)'}; font-weight: 600;">${avgGrowth}%</td>
-                        <td style="color: var(--accent-color); font-weight: 600;">₹${this.formatCurrency(data.fv)}</td>
+                        <td style="color: var(--accent-color); font-weight: 600;">₹${app.formatCurrency(data.fv)}</td>
                         <td>${pct}%</td>
                     `;
                     tbody.appendChild(tr);
@@ -2738,15 +2742,15 @@
                 ['name', 'year', 'cExp', 'inflation', 'fv'].forEach(col => {
                     const iconEl = document.getElementById(`sort-${col}`);
                     if(iconEl) {
-                        if (this.sortColumn === col) {
-                            iconEl.innerText = this.sortAsc ? ' ▲' : ' ▼';
+                        if (app.sortColumn === col) {
+                            iconEl.innerText = app.sortAsc ? ' ▲' : ' ▼';
                         } else {
                             iconEl.innerText = '';
                         }
                     }
                 });
 
-                if (this.data.goals.length === 0) {
+                if (app.data.goals.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No goals defined yet. Click "+ Define New Goal" above.</td></tr>`;
                     return;
                 }
@@ -2754,22 +2758,22 @@
                 let totalCExp = 0;
                 let totalFV = 0;
 
-                const processedGoals = this.data.goals.map(goal => {
+                const processedGoals = app.data.goals.map(goal => {
                     let cExp = goal.cExp || (goal.type === 'retirement' ? (goal.exp * 12) : (goal.cv || goal.pv || 0));
                     let fv = goal.fv || goal.targetValue || 0;
                     let tYear = goal.targetYear;
                     if (!tYear) {
-                        if (goal.type === 'standard' || goal.type === 'edu_stage') tYear = this.currentYear + (goal.yrs || 0);
-                        else if (goal.type === 'retirement') tYear = this.currentYear + (goal.yTo || 0);
-                        else tYear = this.currentYear;
+                        if (goal.type === 'standard' || goal.type === 'edu_stage') tYear = app.currentYear + (goal.yrs || 0);
+                        else if (goal.type === 'retirement') tYear = app.currentYear + (goal.yTo || 0);
+                        else tYear = app.currentYear;
                     }
 
                     let assignedValuation = 0;
                     let assignedFV = 0;
-                    this.data.investments.forEach(inv => {
+                    app.data.investments.forEach(inv => {
                         if (inv.linkedGoalId === goal.id) {
                             assignedValuation += (inv.value || 0);
-                            assignedFV += this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                            assignedFV += app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
                         }
                     });
 
@@ -2780,14 +2784,14 @@
 
                 processedGoals.sort((a, b) => {
                     let valA, valB;
-                    if (this.sortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
-                    else if (this.sortColumn === 'year') { valA = a.computedYear; valB = b.computedYear; }
-                    else if (this.sortColumn === 'cExp') { valA = a.computedCExp; valB = b.computedCExp; }
-                    else if (this.sortColumn === 'inflation') { valA = a.inflation; valB = b.inflation; }
-                    else if (this.sortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
+                    if (app.sortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+                    else if (app.sortColumn === 'year') { valA = a.computedYear; valB = b.computedYear; }
+                    else if (app.sortColumn === 'cExp') { valA = a.computedCExp; valB = b.computedCExp; }
+                    else if (app.sortColumn === 'inflation') { valA = a.inflation; valB = b.inflation; }
+                    else if (app.sortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
 
-                    if (valA < valB) return this.sortAsc ? -1 : 1;
-                    if (valA > valB) return this.sortAsc ? 1 : -1;
+                    if (valA < valB) return app.sortAsc ? -1 : 1;
+                    if (valA > valB) return app.sortAsc ? 1 : -1;
                     return 0;
                 });
 
@@ -2808,7 +2812,7 @@
                                     <span class="badge" style="background:${badgeColor}; color:${badgeTextColor}; font-size:0.55rem;">${displayType}</span>
                                 </div>
                                 <div style="font-size:0.75rem; color:var(--text-secondary);">
-                                    Bucketed: <span style="color:var(--success-color); font-weight:600;">₹${this.formatCurrency(goal.assignedValuation)}</span> (${goal.progressPct.toFixed(1)}% funded)
+                                    Bucketed: <span style="color:var(--success-color); font-weight:600;">₹${app.formatCurrency(goal.assignedValuation)}</span> (${goal.progressPct.toFixed(1)}% funded)
                                 </div>
                                 <div class="goal-progress-track">
                                     <div class="goal-progress-fill" style="width: ${goal.progressPct}%;"></div>
@@ -2816,9 +2820,9 @@
                             </div>
                         </td>
                         <td>${goal.computedYear}</td>
-                        <td>${this.formatCurrency(goal.computedCExp)}</td>
+                        <td>${app.formatCurrency(goal.computedCExp)}</td>
                         <td>${goal.inflation}%</td>
-                        <td class="highlight-val">${this.formatCurrency(goal.computedFV)}</td>
+                        <td class="highlight-val">${app.formatCurrency(goal.computedFV)}</td>
                         <td style="text-align: center;">
                             <button onclick="app.openAssignModal('${goal.id}')" class="btn-outline" style="width:auto; padding:0.3rem 0.6rem; font-size:0.75rem; border-radius:15px; margin-bottom:0.3rem;" title="Bucket Assets">🔗 Assign</button>
                             <div style="display:flex; justify-content:center; gap:0.4rem;">
@@ -2834,9 +2838,9 @@
                 totalRow.className = 'total-row';
                 totalRow.innerHTML = `
                     <td colspan="2">TOTAL</td>
-                    <td>${this.formatCurrency(totalCExp)}</td>
+                    <td>${app.formatCurrency(totalCExp)}</td>
                     <td></td>
-                    <td class="highlight-val">${this.formatCurrency(totalFV)}</td>
+                    <td class="highlight-val">${app.formatCurrency(totalFV)}</td>
                     <td></td>
                 `;
                 tbody.appendChild(totalRow);
@@ -2846,10 +2850,10 @@
                 let globalInvestments = 0;
                 let globalFutureInvestments = 0;
                 let profileTotals = {};
-                const maxYear = this.getMaxGoalYear();
+                const maxYear = app.getMaxGoalYear();
                 
-                this.data.investments.forEach(inv => {
-                    let fv = this.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                app.data.investments.forEach(inv => {
+                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
                     globalInvestments += (inv.value || 0);
                     globalFutureInvestments += fv;
 
@@ -2860,24 +2864,24 @@
                 
                 let totalCExp = 0;
                 let totalFV = 0;
-                this.data.goals.forEach(goal => {
+                app.data.goals.forEach(goal => {
                     let cExp = goal.cExp || (goal.type === 'retirement' ? (goal.exp * 12) : (goal.cv || goal.pv || 0));
                     totalCExp += cExp;
                     totalFV += (goal.fv || goal.targetValue || 0);
                 });
 
-                document.getElementById('dashTotalAssets').innerText = '₹' + this.formatCurrency(globalInvestments);
-                document.getElementById('dashFutureAssets').innerText = '₹' + this.formatCurrency(globalFutureInvestments);
-                document.getElementById('dashTotalPV').innerText = '₹' + this.formatCurrency(totalCExp);
-                document.getElementById('dashTotalFV').innerText = '₹' + this.formatCurrency(totalFV);
+                document.getElementById('dashTotalAssets').innerText = '₹' + app.formatCurrency(globalInvestments);
+                document.getElementById('dashFutureAssets').innerText = '₹' + app.formatCurrency(globalFutureInvestments);
+                document.getElementById('dashTotalPV').innerText = '₹' + app.formatCurrency(totalCExp);
+                document.getElementById('dashTotalFV').innerText = '₹' + app.formatCurrency(totalFV);
 
                 const badgeT1 = document.getElementById('badgeDashToday1');
                 const badgeT2 = document.getElementById('badgeDashToday2');
                 const badgeF1 = document.getElementById('badgeDashFV1');
                 const badgeF2 = document.getElementById('badgeDashFV2');
                 
-                if (badgeT1) badgeT1.innerText = this.currentYear;
-                if (badgeT2) badgeT2.innerText = this.currentYear;
+                if (badgeT1) badgeT1.innerText = app.currentYear;
+                if (badgeT2) badgeT2.innerText = app.currentYear;
                 if (badgeF1) badgeF1.innerText = `TO ${maxYear}`;
                 if (badgeF2) badgeF2.innerText = `TO ${maxYear}`;
 
@@ -2899,7 +2903,7 @@
                     const pFV = profileTotals[pName].fv;
                     if (pFV > 0 && totalFV > 0) {
                         const pPctOfGoal = (pFV / totalFV) * 100;
-                        const color = this.profileColors[colorIdx % this.profileColors.length];
+                        const color = app.profileColors[colorIdx % app.profileColors.length];
                         
                         const seg = document.createElement('div');
                         seg.className = 'progress-bar-segment';
@@ -2921,23 +2925,23 @@
                     }
                 });
 
-                let tableInvestments = this.data.investments.filter(i => {
-                    const profileMatch = this.dashProfileFilters.includes(i.profile || 'Main Portfolio');
-                    const classMatch = this.dashClassFilters.includes(i.rawAssetClass || i.type);
-                    const typeMatch = this.dashTypeFilters.includes(i.rawAssetType || 'Other');
-                    const catMatch = this.dashCategoryFilters.includes(i.rawCategory || 'NA');
-                    const sectorMatch = this.dashSectorFilters.includes(i.rawSector || 'NA');
+                let tableInvestments = app.data.investments.filter(i => {
+                    const profileMatch = app.dashProfileFilters.includes(i.profile || 'Main Portfolio');
+                    const classMatch = app.dashClassFilters.includes(i.rawAssetClass || i.type);
+                    const typeMatch = app.dashTypeFilters.includes(i.rawAssetType || 'Other');
+                    const catMatch = app.dashCategoryFilters.includes(i.rawCategory || 'NA');
+                    const sectorMatch = app.dashSectorFilters.includes(i.rawSector || 'NA');
                     return profileMatch && classMatch && typeMatch && catMatch && sectorMatch;
                 });
 
-                this.renderAllocationTable('dashAssetSummaryBody', 'dashAllocColHeader', tableInvestments, true);
+                app.renderAllocationTable('dashAssetSummaryBody', 'dashAllocColHeader', tableInvestments, true);
             },
 
             renderAll() {
-                this.renderGoals();
-                this.renderInvestments();
-                this.renderDashboard();
-                this.renderSettingsProfiles();
+                app.renderGoals();
+                app.renderInvestments();
+                app.renderDashboard();
+                app.renderSettingsProfiles();
             }
         };
 
