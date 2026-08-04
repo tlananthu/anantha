@@ -183,8 +183,9 @@
         .btn-upload:hover { border-color: var(--accent-color); }
         
         /* Settings Card specific styles */
-        .settings-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        .settings-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; }
+        .settings-layout { display: flex; flex-direction: column; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .settings-card { padding: 2.5rem 2rem; border-bottom: 1px solid var(--border-color); border-radius: 0; border-left: none; border-right: none; border-top: none; background: transparent; }
+        .settings-card:last-child { border-bottom: none; }
 
         /* Toast */
         .toast { visibility: hidden; min-width: 280px; background-color: var(--surface-light); color: var(--text-primary); text-align: center; border-radius: 6px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 1rem; font-weight: 600; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
@@ -263,7 +264,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -392,7 +393,6 @@
             <div class="portfolio-header">
                 <h3>Financial Goals / Plan</h3>
                 <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                    <button onclick="app.openSmartAllocateModal()" style="background: var(--surface-light); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; width: auto;" title="Engine identifies ideal unassigned assets for each goal based on time horizons">✨ Smart Allocate</button>
                     <button onclick="app.openGoalModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; width: auto;">+ Define New Goal</button>
                 </div>
             </div>
@@ -434,23 +434,21 @@
 
         <!-- VIEW: SETTINGS (PROFILES & IMPORT) -->
         <div id="view-settings" class="view">
+            <div id="onboardingCard" class="settings-card" style="display: none; border: 1px solid var(--accent-color); background: rgba(56, 189, 248, 0.05); margin-bottom: 2rem; border-radius: 8px;">
+                <h2 style="color: var(--accent-color); font-size: 1.3rem;">Welcome to Wealth OS! 👋</h2>
+                <p style="color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; line-height: 1.6;">
+                    This is your completely private, offline personal finance dashboard. None of your data ever leaves your device.
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0; line-height: 1.6;">
+                    <strong>To get started:</strong> Create a profile below and import your portfolio holdings file. We will automatically analyze, categorize, and project the future value of your entire portfolio!
+                </p>
+            </div>
+
             <div class="settings-layout">
-
-                <!-- Onboarding Card (Only shows if no data exists) -->
-                <div id="onboardingCard" class="settings-card" style="grid-column: 1 / -1; display: none; border: 1px solid var(--accent-color); background: rgba(56, 189, 248, 0.05);">
-                    <h2 style="color: var(--accent-color); font-size: 1.3rem;">Welcome to Wealth OS! 👋</h2>
-                    <p style="color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; line-height: 1.6;">
-                        This is your completely private, offline personal finance dashboard. None of your data ever leaves your device.
-                    </p>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0; line-height: 1.6;">
-                        <strong>To get started:</strong> Create a profile below and import your portfolio holdings file. We will automatically analyze, categorize, and project the future value of your entire portfolio!
-                    </p>
-                </div>
-
-                <div class="settings-card" style="height: fit-content; grid-column: 1 / -1;">
+                <div class="settings-card">
                     <h2>Profile Data & Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
-                        Create asset owner profiles and upload portfolio files directly into them. We seamlessly support automated data extraction from INDMoney, Zerodha (Kite & Console), Upstox, Scripbox, Groww, and ICICI FD statements.
+                        Create asset owner profiles and upload portfolio files directly into them. We seamlessly support automated data extraction from INDMoney, Zerodha (Kite & Console), Upstox, Scripbox, Groww, ICICI FD, and Post Office statements.
                     </p>
                     
                     <div id="settingsProfileList" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
@@ -475,13 +473,13 @@
                     </div>
                 </div>
                 
-                <div class="settings-card" style="height: fit-content;">
+                <div class="settings-card">
                     <h2>Backup & Restore</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">
                         Export your entire portfolio, custom profiles, goals, and manual overrides into a single JSON file. Use this file to restore your data or transfer it to another device.
                     </p>
                     
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; flex-direction: row; gap: 1rem; flex-wrap: wrap;">
                         <button onclick="app.exportData()" class="btn-action" style="background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--accent-color);">
                             ⬇️ Download Full Backup (JSON)
                         </button>
@@ -492,7 +490,6 @@
                         </button>
                     </div>
                 </div>
-                
             </div>
         </div>
 
@@ -589,7 +586,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal (Updated V2.69) -->
+        <!-- Justification / Projection Math Modal (Updated V2.70) -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -613,128 +610,7 @@
             </div>
         </div>
 
-        <!-- Split Asset Modal -->
-        <div class="modal-overlay" id="splitAssetModal">
-            <div class="modal-content" style="max-width: 400px;">
-                <button class="close-modal" onclick="app.closeSplitModal()">✕</button>
-                <h3 id="splitModalTitle">Allocate / Split Asset</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;" id="splitModalDesc"></p>
-                
-                <form id="splitForm" onsubmit="app.handleSplitSave(event)">
-                    <div class="form-group">
-                        <label for="splitPercentage">Percentage to Allocate (%)</label>
-                        <input type="number" id="splitPercentage" required min="1" max="100" value="100">
-                    </div>
-                    <div class="form-group">
-                        <label for="splitGoal">Assign to Goal</label>
-                        <select id="splitGoal" required></select>
-                    </div>
-
-                    <div class="form-actions" style="margin-top: 1.5rem;">
-                        <button type="submit" class="btn-action">Allocate</button>
-                        <button type="button" class="btn-cancel btn-action" onclick="app.closeSplitModal()" style="display: block;">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Smart Allocate Modal -->
-        <div class="modal-overlay" id="smartAllocateModal">
-            <div class="modal-content" style="max-width: 650px;">
-                <button class="close-modal" onclick="app.closeSmartAllocateModal()">✕</button>
-                <h3 id="smartAllocateTitle">✨ Smart Asset Allocation</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;">The engine analyzes your unassigned assets and recommends allocations based on goal time horizons and asset risk profiles.</p>
-                
-                <div id="smartAllocateList" style="display:flex; flex-direction:column; gap:0.6rem; max-height: 400px; overflow-y:auto; background:var(--bg-color); padding:1rem; border-radius:6px; border:1px solid var(--border-color); margin-bottom: 1.5rem;">
-                    <!-- Recs injected here -->
-                </div>
-
-                <div style="display: flex; gap: 1rem;">
-                    <button type="button" onclick="app.applySmartRecommendations()" class="btn-action">Apply Selected Recommendations</button>
-                    <button type="button" onclick="app.closeSmartAllocateModal()" class="btn-cancel btn-action" style="display: block;">Cancel</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Goal Form Modal -->
-        <div class="modal-overlay" id="goalModal">
-            <div class="modal-content" style="max-width: 550px;">
-                <button class="close-modal" onclick="app.closeGoalModal()">✕</button>
-                <h3 id="goalFormTitle">Define Target Goal</h3>
-                <form id="goalForm" onsubmit="app.handleGoalSave(event)">
-                    <div class="form-group">
-                        <label for="goalType">Goal Type</label>
-                        <select id="goalType" onchange="app.toggleGoalFields()">
-                            <option value="standard">Standard Financial Goal</option>
-                            <option value="retirement">Retirement Corpus</option>
-                            <option value="education">Kids Education Planner (Multi-Stage)</option>
-                            <option value="edu_stage" style="display:none;">Education Milestone (Edit)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="goalName" id="goalNameLabel">Goal Name</label>
-                        <input type="text" id="goalName" required placeholder="e.g., Higher Education">
-                    </div>
-
-                    <div id="standardFields">
-                        <div class="form-group">
-                            <label for="currentValue">C. Expenses (Current Value ₹)</label>
-                            <input type="number" id="currentValue" placeholder="1000000" min="0" step="any">
-                        </div>
-                        <div class="form-group">
-                            <label for="years">Years Till Closure</label>
-                            <input type="number" id="years" placeholder="8" min="1" max="100">
-                        </div>
-                    </div>
-
-                    <div id="retirementFields" style="display: none;">
-                        <div class="form-group">
-                            <label for="monthlyExpenses">Current Monthly Expenses (₹)</label>
-                            <input type="number" id="monthlyExpenses" placeholder="50000" min="0" step="any">
-                        </div>
-                        <div class="form-group">
-                            <label for="yearsToRetire">Years To Retirement</label>
-                            <input type="number" id="yearsToRetire" placeholder="15" min="1" max="50">
-                        </div>
-                        <div class="form-group">
-                            <label for="yearsInRetirement">Years In Retirement (Duration)</label>
-                            <input type="number" id="yearsInRetirement" placeholder="25" min="1" max="50">
-                        </div>
-                        <div class="form-group">
-                            <label for="postRetirementReturn">Expected Post-Retirement Return (%)</label>
-                            <input type="number" id="postRetirementReturn" placeholder="8" min="0" max="100" step="0.1">
-                        </div>
-                    </div>
-
-                    <div id="educationFields" style="display: none;">
-                        <div class="form-group">
-                            <label for="eduCurrentGrade">Current Grade of Child (1-12)</label>
-                            <input type="number" id="eduCurrentGrade" value="4" min="1" max="12" oninput="app.generateEduTimeline()" onchange="app.generateEduTimeline()">
-                        </div>
-                        <div class="form-group">
-                            <label style="color: var(--accent-color); margin-bottom: 0.8rem;">Define Upcoming Stages (Today's ₹ Cost)</label>
-                            <div id="eduTimelineGrid" style="display:flex; flex-direction:column; gap:0.5rem; background: var(--bg-color); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); max-height: 250px; overflow-y: auto;">
-                                <!-- Auto generated via JS -->
-                            </div>
-                            <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:0.5rem;">*Leave cost empty or click '✕' for stages you do not want to track.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label id="inflationLabel" for="inflation">Inflation (%)</label>
-                        <input type="number" id="inflation" required placeholder="10" min="0" max="100" step="0.1">
-                    </div>
-
-                    <div class="form-actions" style="margin-top: 1.5rem;">
-                        <button type="submit" id="goalSubmitBtn" class="btn-action">Calculate & Save</button>
-                        <button type="button" class="btn-cancel btn-action" onclick="app.closeGoalModal()" style="display: block;">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Assign Assets Modal (Goal Buckets) V2.69 -->
+        <!-- Assign Assets Modal (Goal Buckets) V2.70 -->
         <div class="modal-overlay" id="assignAssetsModal">
             <div class="modal-content" style="max-width: 600px;">
                 <button class="close-modal" onclick="app.closeAssignModal()">✕</button>
@@ -777,7 +653,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.69</div>
+        <div>Anantha Wealth OS V2.70</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -822,9 +698,7 @@
             editingBatchId: null,
             editingInvId: null,
             assigningGoalId: null,
-            splittingInvId: null,
             currentYear: new Date().getFullYear(),
-            currentRecommendations: [],
             tempAssignIds: new Set(),
             
             activeView: 'home',
@@ -981,9 +855,9 @@
             },
 
             migrateData() {
-                const savedV2_69 = localStorage.getItem('ananthaDataV2_69');
-                if (savedV2_69) {
-                    app.data = JSON.parse(savedV2_69);
+                const savedV2_70 = localStorage.getItem('ananthaDataV2_70');
+                if (savedV2_70) {
+                    app.data = JSON.parse(savedV2_70);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -1003,7 +877,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_68') || localStorage.getItem('ananthaDataV2_67') || localStorage.getItem('ananthaDataV2_66') || localStorage.getItem('ananthaDataV2_65') || localStorage.getItem('ananthaDataV2_64');
+                const savedOld = localStorage.getItem('ananthaDataV2_69') || localStorage.getItem('ananthaDataV2_68') || localStorage.getItem('ananthaDataV2_67') || localStorage.getItem('ananthaDataV2_66') || localStorage.getItem('ananthaDataV2_65');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -1066,7 +940,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_69', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_70', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1257,178 +1131,6 @@
                 if (viewId === 'settings') app.renderSettingsProfiles();
                 if (viewId === 'goals') app.renderGoals();
             },
-
-            /* -------------------------------------------------------------------------- */
-            /* SMART ALLOCATE ENGINE (OPTION 4 / ADVANCED RECOMMENDATIONS)                */
-            /* -------------------------------------------------------------------------- */
-            openSmartAllocateModal() {
-                app.generateSmartRecommendations();
-                document.getElementById('smartAllocateModal').style.display = 'flex';
-            },
-
-            closeSmartAllocateModal() {
-                document.getElementById('smartAllocateModal').style.display = 'none';
-                app.currentRecommendations = [];
-            },
-
-            generateSmartRecommendations() {
-                let recs = [];
-                let usedAssetIds = new Set();
-                
-                let goalsWithShortage = app.data.goals.map(g => {
-                    let tYear = g.targetYear || (app.currentYear + (g.yrs || g.yTo || 0));
-                    let yrsToGoal = tYear - app.currentYear;
-                    let assignedFV = 0;
-                    app.data.investments.forEach(inv => {
-                        if(inv.linkedGoalId === g.id) assignedFV += app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
-                    });
-                    let reqFv = g.fv || g.targetValue || 0;
-                    let shortage = reqFv - assignedFV;
-                    return { ...g, yrsToGoal, shortage, origShortage: shortage };
-                }).filter(g => g.shortage > 0);
-
-                let availableAssets = app.data.investments.filter(i => !i.linkedGoalId).map(inv => {
-                    return { ...inv, computedFV: app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate), origFV: app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate) };
-                });
-
-                availableAssets.sort((a,b) => b.computedFV - a.computedFV);
-
-                // Phase 1: Retirement matching
-                let retGoals = goalsWithShortage.filter(g => g.type === 'retirement');
-                retGoals.forEach(g => {
-                    availableAssets.forEach(a => {
-                        if (a.computedFV <= 0 || g.shortage <= 0 || usedAssetIds.has(a.id)) return;
-                        if (['nps', 'epf', 'ppf'].includes(a.type)) {
-                            let allocatePct = Math.min(100, (g.shortage / a.computedFV) * 100);
-                            if (allocatePct > 99) allocatePct = 100;
-                            
-                            recs.push({
-                                asset: a, goal: g, pct: allocatePct, fvAdded: a.origFV * (allocatePct/100),
-                                reason: `Asset type (${a.type.toUpperCase()}) is structurally designed for retirement.`
-                            });
-                            g.shortage -= (a.origFV * (allocatePct/100));
-                            usedAssetIds.add(a.id);
-                        }
-                    });
-                });
-
-                // Phase 2: Short term goals (< 4 years)
-                let shortGoals = goalsWithShortage.filter(g => g.yrsToGoal < 4 && g.shortage > 0);
-                shortGoals.sort((a,b) => a.yrsToGoal - b.yrsToGoal);
-                shortGoals.forEach(g => {
-                    availableAssets.forEach(a => {
-                        if (a.computedFV <= 0 || g.shortage <= 0 || usedAssetIds.has(a.id)) return;
-                        if (['liquid', 'fd', 'rd', 'debt'].includes(a.type)) {
-                            let allocatePct = Math.min(100, (g.shortage / a.computedFV) * 100);
-                            if (allocatePct > 99) allocatePct = 100; 
-                            
-                            recs.push({
-                                asset: a, goal: g, pct: allocatePct, fvAdded: a.origFV * (allocatePct/100),
-                                reason: `Low-risk stable asset perfectly matches short-term horizon (${g.yrsToGoal} yrs).`
-                            });
-                            g.shortage -= (a.origFV * (allocatePct/100));
-                            usedAssetIds.add(a.id);
-                        }
-                    });
-                });
-
-                // Phase 3: Long term goals (>= 4 years)
-                let longGoals = goalsWithShortage.filter(g => g.yrsToGoal >= 4 && g.shortage > 0);
-                longGoals.sort((a,b) => a.yrsToGoal - b.yrsToGoal);
-                longGoals.forEach(g => {
-                    availableAssets.forEach(a => {
-                        if (a.computedFV <= 0 || g.shortage <= 0 || usedAssetIds.has(a.id)) return;
-                        if (['equity', 'hybrid', 'gold_silver', 'real_estate', 'debt', 'ppf'].includes(a.type)) {
-                            let allocatePct = Math.min(100, (g.shortage / a.computedFV) * 100);
-                            if (allocatePct > 99) allocatePct = 100; 
-                            
-                            recs.push({
-                                asset: a, goal: g, pct: allocatePct, fvAdded: a.origFV * (allocatePct/100),
-                                reason: `Growth asset is suitable to compound for long-term horizon (${g.yrsToGoal} yrs).`
-                            });
-                            g.shortage -= (a.origFV * (allocatePct/100));
-                            usedAssetIds.add(a.id);
-                        }
-                    });
-                });
-
-                app.currentRecommendations = recs;
-                app.renderRecommendationsUI();
-            },
-
-            renderRecommendationsUI() {
-                const container = document.getElementById('smartAllocateList');
-                container.innerHTML = '';
-                if (app.currentRecommendations.length === 0) {
-                    container.innerHTML = `<span style="color:var(--text-secondary); text-align:center; padding:1rem;">No optimal recommendations found. All goals are funded, or no suitable unassigned assets exist.</span>`;
-                    return;
-                }
-
-                app.currentRecommendations.forEach((rec, idx) => {
-                    container.innerHTML += `
-                        <label style="display:flex; align-items:flex-start; justify-content:space-between; background:var(--surface-color); padding:0.8rem; border-radius:4px; cursor:pointer; border:1px solid var(--border-color);">
-                            <div style="display:flex; align-items:flex-start; gap:0.6rem; flex:1;">
-                                <input type="checkbox" class="rec-checkbox" value="${idx}" checked style="width:16px; height:16px; accent-color:var(--accent-color); margin-top:3px;">
-                                <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);">
-                                        Allocate ${rec.pct.toFixed(0)}% of <span style="color:var(--accent-color);">${rec.asset.name}</span>
-                                    </span>
-                                    <span style="font-size:0.85rem; color:var(--text-secondary);">
-                                        ➔ To: <strong>${rec.goal.name}</strong> (Fills ₹${app.formatCurrency(rec.fvAdded)} of need)
-                                    </span>
-                                    <span style="font-size:0.75rem; color:var(--success-color); background:rgba(52, 211, 153, 0.1); padding:0.2rem 0.4rem; border-radius:4px; width:fit-content; margin-top:0.2rem;">
-                                        💡 ${rec.reason}
-                                    </span>
-                                </div>
-                            </div>
-                        </label>
-                    `;
-                });
-            },
-
-            applySmartRecommendations() {
-                const checkboxes = document.querySelectorAll('.rec-checkbox');
-                let appliedCount = 0;
-                
-                checkboxes.forEach(cb => {
-                    if (cb.checked) {
-                        const rec = app.currentRecommendations[parseInt(cb.value)];
-                        const inv = app.data.investments.find(i => i.id === rec.asset.id);
-                        if (!inv) return;
-
-                        if (rec.pct >= 99) {
-                            inv.linkedGoalId = rec.goal.id;
-                        } else {
-                            const splitFactor = rec.pct / 100;
-                            let newAsset = JSON.parse(JSON.stringify(inv)); 
-                            newAsset.id = Date.now().toString() + Math.random().toString().slice(2,8);
-                            newAsset.name = inv.name + " (Split)";
-                            newAsset.value = inv.value * splitFactor;
-                            if (newAsset.investedValue != null && !isNaN(newAsset.investedValue)) {
-                                newAsset.investedValue = inv.investedValue * splitFactor;
-                            }
-                            newAsset.linkedGoalId = rec.goal.id;
-                            newAsset.splitParentId = inv.id;
-                            newAsset.isManuallyEdited = true;
-
-                            inv.value = inv.value * (1 - splitFactor);
-                            if (inv.investedValue != null && !isNaN(inv.investedValue)) {
-                                inv.investedValue = inv.investedValue * (1 - splitFactor);
-                            }
-                            inv.isManuallyEdited = true;
-                            
-                            app.data.investments.push(newAsset);
-                        }
-                        appliedCount++;
-                    }
-                });
-
-                app.saveState();
-                app.closeSmartAllocateModal();
-                app.renderAll();
-                app.showToast(`Applied ${appliedCount} recommendations successfully!`);
-            },
-
 
             /* -------------------------------------------------------------------------- */
             /* INVESTMENTS LOGIC & MODAL                                                  */
@@ -1680,82 +1382,6 @@
                 }
             },
 
-            /* -------------------------------------------------------------------------- */
-            /* SPLIT ASSET LOGIC                                                          */
-            /* -------------------------------------------------------------------------- */
-            openSplitModal(id) {
-                const inv = app.data.investments.find(i => i.id === id);
-                if (!inv) return;
-                app.splittingInvId = id;
-                document.getElementById('splitModalDesc').innerText = `Allocating: ${inv.name} (Current Val: ₹${app.formatCurrency(inv.value)})`;
-
-                const goalSelect = document.getElementById('splitGoal');
-                goalSelect.innerHTML = '<option value="">-- Select Goal to Assign To --</option>';
-                app.data.goals.forEach(g => {
-                    goalSelect.innerHTML += `<option value="${g.id}">${g.name}</option>`;
-                });
-
-                document.getElementById('splitAssetModal').style.display = 'flex';
-                document.getElementById('splitPercentage').focus();
-            },
-            closeSplitModal() {
-                document.getElementById('splitAssetModal').style.display = 'none';
-                app.splittingInvId = null;
-            },
-            handleSplitSave(e) {
-                e.preventDefault();
-                if (!app.splittingInvId) return;
-                const pct = parseFloat(document.getElementById('splitPercentage').value);
-                const goalId = document.getElementById('splitGoal').value;
-                if (!goalId) {
-                    app.showToast("Please select a goal.", true);
-                    return;
-                }
-
-                const origIdx = app.data.investments.findIndex(i => i.id === app.splittingInvId);
-                if (origIdx === -1) return;
-
-                const orig = app.data.investments[origIdx];
-                
-                if (pct === 100) {
-                    orig.linkedGoalId = goalId;
-                    app.saveState();
-                    app.closeSplitModal();
-                    app.renderInvestments();
-                    app.renderDashboard();
-                    app.renderGoals();
-                    app.showToast(`Asset fully allocated to goal!`);
-                    return;
-                }
-
-                const splitFactor = pct / 100;
-
-                let newAsset = JSON.parse(JSON.stringify(orig)); 
-                newAsset.id = Date.now().toString() + Math.random().toString().slice(2,8);
-                newAsset.name = orig.name + " (Split)";
-                newAsset.value = orig.value * splitFactor;
-                if (newAsset.investedValue != null && !isNaN(newAsset.investedValue)) {
-                    newAsset.investedValue = orig.investedValue * splitFactor;
-                }
-                newAsset.linkedGoalId = goalId;
-                newAsset.splitParentId = orig.id;
-                newAsset.isManuallyEdited = true;
-
-                orig.value = orig.value * (1 - splitFactor);
-                if (orig.investedValue != null && !isNaN(orig.investedValue)) {
-                    orig.investedValue = orig.investedValue * (1 - splitFactor);
-                }
-                orig.isManuallyEdited = true;
-
-                app.data.investments.push(newAsset);
-                
-                app.saveState();
-                app.closeSplitModal();
-                app.renderInvestments();
-                app.renderDashboard();
-                app.renderGoals();
-                app.showToast(`Asset split by ${pct}% and allocated!`);
-            },
             unsplitAsset(id) {
                 const inv = app.data.investments.find(i => i.id === id);
                 if (!inv || !inv.splitParentId) return;
@@ -1829,7 +1455,7 @@
 
                     app.data.investments = [...app.data.investments, ...allNewInvestments];
 
-                    // --- V2.69 CAP-AWARE AUTO-MATCHER ---
+                    // --- V2.69 CAP-AWARE AUTO-MATCHER FOR FDs/RDs with MATURITY DATES ---
                     let goalStatus = {};
                     app.data.goals.forEach(g => {
                         let reqFv = g.fv || g.targetValue || 0;
@@ -1844,7 +1470,7 @@
                     });
 
                     app.data.investments.forEach(inv => {
-                        if (inv.source === "ICICI-FD" && !inv.linkedGoalId && inv.maturityDate && !inv.isManuallyEdited) {
+                        if ((inv.source === "ICICI-FD" || inv.source === "PostOffice") && !inv.linkedGoalId && inv.maturityDate && !inv.isManuallyEdited) {
                             let matYear = new Date(inv.maturityDate).getFullYear();
                             let invFv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
                             
@@ -1907,7 +1533,7 @@
                             const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
                             
                             let headerRowIndex = -1;
-                            let isZerodhaConsole = false, isZerodhaKite = false, isUpstox = false, isScripbox = false, isGrowwMF = false, isGrowwStocks = false, isICICIFD = false;
+                            let isZerodhaConsole = false, isZerodhaKite = false, isUpstox = false, isScripbox = false, isGrowwMF = false, isGrowwStocks = false, isICICIFD = false, isPostOffice = false;
                             
                             for(let i=0; i < Math.min(100, rows.length); i++) {
                                 if(rows[i]) {
@@ -1929,6 +1555,8 @@
                                         headerRowIndex = i; isGrowwStocks = true; detectedSource = "Groww-Stocks"; break;
                                     } else if (rowStr.includes("fixed deposit number") && rowStr.includes("maturity amount") && rowStr.includes("interest rate")) {
                                         headerRowIndex = i; isICICIFD = true; detectedSource = "ICICI-FD"; break;
+                                    } else if (rowStr.includes("account number") && rowStr.includes("account type") && rowStr.includes("balance") && rowStr.includes("post office")) {
+                                        headerRowIndex = i; isPostOffice = true; detectedSource = "PostOffice"; break;
                                     }
                                 }
                             }
@@ -1964,7 +1592,42 @@
                                         return 'Unknown';
                                     }
 
-                                    if (isICICIFD) {
+                                    if (isPostOffice) {
+                                        let accType = strValSafe(rowObj["Account Type"]);
+                                        let accNum = strValSafe(rowObj["Account Number"]);
+                                        invName = "PO " + accType.split('-')[0].trim() + " " + accNum.slice(-4);
+                                        mVal = app.parseCurrencyStr(rowObj["Balance"]);
+                                        invested = mVal; 
+                                        
+                                        let matDateStr = strValSafe(rowObj["Maturity Date"]);
+                                        if (matDateStr) {
+                                            let parsedDate = new Date(matDateStr);
+                                            if (!isNaN(parsedDate.getTime())) {
+                                                maturityDate = parsedDate.toISOString().split('T')[0];
+                                            }
+                                        }
+                                        
+                                        let accTypeLow = accType.toLowerCase();
+                                        if (accTypeLow.includes("savings")) {
+                                            rawType = "SA";
+                                            rawClass = "Liquid";
+                                        } else if (accTypeLow.includes("recurring deposit") || accTypeLow.includes("rd")) {
+                                            rawType = "RD";
+                                            rawClass = "Debt";
+                                        } else if (accTypeLow.includes("monthly income scheme") || accTypeLow.includes("mis")) {
+                                            rawType = "POMIS";
+                                            rawClass = "Debt";
+                                        } else if (accTypeLow.includes("time deposit") || accTypeLow.includes("fd") || accTypeLow.includes("fixed deposit")) {
+                                            rawType = "FD";
+                                            rawClass = "Debt";
+                                        } else {
+                                            rawType = "Other";
+                                            rawClass = "Other";
+                                        }
+                                        rawCategory = "NA";
+                                        rawSector = "NA";
+
+                                    } else if (isICICIFD) {
                                         invName = "ICICI FD " + strValSafe(rowObj["Fixed Deposit Number"]);
                                         mVal = app.parseCurrencyStr(rowObj["Balance"]);
                                         invested = mVal; 
@@ -2084,13 +1747,14 @@
                                         let aCatStr = rawCategory.toLowerCase();
                                         
                                         let invType = 'equity'; 
-                                        if (aClassStr === 'liquid' || aCatStr.includes('liquid') || isICICIFD) invType = 'liquid';
+                                        if (aClassStr === 'liquid' || aCatStr.includes('liquid') || isICICIFD || aTypeStr === 'SA') invType = 'liquid';
                                         else if (aTypeStr === 'VEHICLE' || aClassStr === 'vehicle') invType = 'vehicle';
                                         else if (aTypeStr === 'NPS') invType = 'nps';
                                         else if (aTypeStr === 'EPF') invType = 'epf';
                                         else if (aTypeStr === 'PPF') invType = 'ppf';
                                         else if (aTypeStr === 'FD') invType = 'fd';
-                                        else if (aTypeStr === 'SA') invType = 'liquid';
+                                        else if (aTypeStr === 'RD') invType = 'rd';
+                                        else if (aTypeStr === 'POMIS') invType = 'pomis';
                                         else if (aClassStr.includes('gold') || aClassStr.includes('silver') || aTypeStr === 'PHYSICAL_GOLD' || aCatStr.includes('gold') || aCatStr.includes('silver')) invType = 'gold_silver';
                                         else if (aTypeStr === 'REAL_ESTATE' || aClassStr.includes('real estate')) invType = 'real_estate';
                                         else if (aClassStr.includes('debt') || aTypeStr === 'BOND' || aCatStr.includes('debt')) invType = 'debt';
@@ -2758,12 +2422,20 @@
                         if (inv.investedValue && inv.investedValue > 0) {
                             actualGrowthPct = ((inv.value - inv.investedValue) / inv.investedValue) * 100;
                         }
-                        return { ...inv, computedFV: fv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct };
+                        
+                        let goalSortName = 'zzzz';
+                        if (inv.linkedGoalId) {
+                            const foundGoal = app.data.goals.find(g => g.id === inv.linkedGoalId);
+                            if (foundGoal) goalSortName = foundGoal.name.toLowerCase();
+                        }
+                        
+                        return { ...inv, computedFV: fv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct, goalSortName: goalSortName };
                     });
 
                     processedInv.sort((a, b) => {
                         let valA, valB;
                         if (app.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+                        else if (app.invSortColumn === 'goal') { valA = a.goalSortName; valB = b.goalSortName; }
                         else if (app.invSortColumn === 'value') { valA = a.value; valB = b.value; }
                         else if (app.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
                         else if (app.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
@@ -2818,11 +2490,7 @@
                             planTypeBadge = `<span class="badge" style="margin-left:5px; border-bottom:1px solid ${pColor}; background:transparent;">${inv.planType}</span>`;
                         }
                         
-                        let splitActionHtml = inv.splitParentId 
-                            ? `<button class="icon-btn" onclick="event.stopPropagation(); app.unsplitAsset('${inv.id}')" title="Merge Back to Original Asset" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: rgba(56, 189, 248, 0.1); padding: 0.2rem 0.5rem; border-radius: 12px; color: var(--accent-color); border: 1px solid var(--accent-color);">Merge</button>` 
-                            : `<button class="icon-btn" onclick="event.stopPropagation(); app.openSplitModal('${inv.id}')" title="Allocate/Split Asset to Target Goal" style="margin-right: 5px; font-size: 0.8rem; font-weight: 700; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 12px; border: 1px solid var(--border-color);">Allocate</button>`;
-
-                        splitActionHtml += `<button class="icon-btn" onclick="event.stopPropagation(); app.openJustificationModal('${inv.id}')" title="View Projection Math" style="margin-right: 5px; font-size: 1rem;">📊</button>`;
+                        let splitActionHtml = `<button class="icon-btn" onclick="event.stopPropagation(); app.openJustificationModal('${inv.id}')" title="View Projection Math" style="margin-right: 5px; font-size: 1rem;">📊</button>`;
 
                         tbodyHtml += `
                             <tr class="${rowClass}" onclick="app.editInv('${inv.id}')">
@@ -2837,6 +2505,7 @@
                                 <td>₹${app.formatCurrency(inv.value)}</td>
                                 <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
                                 <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
+                                <td style="color: var(--text-secondary); font-size: 0.9rem;">${inv.matDisplay || '-'}</td>
                                 <td class="highlight-val">₹${app.formatCurrency(inv.computedFV)}</td>
                                 <td style="text-align: center; white-space: nowrap;">
                                     ${splitActionHtml}
@@ -2877,10 +2546,11 @@
                                     <thead>
                                         <tr>
                                             <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name-${safeProfileId}" class="sort-icon"></span></th>
-                                            <th>Goal</th>
+                                            <th onclick="app.sortInvestments('goal')">Goal <span id="sort-inv-goal-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('value')">Valuation <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('growth')">Expected Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('maturity')">Maturity Date <span id="sort-inv-maturity-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('fv')">Projected FV <span id="sort-inv-fv-${safeProfileId}" class="sort-icon"></span></th>
                                             <th style="text-align: center;">Actions</th>
                                         </tr>
@@ -2890,6 +2560,7 @@
                                         <tr class="total-row">
                                             <td colspan="2">TOTAL</td>
                                             <td>₹${app.formatCurrency(totalCV)}</td>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td class="highlight-val">₹${app.formatCurrency(totalFV)}</td>
@@ -2904,7 +2575,7 @@
                 });
 
                 // Update sort icons after DOM injection
-                ['name', 'value', 'actualGrowth', 'growth', 'fv'].forEach(col => {
+                ['name', 'goal', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
                     activeProfiles.forEach(profile => {
                         const iconEl = document.getElementById(`sort-inv-${col}-${profile.replace(/\s+/g,'-')}`);
                         if(iconEl) {
@@ -3252,14 +2923,10 @@
             const assetModal = document.getElementById('assetModal');
             const goalModal = document.getElementById('goalModal');
             const assignModal = document.getElementById('assignAssetsModal');
-            const splitModal = document.getElementById('splitAssetModal');
-            const smartAllocateModal = document.getElementById('smartAllocateModal');
             const justificationModal = document.getElementById('justificationModal');
             if (event.target === assetModal) app.closeAssetModal();
             if (event.target === goalModal) app.closeGoalModal();
             if (event.target === assignModal) app.closeAssignModal();
-            if (event.target === splitModal) app.closeSplitModal();
-            if (event.target === smartAllocateModal) app.closeSmartAllocateModal();
             if (event.target === justificationModal) app.closeJustificationModal();
         }
 
