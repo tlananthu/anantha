@@ -167,6 +167,15 @@
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
         
+        /* YOY Chart specific styles */
+        .yoy-chart { display: flex; align-items: flex-end; height: 160px; gap: 6px; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
+        .yoy-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 35px; position: relative; cursor: pointer; height: 100%; }
+        .yoy-bar { width: 100%; background: var(--accent-color); border-radius: 4px 4px 0 0; transition: background 0.2s; }
+        .yoy-bar-col:hover .yoy-bar { filter: brightness(1.2); }
+        .yoy-bar-label { font-size: 0.65rem; color: var(--text-secondary); margin-top: 6px; font-weight: 600; }
+        .yoy-tooltip { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); background: var(--surface-light); color: var(--text-primary); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; border: 1px solid var(--accent-color); z-index: 10; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: opacity 0.2s; }
+        .yoy-bar-col:hover .yoy-tooltip { opacity: 1; }
+
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
         .portfolio-header h3 { font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin: 0; }
         .btn-upload { background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color); font-weight: 500; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
@@ -237,7 +246,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -586,7 +595,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal -->
+        <!-- Justification / Projection Math Modal (Updated V2.62) -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 500px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -598,10 +607,12 @@
                     <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Expected Growth (r): <span id="justRate" style="color: var(--success-color); float: right;"></span></div>
                     <div style="margin-bottom: 1rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">Time Horizon (n): <span id="justYears" style="color: var(--text-primary); float: right;"></span></div>
                     
-                    <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Calculation:</div>
-                    <div id="justFormula" style="color: var(--text-secondary); margin-bottom: 1rem; word-break: break-all;"></div>
+                    <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Year-on-Year Growth Projection:</div>
                     
-                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem;">Projected FV: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
+                    <!-- New Visual CSS Chart Container -->
+                    <div id="justChartContainer" class="yoy-chart"></div>
+                    
+                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Projected FV: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
                 </div>
                 
                 <button class="btn-action" onclick="app.closeJustificationModal()">Close</button>
@@ -756,7 +767,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.61</div>
+        <div>Anantha Wealth OS V2.62</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -874,9 +885,9 @@
             },
 
             migrateData() {
-                const savedV2_61 = localStorage.getItem('ananthaDataV2_61');
-                if (savedV2_61) {
-                    app.data = JSON.parse(savedV2_61);
+                const savedV2_62 = localStorage.getItem('ananthaDataV2_62');
+                if (savedV2_62) {
+                    app.data = JSON.parse(savedV2_62);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -896,7 +907,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_60') || localStorage.getItem('ananthaDataV2_59') || localStorage.getItem('ananthaDataV2_58') || localStorage.getItem('ananthaDataV2_57');
+                const savedOld = localStorage.getItem('ananthaDataV2_61') || localStorage.getItem('ananthaDataV2_60') || localStorage.getItem('ananthaDataV2_59') || localStorage.getItem('ananthaDataV2_58');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -959,7 +970,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_61', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_62', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1381,15 +1392,60 @@
                 document.getElementById('justAssetName').innerText = inv.name;
                 document.getElementById('justPV').innerText = `₹${app.formatCurrency(inv.value)}`;
                 document.getElementById('justRate').innerText = `${inv.growthRate}%`;
-                document.getElementById('justYears').innerText = `${years.toFixed(1)} Years (Target: ${endYear})`;
+                
+                let yText = years === 0 ? "Now" : `${years.toFixed(1)} Years`;
+                document.getElementById('justYears').innerText = `${yText} (Target: ${endYear})`;
                 
                 let multiplier = 1 + (inv.growthRate / 100);
                 let fv = inv.value * Math.pow(multiplier, years);
                 if (multiplier < 0) fv = 0;
                 
-                document.getElementById('justFormula').innerText = `FV = ₹${app.formatCurrency(inv.value)} × (1 + ${inv.growthRate/100})^${years.toFixed(1)}`;
-                document.getElementById('justFV').innerText = `₹${app.formatCurrency(fv)}`;
+                // Build the YoY visual chart
+                let chartHtml = '';
+                let dataPoints = [];
+                let maxVal = 0;
                 
+                // Determine step size to keep bars clean
+                let step = years > 40 ? 5 : (years > 20 ? 2 : 1);
+                
+                for (let i = 0; i < years; i += step) {
+                    let pointVal = inv.value * Math.pow(1 + (inv.growthRate/100), i);
+                    if (pointVal > maxVal) maxVal = pointVal;
+                    dataPoints.push({ t: i, val: pointVal, year: app.currentYear + i });
+                }
+                
+                // Always push the final exact year
+                if (dataPoints.length === 0 || dataPoints[dataPoints.length - 1].t !== years) {
+                    let finalVal = inv.value * Math.pow(1 + (inv.growthRate/100), years);
+                    if (finalVal > maxVal) maxVal = finalVal;
+                    dataPoints.push({ t: years, val: finalVal, year: app.currentYear + years });
+                }
+
+                if (maxVal === 0) maxVal = inv.value; // Fallback if pv is 0 or negative compounding to 0
+
+                dataPoints.forEach(pt => {
+                    let heightPct = (pt.val / maxVal) * 100;
+                    let isFinal = pt.t === years;
+                    
+                    let color = isFinal ? 'var(--success-color)' : 'var(--accent-color)';
+                    if (inv.growthRate < 0) {
+                        color = isFinal ? 'var(--danger-color)' : 'var(--warning-color)';
+                    }
+                    
+                    let label = pt.t === 0 ? 'Now' : (Number.isInteger(pt.t) ? `Y${pt.t}` : `Y${pt.t.toFixed(1)}`);
+                    
+                    chartHtml += `
+                        <div class="yoy-bar-col">
+                            <div class="yoy-bar" style="height: ${heightPct}%; background: ${color};">
+                                <div class="yoy-tooltip">₹${app.formatCurrency(pt.val)}<br>${Math.floor(pt.year)}</div>
+                            </div>
+                            <div class="yoy-bar-label">${label}</div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('justChartContainer').innerHTML = chartHtml;
+                document.getElementById('justFV').innerText = `₹${app.formatCurrency(fv)}`;
                 document.getElementById('justificationModal').style.display = 'flex';
             },
             closeJustificationModal() {
