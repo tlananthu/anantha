@@ -267,7 +267,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -368,7 +368,7 @@
                 <div class="table-header-row" style="flex-direction: column; align-items: flex-start; padding-bottom: 1rem;">
                     <div style="display:flex; justify-content:space-between; align-items: center; width:100%; flex-wrap:wrap; gap:1rem;">
                         <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-primary); font-weight: 600;">Asset Allocation Summary</h3>
-                        <button class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('dash')">Tune Filters ⚡</button>
+                        <button class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('dash')">Filter ⚡</button>
                     </div>
                 </div>
                 
@@ -424,7 +424,7 @@
             <div class="portfolio-header">
                 <h3>Registered Assets</h3>
                 <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                    <button class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('inv')">Tune Filters ⚡</button>
+                    <button class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('inv')">Filter ⚡</button>
                     <button class="btn-upload" onclick="app.openAssetModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600;">+ Add Asset</button>
                 </div>
             </div>
@@ -505,6 +505,16 @@
                             ⬆️ Restore from Backup
                         </button>
                     </div>
+                </div>
+
+                <div class="settings-card" style="border-top: 1px solid var(--danger-color); background: rgba(244, 63, 94, 0.02);">
+                    <h2 style="color: var(--danger-color);">Danger Zone</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
+                        Permanently delete all profiles, investments, goals, and settings from this device. Make sure you have downloaded a backup first! This action cannot be undone.
+                    </p>
+                    <button onclick="app.deleteAllData()" class="btn-action" style="background-color: rgba(244, 63, 94, 0.1); color: var(--danger-color); border: 1px solid rgba(244, 63, 94, 0.2); width: auto; padding: 0.75rem 2rem;">
+                        ⚠️ Delete All Data
+                    </button>
                 </div>
             </div>
         </div>
@@ -709,7 +719,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.74</div>
+        <div>Anantha Wealth OS V2.75</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -928,9 +938,9 @@
             },
 
             migrateData() {
-                const savedV2_74 = localStorage.getItem('ananthaDataV2_74');
-                if (savedV2_74) {
-                    app.data = JSON.parse(savedV2_74);
+                const savedV2_75 = localStorage.getItem('ananthaDataV2_75');
+                if (savedV2_75) {
+                    app.data = JSON.parse(savedV2_75);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -950,12 +960,11 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71') || localStorage.getItem('ananthaDataV2_70') || localStorage.getItem('ananthaDataV2_69') || localStorage.getItem('ananthaDataV2_68');
+                const savedOld = localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71') || localStorage.getItem('ananthaDataV2_70') || localStorage.getItem('ananthaDataV2_69') || localStorage.getItem('ananthaDataV2_68');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
                     app.data.investments.forEach(i => {
-                        // Stripping old allocation data logic to clean up the JSON size for pure auto-pilot
                         delete i.linkedGoalId;
                         delete i.splitParentId;
 
@@ -1016,7 +1025,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_74', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_75', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1086,6 +1095,31 @@
                 };
                 reader.readAsText(file);
                 event.target.value = ''; 
+            },
+
+            deleteAllData() {
+                if (confirm('CRITICAL WARNING: This will permanently wipe ALL your profiles, investments, and goals from this browser. Make sure you have downloaded a backup first. This CANNOT be undone. Proceed?')) {
+                    if (confirm('Final Confirmation: Click OK to delete everything.')) {
+                        localStorage.removeItem('ananthaDataV2_75');
+                        localStorage.removeItem('ananthaDataV2_74');
+                        localStorage.removeItem('ananthaDataV2_73');
+                        localStorage.removeItem('ananthaDataV2_72');
+                        localStorage.removeItem('ananthaDataV2_71');
+                        localStorage.removeItem('ananthaDataV2_70');
+                        localStorage.removeItem('ananthaDataV2_69');
+                        localStorage.removeItem('ananthaDataV2_68');
+                        localStorage.removeItem('ananthaDataV2_67');
+                        localStorage.removeItem('ananthaDataV2_66');
+                        localStorage.removeItem('ananthaDataV2_65');
+                        app.data = { profiles: ['Main Portfolio'], goals: [], investments: [] };
+                        app.dashProfileFilters = ['Main Portfolio'];
+                        app.dashClassFilters = []; app.dashTypeFilters = []; app.dashCategoryFilters = []; app.dashSectorFilters = [];
+                        app.invProfileFilters = ['Main Portfolio'];
+                        app.invClassFilters = []; app.invTypeFilters = []; app.invCategoryFilters = []; app.invSectorFilters = [];
+                        app.saveState();
+                        location.reload();
+                    }
+                }
             },
 
             /* -------------------------------------------------------------------------- */
@@ -1485,7 +1519,7 @@
 
                 app.saveState();
                 app.closeAssetModal();
-                app.renderAll(); // Re-run engine
+                app.renderAll(); 
                 app.showToast("Asset saved successfully.");
             },
 
@@ -2713,7 +2747,6 @@
                     }
                     drawerHtml += `</td></tr>`;
                     
-                    // Convert html string to elements and append
                     const temp = document.createElement('tbody');
                     temp.innerHTML = drawerHtml;
                     tbody.appendChild(temp.firstElementChild);
