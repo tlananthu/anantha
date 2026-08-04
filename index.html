@@ -19,12 +19,12 @@
             --accent-color: #38bdf8;
             --danger-color: #f43f5e;
             --warning-color: #fbbf24;
-            --edu-color: #a78bfa;
-            --success-color: #34d399;
+            --edu-color: #c084fc; /* High contrast purple */
+            --success-color: #34d399; /* High contrast mint */
             --border-color: #2dd4bf20;
-            --liquid-color: #818cf8;
+            --liquid-color: #818cf8; /* High contrast indigo */
             --vehicle-color: #9ca3af;
-            --realestate-color: #d97706;
+            --realestate-color: #f97316; /* Bright orange */
             --font-family: system-ui, -apple-system, sans-serif;
         }
 
@@ -332,22 +332,22 @@
             <div class="summary-layout">
                 <div class="card dash-stat-card">
                     <div class="year-badge ongoing" id="badgeDashToday1">----</div>
-                    <div class="dash-label">Assets (Today)</div>
+                    <div class="dash-label">Total Saved (Today)</div>
                     <div class="dash-value success" id="dashTotalAssets">₹0</div>
                 </div>
                 <div class="card dash-stat-card">
                     <div class="year-badge" id="badgeDashFV1">TO ----</div>
-                    <div class="dash-label">Projected Asset Future Value</div>
+                    <div class="dash-label">Expected Future Wealth</div>
                     <div class="dash-value success" id="dashFutureAssets">₹0</div>
                 </div>
                 <div class="card dash-stat-card" id="dashTotalPVCard">
                     <div class="year-badge ongoing" id="badgeDashToday2">----</div>
-                    <div class="dash-label">Plan Current Expenses</div>
+                    <div class="dash-label">Today's Cost of Goals</div>
                     <div class="dash-value" id="dashTotalPV">₹0</div>
                 </div>
                 <div class="card dash-stat-card" id="dashTotalFVCard">
                     <div class="year-badge" id="badgeDashFV2">TO ----</div>
-                    <div class="dash-label">Total Goal Required (Future Value)</div>
+                    <div class="dash-label">Total Money Needed in Future</div>
                     <div class="dash-value highlight" id="dashTotalFV">₹0</div>
                 </div>
             </div>
@@ -363,20 +363,6 @@
                 <div style="position: relative; height: 350px; width: 100%; margin-top: 1.5rem;">
                     <canvas id="assetProgressionCanvas"></canvas>
                 </div>
-            </div>
-
-            <!-- Wealth Progression Progress Bar -->
-            <div class="progress-container" id="dashProgressBarWrapper" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                    <div>
-                        <h3 id="wealthProgressionTitle" style="margin-bottom: 0.2rem;">Wealth Progression</h3>
-                        <span id="wealthProgressionSub" style="font-size: 0.85rem; color: var(--text-secondary);">Total Projected Future Assets vs Total Future Goals Target</span>
-                    </div>
-                    <div id="dashPercentage" style="font-size: 1.2rem; font-weight: 700; color: var(--accent-color);">0%</div>
-                </div>
-                
-                <div class="progress-bar-bg" id="dashProgressBarContainer"></div>
-                <div class="progress-legend" id="dashProgressLegend"></div>
             </div>
 
             <div class="table-container" style="margin-top: 2rem;">
@@ -396,9 +382,9 @@
                     <thead>
                         <tr>
                             <th id="dashAllocColHeader">Asset Class</th>
-                            <th>Current Valuation</th>
-                            <th>Avg. Expected Growth</th>
-                            <th>Projected Future Value</th>
+                            <th>Current Value</th>
+                            <th>Yearly Growth Estimate</th>
+                            <th>Expected Value (at Goal Year)</th>
                             <th>% of Portfolio</th>
                         </tr>
                     </thead>
@@ -411,10 +397,56 @@
         
         <!-- VIEW: GOALS -->
         <div id="view-goals" class="view">
+            
             <div class="portfolio-header">
                 <h3>Financial Goals / Plan</h3>
                 <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                     <button onclick="app.openGoalModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; width: auto;">+ Define New Goal</button>
+                </div>
+            </div>
+
+            <!-- Wealth Progression Progress Bar (Moved here) -->
+            <div class="progress-container" id="goalProgressBarWrapper" style="display: none; margin-top: 0; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <h3 id="wealthProgressionTitle" style="margin-bottom: 0.2rem;">Wealth Progression</h3>
+                        <span id="wealthProgressionSub" style="font-size: 0.85rem; color: var(--text-secondary);">Total Expected Future Wealth vs Total Money Needed for Goals</span>
+                    </div>
+                    <div id="goalPercentage" style="font-size: 1.2rem; font-weight: 700; color: var(--accent-color);">0%</div>
+                </div>
+                
+                <div class="progress-bar-bg" id="goalProgressBarContainer"></div>
+                <div class="progress-legend" id="goalProgressLegend"></div>
+            </div>
+
+            <!-- Budgeting Module -->
+            <div class="settings-card" style="margin-bottom: 2rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--surface-color);">
+                <h2 style="display:flex; align-items:center; gap:0.5rem; margin-top:0;">💸 Monthly Budget & Investment Guide</h2>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
+                    Track your monthly cash flow and let the Auto-Pilot engine recommend exactly how much you need to save each month to hit all your goals.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    
+                    <div style="background: var(--surface-light); padding: 1.2rem; border-radius: 8px; border-left: 4px solid var(--success-color);">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Incoming Cash</h4>
+                        <div class="form-group"><label>Monthly Salary</label><input type="number" id="budSalary" placeholder="e.g. 100000" onchange="app.saveBudget()"></div>
+                        <div class="form-group"><label>Rent / Other Income</label><input type="number" id="budRent" placeholder="e.g. 15000" onchange="app.saveBudget()"></div>
+                        <div style="font-weight: bold; color: var(--success-color); border-top: 1px solid var(--border-color); padding-top: 0.5rem;">Total: ₹<span id="budTotalInc">0</span></div>
+                    </div>
+                    
+                    <div style="background: var(--surface-light); padding: 1.2rem; border-radius: 8px; border-left: 4px solid var(--danger-color);">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Monthly Expenses</h4>
+                        <div class="form-group"><label>Living & Bills (Rent, Groceries, Utilities)</label><input type="number" id="budLiving" placeholder="e.g. 40000" onchange="app.saveBudget()"></div>
+                        <div class="form-group"><label>Discretionary (Shopping, Fun)</label><input type="number" id="budFun" placeholder="e.g. 10000" onchange="app.saveBudget()"></div>
+                        <div style="font-weight: bold; color: var(--danger-color); border-top: 1px solid var(--border-color); padding-top: 0.5rem;">Total: ₹<span id="budTotalExp">0</span></div>
+                    </div>
+                    
+                    <div style="background: rgba(56, 189, 248, 0.05); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--accent-color);">
+                        <h4 style="margin-bottom: 1rem; color: var(--accent-color);">Your Action Plan</h4>
+                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Monthly Surplus: <strong style="color: var(--text-primary); font-size: 1.1rem;">₹<span id="budSurplus">0</span></strong></div>
+                        <div style="margin-bottom: 1rem; color: var(--text-secondary);">Target Monthly Savings: <strong style="color: var(--warning-color); font-size: 1.1rem;">₹<span id="budRequired">0</span></strong></div>
+                        <div id="budSuggestion" style="font-size: 0.9rem; line-height: 1.5; color: var(--text-primary); background: var(--bg-color); padding: 0.8rem; border-radius: 4px;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -423,10 +455,10 @@
                     <thead>
                         <tr>
                             <th onclick="app.sortGoals('name')">Goal <span id="sort-name" class="sort-icon"></span></th>
-                            <th onclick="app.sortGoals('year')">Year <span id="sort-year" class="sort-icon"></span></th>
-                            <th onclick="app.sortGoals('cExp')">Current Expenses <span id="sort-cExp" class="sort-icon"></span></th>
-                            <th onclick="app.sortGoals('inflation')">Inflation <span id="sort-inflation" class="sort-icon"></span></th>
-                            <th onclick="app.sortGoals('fv')">Goal Required (Future Value) <span id="sort-fv" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('year')">Target Year <span id="sort-year" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('cExp')">Today's Cost <span id="sort-cExp" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('inflation')">Expected Yearly Inflation <span id="sort-inflation" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('fv')">Target Amount <span id="sort-fv" class="sort-icon"></span></th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
@@ -471,12 +503,12 @@
                 <div class="settings-card">
                     <h2 style="display:flex; align-items:center; gap:0.5rem;">🤖 Auto-Pilot Engine Room</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
-                        Wealth OS runs on a 100% Auto-Pilot algorithm. It constantly analyzes your portfolio's projected future value and automatically maps the optimal assets to your goals based on financial best practices and time horizons. No manual bucketing required.
+                        Wealth OS runs on a 100% Auto-Pilot algorithm. It constantly analyzes your portfolio's expected future wealth and automatically maps the optimal assets to your goals based on financial best practices and time horizons. No manual tracking required.
                     </p>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-primary);">
-                        <div style="margin-bottom: 0.5rem;"><strong style="color: var(--success-color);">Short-Term (0-3 Yrs):</strong> Favors Liquid, FD, RD, Debt</div>
-                        <div style="margin-bottom: 0.5rem;"><strong style="color: var(--warning-color);">Mid-Term (4-7 Yrs):</strong> Favors Hybrid, Debt, Gold</div>
-                        <div><strong style="color: var(--accent-color);">Long-Term (7+ Yrs):</strong> Favors Equity, Real Estate, EPF/PPF</div>
+                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.9rem; color: var(--text-primary);">
+                        <div style="margin-bottom: 0.5rem;"><strong style="color: var(--success-color);">Short-Term (0-3 Yrs):</strong> Favors Safe/Cash assets (FD, RD, Savings, Debt)</div>
+                        <div style="margin-bottom: 0.5rem;"><strong style="color: var(--warning-color);">Mid-Term (4-7 Yrs):</strong> Favors Balanced Funds, Debt, Gold</div>
+                        <div><strong style="color: var(--accent-color);">Long-Term (7+ Yrs):</strong> Favors Stock Market, Real Estate, Retirement Funds (EPF/PPF)</div>
                     </div>
                 </div>
 
@@ -610,14 +642,14 @@
                             <input type="number" id="invInvested" placeholder="400000" min="0" step="any">
                         </div>
                         <div class="form-group">
-                            <label for="invValue">Current Valuation (₹)</label>
+                            <label for="invValue">Current Value (₹)</label>
                             <input type="number" id="invValue" required placeholder="500000" min="0" step="any">
                         </div>
                     </div>
 
                     <div class="row-group">
                         <div class="form-group">
-                            <label for="invGrowth">Expected YoY Growth (%)</label>
+                            <label for="invGrowth">Expected Yearly Growth (%)</label>
                             <input type="number" id="invGrowth" required placeholder="7.1" step="0.1" value="12.0">
                         </div>
                         <div class="form-group">
@@ -635,21 +667,21 @@
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
-                <h3 style="margin-bottom: 0.5rem;">📊 Projection Math</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">How the engine calculates the Projected Future Value for <strong id="justAssetName" style="color: var(--text-primary);"></strong>.</p>
+                <h3 style="margin-bottom: 0.5rem;">📊 How We Calculate This</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">Here is the math used to guess what <strong id="justAssetName" style="color: var(--text-primary);"></strong> will be worth in the future.</p>
                 
                 <div style="background: var(--surface-light); padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1rem; margin-bottom: 1.5rem;">
-                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Current Valuation (PV): <span id="justPV" style="color: var(--text-primary); float: right;"></span></div>
-                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Expected Growth (r): <span id="justRate" style="color: var(--success-color); float: right;"></span></div>
-                    <div style="margin-bottom: 1rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">Time Horizon (n): <span id="justYears" style="color: var(--text-primary); float: right;"></span></div>
+                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Current Value: <span id="justPV" style="color: var(--text-primary); float: right;"></span></div>
+                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Expected Yearly Growth: <span id="justRate" style="color: var(--success-color); float: right;"></span></div>
+                    <div style="margin-bottom: 1rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">Years to Goal: <span id="justYears" style="color: var(--text-primary); float: right;"></span></div>
                     
-                    <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Calculation & Projection:</div>
+                    <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Calculation:</div>
                     <div id="justFormula" style="color: var(--text-secondary); margin-bottom: 1.5rem; word-break: break-all; white-space: pre-wrap; font-size: 0.9rem; line-height: 1.6;"></div>
                     
                     <!-- Visual CSS Chart Container -->
                     <div id="justChartContainer" class="yoy-chart"></div>
                     
-                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Projected Future Value: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
+                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Expected Future Wealth: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
                 </div>
                 
                 <button class="btn-action" onclick="app.closeJustificationModal()">Close</button>
@@ -679,11 +711,11 @@
 
                     <div id="standardFields">
                         <div class="form-group">
-                            <label for="currentValue">Current Expenses (Current Value ₹)</label>
+                            <label for="currentValue">Today's Cost (If you had to pay for this goal today, how much is it in ₹?)</label>
                             <input type="number" id="currentValue" placeholder="1000000" min="0" step="any">
                         </div>
                         <div class="form-group">
-                            <label for="years">Years Till Closure</label>
+                            <label for="years">Years Till Goal Date</label>
                             <input type="number" id="years" placeholder="8" min="1" max="100">
                         </div>
                     </div>
@@ -702,7 +734,7 @@
                             <input type="number" id="yearsInRetirement" placeholder="25" min="1" max="50">
                         </div>
                         <div class="form-group">
-                            <label for="postRetirementReturn">Expected Post-Retirement Return (%)</label>
+                            <label for="postRetirementReturn">Expected Post-Retirement Yearly Growth (%)</label>
                             <input type="number" id="postRetirementReturn" placeholder="8" min="0" max="100" step="0.1">
                         </div>
                     </div>
@@ -722,8 +754,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label id="inflationLabel" for="inflation">Inflation (%)</label>
-                        <input type="number" id="inflation" required placeholder="10" min="0" max="100" step="0.1">
+                        <label id="inflationLabel" for="inflation">Expected Yearly Inflation (%)</label>
+                        <input type="number" id="inflation" required placeholder="10" min="0" max="100" step="0.1" value="7.0">
                     </div>
 
                     <div class="form-actions" style="margin-top: 1.5rem;">
@@ -738,7 +770,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.76</div>
+        <div>Anantha Wealth OS V2.78</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -764,6 +796,13 @@
             if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'select' || e.target.tagName.toLowerCase() === 'textarea') {
                 return; 
             }
+            if (e.key === 'Escape') {
+                app.closeAssetModal();
+                app.closeGoalModal();
+                app.closeJustificationModal();
+                app.closeFilterPanel();
+                return;
+            }
             // Support ` or ~ to cycle tabs
             if (e.key === '`' || e.key === '~') {
                 e.preventDefault();
@@ -780,7 +819,8 @@
             data: {
                 profiles: ['Main Portfolio'],
                 goals: [],
-                investments: []
+                investments: [],
+                budget: { salary: 0, rent: 0, living: 0, fun: 0 }
             },
             engineState: {
                 pool: [],
@@ -809,7 +849,7 @@
                 equity: 12.0, debt: 7.0, hybrid: 10.0, liquid: 4.0, fd: 7.0, rd: 6.8, nps: 10.0, epf: 8.1, ppf: 7.1, pomis: 7.4, gold_silver: 8.0, real_estate: 6.0, vehicle: -10.0 
             },
             
-            profileColors: ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#f43f5e', '#ec4899', '#14b8a6', '#6366f1'],
+            profileColors: ['#38bdf8', '#34d399', '#c084fc', '#fbbf24', '#f43f5e', '#ec4899', '#14b8a6', '#6366f1'],
 
             // Gesture variables
             touchStartX: 0,
@@ -855,6 +895,7 @@
                 }
                 app.updateProfileDropdowns();
                 app.toggleGoalFields();
+                app.loadBudgetInputs();
                 app.renderAll();
                 app.switchView(app.activeView);
                 app.initTouchGestures();
@@ -962,9 +1003,11 @@
             },
 
             migrateData() {
-                const savedV2_76 = localStorage.getItem('ananthaDataV2_76');
-                if (savedV2_76) {
-                    app.data = JSON.parse(savedV2_76);
+                const savedV2_78 = localStorage.getItem('ananthaDataV2_78');
+                if (savedV2_78) {
+                    app.data = JSON.parse(savedV2_78);
+                    if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
+                    
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -984,9 +1027,10 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_75') || localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71') || localStorage.getItem('ananthaDataV2_70');
+                const savedOld = localStorage.getItem('ananthaDataV2_77') || localStorage.getItem('ananthaDataV2_76') || localStorage.getItem('ananthaDataV2_75') || localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
+                    if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     
                     app.data.investments.forEach(i => {
                         delete i.linkedGoalId;
@@ -1049,7 +1093,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_76', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_78', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1086,8 +1130,8 @@
                         
                         if (!importedData.profiles) importedData.profiles = ['Main Portfolio'];
                         if (!importedData.goals) importedData.goals = [];
+                        if (!importedData.budget) importedData.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                         
-                        // Strip manual linkages if coming from older backup
                         importedData.investments.forEach(i => {
                             delete i.linkedGoalId;
                             delete i.splitParentId;
@@ -1109,6 +1153,7 @@
 
                         app.saveState();
                         app.updateProfileDropdowns();
+                        app.loadBudgetInputs();
                         app.renderAll();
                         
                         app.showToast("Data restored successfully from backup.");
@@ -1124,19 +1169,8 @@
             deleteAllData() {
                 if (confirm('CRITICAL WARNING: This will permanently wipe ALL your profiles, investments, and goals from this browser. Make sure you have downloaded a backup first. This CANNOT be undone. Proceed?')) {
                     if (confirm('Final Confirmation: Click OK to delete everything.')) {
-                        localStorage.removeItem('ananthaDataV2_76');
-                        localStorage.removeItem('ananthaDataV2_75');
-                        localStorage.removeItem('ananthaDataV2_74');
-                        localStorage.removeItem('ananthaDataV2_73');
-                        localStorage.removeItem('ananthaDataV2_72');
-                        localStorage.removeItem('ananthaDataV2_71');
-                        localStorage.removeItem('ananthaDataV2_70');
-                        localStorage.removeItem('ananthaDataV2_69');
-                        localStorage.removeItem('ananthaDataV2_68');
-                        localStorage.removeItem('ananthaDataV2_67');
-                        localStorage.removeItem('ananthaDataV2_66');
-                        localStorage.removeItem('ananthaDataV2_65');
-                        app.data = { profiles: ['Main Portfolio'], goals: [], investments: [] };
+                        localStorage.clear();
+                        app.data = { profiles: ['Main Portfolio'], goals: [], investments: [], budget: { salary: 0, rent: 0, living: 0, fun: 0 } };
                         app.dashProfileFilters = ['Main Portfolio'];
                         app.dashClassFilters = []; app.dashTypeFilters = []; app.dashCategoryFilters = []; app.dashSectorFilters = [];
                         app.invProfileFilters = ['Main Portfolio'];
@@ -1151,35 +1185,36 @@
             /* 100% AUTO-PILOT ENGINE (CORE ALGORITHM)                                    */
             /* -------------------------------------------------------------------------- */
             runAutoPilot() {
-                // Step 1: Create a fresh processing pool from raw investments
                 let pool = app.data.investments.map(inv => {
                     let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
                     return { ...inv, totalFV: fv, remainingFV: fv, allocations: [] };
                 });
 
-                // Step 2: Prep goals
                 let engineGoals = app.data.goals.map(g => {
                     let tYear = g.targetYear || (app.currentYear + (g.yrs || g.yTo || 0));
                     let reqFv = g.fv || g.targetValue || 0;
-                    // Fix legacy parsing where cExp might be 0 but cv has value
                     let computedCExp = parseFloat(g.cExp) || parseFloat(g.cv) || parseFloat(g.currentValue) || parseFloat(g.pv) || (g.type === 'retirement' ? parseFloat(g.exp) * 12 : 0);
                     return { ...g, computedYear: tYear, computedFV: reqFv, computedCExp: computedCExp, filledFV: 0, mappedAssets: [] };
                 }).sort((a, b) => a.computedYear - b.computedYear);
 
-                // Step 3: Define Horizon Logic
                 const getPreferred = (horizon) => {
                     if (horizon <= 3) return ['liquid', 'fd', 'rd', 'debt', 'pomis'];
                     if (horizon <= 7) return ['hybrid', 'debt', 'gold_silver', 'liquid', 'fd', 'rd'];
                     return ['equity', 'real_estate', 'nps', 'epf', 'ppf', 'hybrid'];
                 };
 
-                // Step 4: Map the money
+                const isAvailableForGoal = (asset, goalYear) => {
+                    if (!asset.maturityDate) return true;
+                    let matYear = new Date(asset.maturityDate).getFullYear();
+                    return matYear <= goalYear;
+                };
+
                 engineGoals.forEach(g => {
                     let horizon = g.computedYear - app.currentYear;
                     let prefTypes = getPreferred(horizon);
 
-                    // Pass 1: Grab Preferred Assets
-                    pool.filter(a => a.remainingFV > 0 && prefTypes.includes(a.type))
+                    // Pass 1: Preferred Assets matching Horizon & Maturity constraint
+                    pool.filter(a => a.remainingFV > 0 && prefTypes.includes(a.type) && isAvailableForGoal(a, g.computedYear))
                         .sort((a,b) => b.remainingFV - a.remainingFV)
                         .forEach(a => {
                             if (g.filledFV >= g.computedFV) return;
@@ -1191,9 +1226,9 @@
                             g.mappedAssets.push({ assetName: a.name, amount: take, match: 'Optimal' });
                         });
 
-                    // Pass 2: Grab Anything (Spillover)
+                    // Pass 2: Spillover (Any available asset matching Maturity constraint)
                     if (g.filledFV < g.computedFV) {
-                        pool.filter(a => a.remainingFV > 0)
+                        pool.filter(a => a.remainingFV > 0 && isAvailableForGoal(a, g.computedYear))
                             .sort((a,b) => b.remainingFV - a.remainingFV)
                             .forEach(a => {
                                 if (g.filledFV >= g.computedFV) return;
@@ -1415,13 +1450,13 @@
                 let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
                 
                 if (inv.type === 'pomis') {
-                    document.getElementById('justFormula').innerText = `FV = ₹${app.formatCurrency(inv.value)}\n(POMIS interest is paid out monthly, so principal does not compound)`;
+                    document.getElementById('justFormula').innerText = `Expected Value = ₹${app.formatCurrency(inv.value)}\n(POMIS interest is paid out monthly, so principal does not compound)`;
                 } else if (inv.type === 'rd' && inv.monthlySIP > 0) {
                     let m = years * 12;
                     let r = (inv.growthRate / 100) / 12;
-                    document.getElementById('justFormula').innerText = `FV = PV × (1+r)^n + SIP × [((1+r)^n - 1)/r] × (1+r)\n\nPV = ₹${app.formatCurrency(inv.value)}\nSIP = ₹${app.formatCurrency(inv.monthlySIP)}/mo\nr = ${(r*100).toFixed(2)}% per month\nn = ${m.toFixed(0)} months`;
+                    document.getElementById('justFormula').innerText = `We grow your current value plus your monthly SIPs.\n\nCurrent Value = ₹${app.formatCurrency(inv.value)}\nSIP = ₹${app.formatCurrency(inv.monthlySIP)}/mo\nGrowth = ${(r*100).toFixed(2)}% per month\nDuration = ${m.toFixed(0)} months`;
                 } else {
-                    document.getElementById('justFormula').innerText = `FV = ₹${app.formatCurrency(inv.value)} × (1 + ${inv.growthRate/100})^${years.toFixed(1)}`;
+                    document.getElementById('justFormula').innerText = `We grow your current value by ${inv.growthRate}% every year for ${years.toFixed(1)} years.`;
                 }
 
                 let chartHtml = '';
@@ -2226,6 +2261,80 @@
             },
 
             /* -------------------------------------------------------------------------- */
+            /* BUDGETING MODULE                                                           */
+            /* -------------------------------------------------------------------------- */
+            loadBudgetInputs() {
+                if (!app.data.budget) return;
+                document.getElementById('budSalary').value = app.data.budget.salary || '';
+                document.getElementById('budRent').value = app.data.budget.rent || '';
+                document.getElementById('budLiving').value = app.data.budget.living || '';
+                document.getElementById('budFun').value = app.data.budget.fun || '';
+            },
+
+            saveBudget() {
+                if (!app.data.budget) app.data.budget = {};
+                app.data.budget.salary = parseFloat(document.getElementById('budSalary').value) || 0;
+                app.data.budget.rent = parseFloat(document.getElementById('budRent').value) || 0;
+                app.data.budget.living = parseFloat(document.getElementById('budLiving').value) || 0;
+                app.data.budget.fun = parseFloat(document.getElementById('budFun').value) || 0;
+                app.saveState();
+                app.renderGoals(); // re-evaluates surplus and recommendations
+            },
+
+            renderBudgetStats() {
+                let inc = (app.data.budget.salary || 0) + (app.data.budget.rent || 0);
+                let exp = (app.data.budget.living || 0) + (app.data.budget.fun || 0);
+                let surplus = inc - exp;
+                
+                document.getElementById('budTotalInc').innerText = app.formatCurrency(inc);
+                document.getElementById('budTotalExp').innerText = app.formatCurrency(exp);
+                document.getElementById('budSurplus').innerText = app.formatCurrency(surplus);
+
+                let monthlySavingsNeeded = 0;
+                let shortTermNeed = 0; // <= 3 yrs
+                let longTermNeed = 0;  // > 3 yrs
+
+                app.engineState.goals.forEach(g => {
+                    let shortfall = g.computedFV - g.filledFV;
+                    if (shortfall > 0) {
+                        let months = (g.computedYear - app.currentYear) * 12;
+                        if (months < 1) months = 1;
+                        let needed = shortfall / months;
+                        monthlySavingsNeeded += needed;
+                        
+                        let horizon = g.computedYear - app.currentYear;
+                        if (horizon <= 3) shortTermNeed += needed;
+                        else longTermNeed += needed;
+                    }
+                });
+
+                document.getElementById('budRequired').innerText = app.formatCurrency(monthlySavingsNeeded);
+
+                const suggEl = document.getElementById('budSuggestion');
+                if (app.engineState.goals.length === 0) {
+                    suggEl.innerHTML = `<span style="color:var(--text-secondary);">Define goals below to get custom savings targets.</span>`;
+                } else if (monthlySavingsNeeded === 0) {
+                    suggEl.innerHTML = `<span style="color:var(--success-color); font-weight:bold;">🎉 All goals are currently funded by your existing wealth!</span>`;
+                } else {
+                    let txt = '';
+                    if (surplus >= monthlySavingsNeeded) {
+                        txt += `<span style="color:var(--success-color); font-weight:bold;">✅ You are on track! Your surplus covers your needs.</span><br/><br/>`;
+                    } else {
+                        txt += `<span style="color:var(--danger-color); font-weight:bold;">⚠️ Warning: You need to save more or cut expenses to hit your goals.</span><br/><br/>`;
+                    }
+                    
+                    let stPct = (shortTermNeed / monthlySavingsNeeded) * 100;
+                    let ltPct = (longTermNeed / monthlySavingsNeeded) * 100;
+
+                    txt += `<strong>Action Plan for your savings:</strong><br/>`;
+                    if (stPct > 0) txt += `• Put <strong>${stPct.toFixed(0)}%</strong> into Safe/Cash Assets (FDs, RDs) for short-term goals.<br/>`;
+                    if (ltPct > 0) txt += `• Put <strong>${ltPct.toFixed(0)}%</strong> into the Stock Market for long-term growth.`;
+                    
+                    suggEl.innerHTML = txt;
+                }
+            },
+
+            /* -------------------------------------------------------------------------- */
             /* UNIFIED CASCADING FILTER PANEL LOGIC                                       */
             /* -------------------------------------------------------------------------- */
             openFilterPanel(mode) {
@@ -2566,7 +2675,7 @@
                                         👤 ${profile}
                                     </h3>
                                     <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">
-                                        Profile Projected Future Value: <strong style="color: var(--accent-color);">₹${app.formatCurrency(totalFV)}</strong>
+                                        Profile Expected Future Wealth: <strong style="color: var(--accent-color);">₹${app.formatCurrency(totalFV)}</strong>
                                     </div>
                                 </div>
                             </div>
@@ -2577,11 +2686,11 @@
                                         <tr>
                                             <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name-${safeProfileId}" class="sort-icon"></span></th>
                                             <th>Auto-Destination</th>
-                                            <th onclick="app.sortInvestments('value')">Valuation <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('value')">Current Value <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
-                                            <th onclick="app.sortInvestments('growth')">Expected Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('growth')">Expected Yearly Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('maturity')">Maturity Date <span id="sort-inv-maturity-${safeProfileId}" class="sort-icon"></span></th>
-                                            <th onclick="app.sortInvestments('fv')">Projected Future Value <span id="sort-inv-fv-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('fv')">Expected Value (at Goal) <span id="sort-inv-fv-${safeProfileId}" class="sort-icon"></span></th>
                                             <th style="text-align: center;">Actions</th>
                                         </tr>
                                     </thead>
@@ -2624,7 +2733,7 @@
                     case 'nps': case 'epf': case 'gold_silver': return 'var(--warning-color)';
                     case 'real_estate': return 'var(--realestate-color)';
                     case 'vehicle': return 'var(--vehicle-color)';
-                    default: return 'var(--surface-light)';
+                    default: return 'var(--text-secondary)';
                 }
             },
 
@@ -2755,12 +2864,16 @@
 
                 if (app.engineState.goals.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 3rem;">No goals defined yet. Click "+ Define New Goal" above to give the Auto-Pilot targets.</td></tr>`;
+                    document.getElementById('goalProgressBarWrapper').style.display = 'none';
+                    app.renderBudgetStats(); // Render budget even if empty
                     return;
                 }
 
+                document.getElementById('goalProgressBarWrapper').style.display = 'block';
+
                 let totalCExp = 0;
                 let totalFV = 0;
-
+                let totalFilled = 0;
                 let processedGoals = [...app.engineState.goals];
 
                 processedGoals.sort((a, b) => {
@@ -2779,6 +2892,7 @@
                 processedGoals.forEach(goal => {
                     totalCExp += goal.computedCExp;
                     totalFV += goal.computedFV;
+                    totalFilled += goal.filledFV;
 
                     const displayType = goal.type === 'edu_stage' ? 'Education' : goal.type;
                     const badgeColor = goal.type === 'edu_stage' || goal.type === 'education' ? 'var(--edu-color)' : (goal.type === 'retirement' ? 'var(--warning-color)' : 'var(--surface-light)');
@@ -2852,6 +2966,54 @@
                     <td></td>
                 `;
                 tbody.appendChild(totalRow);
+
+                // Update Wealth Progression Bar inside Goals Tab
+                let totalPct = totalFV > 0 ? Math.min((totalFilled / totalFV) * 100, 100) : 0;
+                document.getElementById('goalPercentage').innerText = `${totalPct.toFixed(1)}%`;
+                
+                const progressContainer = document.getElementById('goalProgressBarContainer');
+                const progressLegend = document.getElementById('goalProgressLegend');
+                progressContainer.innerHTML = '';
+                progressLegend.innerHTML = '';
+
+                let profileTotals = {};
+                app.data.investments.forEach(inv => {
+                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                    let pName = inv.profile || 'Main Portfolio';
+                    if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
+                    profileTotals[pName].fv += fv;
+                });
+
+                let colorIdx = 0;
+                const sortedProfiles = Object.keys(profileTotals).sort((a,b) => profileTotals[b].fv - profileTotals[a].fv);
+                
+                sortedProfiles.forEach(pName => {
+                    const pFV = profileTotals[pName].fv;
+                    if (pFV > 0 && totalFV > 0) {
+                        const pPctOfGoal = (pFV / totalFV) * 100;
+                        const color = app.profileColors[colorIdx % app.profileColors.length];
+                        
+                        const seg = document.createElement('div');
+                        seg.className = 'progress-bar-segment';
+                        seg.style.background = color;
+                        seg.style.width = '0%'; 
+                        progressContainer.appendChild(seg);
+                        
+                        const leg = document.createElement('div');
+                        leg.className = 'legend-item';
+                        leg.innerHTML = `<div class="legend-color" style="background:${color};"></div><span><strong>${pName}</strong>: ${pPctOfGoal.toFixed(1)}%</span>`;
+                        progressLegend.appendChild(leg);
+
+                        setTimeout(() => {
+                            const visualWidth = totalPct >= 100 ? (pFV / totalFilled) * 100 : pPctOfGoal;
+                            seg.style.width = `${visualWidth}%`;
+                        }, 100);
+                        
+                        colorIdx++;
+                    }
+                });
+
+                app.renderBudgetStats();
             },
 
             renderDashboard() {
@@ -2907,70 +3069,14 @@
                     let reqCard = document.getElementById('dashTotalFVCard');
                     reqCard.querySelector('.dash-label').innerText = 'Targets Missing';
                     reqCard.querySelector('.dash-value').innerHTML = '<span style="font-size:1rem; font-weight:normal; color:var(--text-secondary);">Tell the engine what you are saving for.</span>';
-                    
-                    document.getElementById('wealthProgressionTitle').innerText = 'Wealth Trajectory';
-                    document.getElementById('wealthProgressionSub').innerText = 'Pure Accumulation Mode: Compounding over a 10-year horizon without specific targets.';
-                    document.getElementById('dashPercentage').innerText = '∞';
-                    
-                    document.getElementById('dashProgressBarWrapper').style.display = 'none';
                 } else {
-                    document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Plan Current Expenses';
+                    document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Today\'s Cost of Goals';
                     document.getElementById('dashTotalPV').innerText = '₹' + app.formatCurrency(totalCExp);
                     document.getElementById('dashTotalPV').className = 'dash-value';
                     
                     let reqCard = document.getElementById('dashTotalFVCard');
-                    reqCard.querySelector('.dash-label').innerText = 'Total Goal Required (Future Value)';
+                    reqCard.querySelector('.dash-label').innerText = 'Total Money Needed in Future';
                     reqCard.querySelector('.dash-value').innerHTML = '₹' + app.formatCurrency(totalFV);
-                    
-                    document.getElementById('wealthProgressionTitle').innerText = 'Wealth Progression';
-                    document.getElementById('wealthProgressionSub').innerText = 'Total Projected Future Assets vs Total Future Goals Target';
-                    
-                    let totalPct = totalFV > 0 ? Math.min((globalFutureInvestments / totalFV) * 100, 100) : 0;
-                    document.getElementById('dashPercentage').innerText = `${totalPct.toFixed(1)}%`;
-                    
-                    document.getElementById('dashProgressBarWrapper').style.display = 'block';
-
-                    const progressContainer = document.getElementById('dashProgressBarContainer');
-                    const progressLegend = document.getElementById('dashProgressLegend');
-                    progressContainer.innerHTML = '';
-                    progressLegend.innerHTML = '';
-
-                    let profileTotals = {};
-                    app.data.investments.forEach(inv => {
-                        let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
-                        let pName = inv.profile || 'Main Portfolio';
-                        if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
-                        profileTotals[pName].fv += fv;
-                    });
-
-                    let colorIdx = 0;
-                    const sortedProfiles = Object.keys(profileTotals).sort((a,b) => profileTotals[b].fv - profileTotals[a].fv);
-                    
-                    sortedProfiles.forEach(pName => {
-                        const pFV = profileTotals[pName].fv;
-                        if (pFV > 0 && totalFV > 0) {
-                            const pPctOfGoal = (pFV / totalFV) * 100;
-                            const color = app.profileColors[colorIdx % app.profileColors.length];
-                            
-                            const seg = document.createElement('div');
-                            seg.className = 'progress-bar-segment';
-                            seg.style.background = color;
-                            seg.style.width = '0%'; 
-                            progressContainer.appendChild(seg);
-                            
-                            const leg = document.createElement('div');
-                            leg.className = 'legend-item';
-                            leg.innerHTML = `<div class="legend-color" style="background:${color};"></div><span><strong>${pName}</strong>: ${pPctOfGoal.toFixed(1)}%</span>`;
-                            progressLegend.appendChild(leg);
-
-                            setTimeout(() => {
-                                const visualWidth = totalPct >= 100 ? (pFV / globalFutureInvestments) * 100 : pPctOfGoal;
-                                seg.style.width = `${visualWidth}%`;
-                            }, 100);
-                            
-                            colorIdx++;
-                        }
-                    });
                 }
 
                 // Render the Chart.js Asset Progression Chart
