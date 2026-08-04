@@ -1,49 +1,49 @@
-# Anantha Wealth OS 📈
+# ∞ Anantha Wealth OS
 
-**A privacy-first, client-side personal finance and portfolio tracking dashboard.**
+**Infinite Possibilities.** A 100% private, offline, and auto-piloted personal finance and wealth management dashboard that runs entirely in your browser. 
 
-Wealth OS is a lightweight, single-page application (SPA) designed to help you track your net worth, manage financial goals, and automatically import your asset holdings without ever sending your sensitive financial data to a server. 
+Wealth OS acts as your personal "Robo-Advisor." It automatically parses your investment statements, projects your future wealth, and algorithmically maps your assets to your life goals based on specific time horizons and risk profiles—all without a single piece of your financial data ever leaving your device.
 
-Everything runs directly in your browser and saves to your local storage. 
+## ✨ Key Features (V3.0)
 
----
+* **100% Privacy & Offline First:** No servers, no cloud databases, no tracking. Everything is processed locally in your browser and saved to your device's LocalStorage. Installable as a Progressive Web App (PWA) for native-like offline access.
+* **Auto-Pilot Engine:** Forget manual bucketing. The core algorithm automatically routes safe/cash assets to short-term goals, balanced assets to mid-term goals, and high-growth equities to long-term goals.
+* **Smart Statement Parsing:** Effortlessly drag-and-drop bulk files. The engine automatically reads, categorizes, and extracts data from:
+  * INDmoney
+  * Zerodha (Kite & Console)
+  * Upstox
+  * Groww (Mutual Funds & Stocks)
+  * Scripbox
+  * ICICI (Fixed Deposits)
+  * India Post Office (FDs, RDs, MIS, Savings)
+* **Goal & Retirement Planning:** Create multi-stage Education plans, track Retirement Corpus requirements (with post-retirement return calculations), and monitor standard financial goals.
+* **Dynamic Budgeting Module:** Track incoming cash against living and discretionary expenses. The engine calculates your monthly surplus and recommends exact percentage splits (e.g., "Put 30% in Safe Assets, 70% in Stock Market") to ensure your goals are met.
+* **Advanced Visualizations:** Smooth, dynamic Chart.js integrations that map your Wealth Trajectory and Asset Class Progression over rolling 10+ year horizons.
+* **Custom Profiles:** Manage assets for different family members under isolated or merged portfolios.
 
-## ✨ Features
+## 🚀 Getting Started
 
-* 🔒 **100% Private & Secure:** No backend, no databases, no tracking. Your financial data never leaves your device.
-* 🤖 **Smart Broker Imports:** Upload your raw Excel exports directly. The platform-aware parsing engine auto-detects and extracts data from:
-  * **INDmoney** (`holdings-family-template.xlsx`)
-  * **Zerodha** (`holdings-template-zerodha.xlsx`)
-  * **Upstox** (`holdings_report_Upstox.xlsx`)
-* 🎯 **Advanced Goal Tracking:** Plan for standard goals, track retirement corpus requirements, or build multi-stage educational timelines for your kids based on inflation and expected returns.
-* 📊 **Asset Allocation Summary:** Group your portfolio instantly by Asset Class, Type, or custom Categories.
-* 🔮 **Future Value Projections:** Automatically calculates the projected future value (FV) of your assets based on customizable historical or expected YoY growth rates.
-* 📱 **Progressive Web App (PWA):** Installable on Android, iOS, and Desktop for a native app experience with full offline support.
+1. Download or clone this repository.
+2. Open `index.html` in any modern web browser.
+3. Head to the **Settings** tab to create a profile (e.g., "Main Portfolio").
+4. Upload your broker statements to automatically populate the dashboard, or log assets manually.
+5. (Optional) Click the **Install App** button in Settings to save Wealth OS to your desktop or mobile home screen.
 
----
-
-## 🚀 Quick Start
-
-Because Wealth OS is a client-side application, you don't need any complex build tools or servers to run it.
-
-### Option 1: Local Usage (Easiest)
-1. Clone or download this repository.
-2. Double-click `index.html` to open it in any modern web browser.
-3. Start logging your assets!
-
-### Option 2: Cloud Hosting (For Mobile PWA Installation)
-To install Wealth OS on your phone's home screen, it needs to be served over HTTPS.
-1. Upload the files to a free static hosting provider like **GitHub Pages**, **Netlify**, or **Vercel**.
-2. Open the hosted URL on your mobile device.
-3. Tap **"Install App"** in the Settings tab, or use your browser's "Add to Home Screen" prompt.
+## 🛠 Tech Stack
+* **Frontend:** Vanilla HTML5, CSS3, JavaScript (ES6+).
+* **Libraries:** [SheetJS (xlsx)](https://sheetjs.com/) for offline Excel/CSV parsing, [Chart.js](https://www.chartjs.org/) for canvas-based data visualization.
+* **Data Storage:** Browser `localStorage` (Exportable to local `.json` backups).
 
 ---
 
-## 📂 File Structure
+## 📝 Backlog & Known Issues
 
-The entire application relies on just three files:
+The following items are scheduled for upcoming development sprints:
 
-```text
-├── index.html       # The core application (UI, logic, and parsing engine)
-├── manifest.json    # PWA configuration (app icon, name, theme colors)
-└── sw.js            # Service Worker (enables 100% offline functionality)
+1. **Goal Creation Timestamping:** Capture the exact year a goal is created. Ensure the compounding math logic works perfectly when legacy goals roll over and fresh files for future years (e.g., 2027, 2028) are uploaded.
+2. **Bug Fix:** Resolve the persistent `app.renderGoals is not a function` error occurring during specific tab switches or data re-renders.
+3. **Budget Persistence:** Save the inputs from the Monthly Budget & Investment Guide to `localStorage` so total income, total expenditure, and engine recommendations do not reset on page refresh.
+4. **Simplified Portfolio View:** Introduce a cleaner, simplified toggle view within the "Portfolio" tab to reduce visual clutter for everyday monitoring. 
+
+---
+*Anantha Wealth OS V3.0*
