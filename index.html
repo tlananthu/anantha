@@ -589,7 +589,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal (Updated V2.68) -->
+        <!-- Justification / Projection Math Modal (Updated V2.69) -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -734,7 +734,7 @@
             </div>
         </div>
 
-        <!-- Assign Assets Modal (Goal Buckets) V2.68 -->
+        <!-- Assign Assets Modal (Goal Buckets) V2.69 -->
         <div class="modal-overlay" id="assignAssetsModal">
             <div class="modal-content" style="max-width: 600px;">
                 <button class="close-modal" onclick="app.closeAssignModal()">✕</button>
@@ -777,7 +777,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.68</div>
+        <div>Anantha Wealth OS V2.69</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -981,9 +981,9 @@
             },
 
             migrateData() {
-                const savedV2_68 = localStorage.getItem('ananthaDataV2_68');
-                if (savedV2_68) {
-                    app.data = JSON.parse(savedV2_68);
+                const savedV2_69 = localStorage.getItem('ananthaDataV2_69');
+                if (savedV2_69) {
+                    app.data = JSON.parse(savedV2_69);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -1003,7 +1003,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_67') || localStorage.getItem('ananthaDataV2_66') || localStorage.getItem('ananthaDataV2_65') || localStorage.getItem('ananthaDataV2_64') || localStorage.getItem('ananthaDataV2_63');
+                const savedOld = localStorage.getItem('ananthaDataV2_68') || localStorage.getItem('ananthaDataV2_67') || localStorage.getItem('ananthaDataV2_66') || localStorage.getItem('ananthaDataV2_65') || localStorage.getItem('ananthaDataV2_64');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -1066,7 +1066,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_68', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_69', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1829,6 +1829,42 @@
 
                     app.data.investments = [...app.data.investments, ...allNewInvestments];
 
+                    // --- V2.69 CAP-AWARE AUTO-MATCHER ---
+                    let goalStatus = {};
+                    app.data.goals.forEach(g => {
+                        let reqFv = g.fv || g.targetValue || 0;
+                        let tYear = g.targetYear || (app.currentYear + (g.yrs || g.yTo || 0));
+                        goalStatus[g.id] = { req: reqFv, year: tYear, assigned: 0 };
+                    });
+
+                    app.data.investments.forEach(inv => {
+                        if (inv.linkedGoalId && goalStatus[inv.linkedGoalId]) {
+                            goalStatus[inv.linkedGoalId].assigned += app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                        }
+                    });
+
+                    app.data.investments.forEach(inv => {
+                        if (inv.source === "ICICI-FD" && !inv.linkedGoalId && inv.maturityDate && !inv.isManuallyEdited) {
+                            let matYear = new Date(inv.maturityDate).getFullYear();
+                            let invFv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                            
+                            let targetGoalId = null;
+                            for (let gId in goalStatus) {
+                                let g = goalStatus[gId];
+                                if (g.year === matYear && g.assigned < g.req) {
+                                    targetGoalId = gId;
+                                    break;
+                                }
+                            }
+                            
+                            if (targetGoalId) {
+                                inv.linkedGoalId = targetGoalId;
+                                goalStatus[targetGoalId].assigned += invFv;
+                            }
+                        }
+                    });
+                    // --- END AUTO-MATCHER ---
+
                     app.invClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
                     app.invTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
                     app.invCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
@@ -2071,17 +2107,6 @@
                                         let matchKey = `${profileName.toLowerCase()}|${invName.toLowerCase()}`;
                                         let existingManual = manualOverrides[matchKey];
                                         let retainedGoalId = assetGoalTags[matchKey] || null;
-                                        
-                                        if (isICICIFD && !retainedGoalId && maturityDate) {
-                                            let matYear = new Date(maturityDate).getFullYear();
-                                            let possibleGoal = app.data.goals.find(g => {
-                                                let tYear = g.targetYear || (app.currentYear + (g.yrs || g.yTo || 0));
-                                                return tYear === matYear;
-                                            });
-                                            if (possibleGoal) {
-                                                retainedGoalId = possibleGoal.id;
-                                            }
-                                        }
 
                                         let objId = Date.now().toString() + Math.random().toString().slice(2,8);
                                         let isManuallyEdited = false;
