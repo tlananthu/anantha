@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anantha | Wealth OS</title>
+    <link rel="icon" type="image/x-icon" href="https://tlananthu.github.io/anantha/favicon.ico">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -98,8 +99,8 @@
         
         .badge { font-size: 0.65rem; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--text-secondary); vertical-align: middle; text-transform: uppercase;}
         
-        .icon-btn { background: none; color: var(--text-secondary); width: auto; padding: 0.4rem; font-size: 1.1rem; min-width: 36px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; }
-        .icon-btn:hover { color: var(--accent-color); background: rgba(255,255,255,0.05); }
+        .icon-btn { background: none; color: var(--text-secondary); width: auto; padding: 0; font-size: 1.1rem; }
+        .icon-btn:hover { color: var(--accent-color); }
         .icon-btn.delete:hover { color: var(--danger-color); }
 
         /* Dashboard specific */
@@ -262,7 +263,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -570,18 +571,13 @@
                             <input type="text" id="invRawCategory" placeholder="e.g. Large Cap, NA">
                         </div>
                         <div class="form-group">
-                            <label for="invRawSector">Sector</label>
-                            <input type="text" id="invRawSector" placeholder="e.g. IT, Auto, NA">
+                            <label for="invPlanType">Plan Type (MF Only)</label>
+                            <select id="invPlanType">
+                                <option value="Unknown">Unknown / NA</option>
+                                <option value="Direct">Direct</option>
+                                <option value="Regular">Regular</option>
+                            </select>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="invPlanType">Plan Type (MF Only)</label>
-                        <select id="invPlanType">
-                            <option value="Unknown">Unknown / NA</option>
-                            <option value="Direct">Direct</option>
-                            <option value="Regular">Regular</option>
-                        </select>
                     </div>
 
                     <div class="form-group">
@@ -616,7 +612,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal -->
+        <!-- Justification / Projection Math Modal (Updated V2.66) -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -788,7 +784,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.65</div>
+        <div>Anantha Wealth OS V2.66</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -995,9 +991,9 @@
             },
 
             migrateData() {
-                const savedV2_65 = localStorage.getItem('ananthaDataV2_65');
-                if (savedV2_65) {
-                    app.data = JSON.parse(savedV2_65);
+                const savedV2_66 = localStorage.getItem('ananthaDataV2_66');
+                if (savedV2_66) {
+                    app.data = JSON.parse(savedV2_66);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -1017,7 +1013,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_64') || localStorage.getItem('ananthaDataV2_63') || localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61');
+                const savedOld = localStorage.getItem('ananthaDataV2_65') || localStorage.getItem('ananthaDataV2_64') || localStorage.getItem('ananthaDataV2_63') || localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -1080,7 +1076,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_65', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_66', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -2721,7 +2717,7 @@
                         
                         if (inv.growthRate < 0) {
                             rowClass += " loss-making-row";
-                            warningIcon = `<span title="Loss making asset" style="cursor:help; margin-left:5px;">❗</span>`;
+                            warningIcon = `<span title="Loss making asset (Negative Growth Based on File)" style="cursor:help; margin-left:5px;">❗</span>`;
                         } else if (inv.growthRate < 7.0 && inv.type !== 'vehicle') {
                             rowClass += " low-growth-row";
                             warningIcon = `<span title="Losing potential to inflation (Growth < 7.0%)" style="cursor:help; margin-left:5px;">⚠️</span>`;
