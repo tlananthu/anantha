@@ -118,6 +118,13 @@
         .legend-item { display: flex; align-items: center; gap: 0.4rem; color: var(--text-primary); }
         .legend-color { width: 12px; height: 12px; border-radius: 3px; }
 
+        /* Goal Table Progress Bars & Drawers */
+        .goal-progress-track { width: 100%; background: var(--surface-light); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+        .goal-progress-fill { height: 100%; background: var(--success-color); transition: width 0.5s ease; }
+        .drawer-row { display: none; background: rgba(56, 189, 248, 0.02); }
+        .drawer-row.open { display: table-row; animation: fadeIn 0.2s ease-in-out; }
+        .clickable-goal:hover { background-color: rgba(255, 255, 255, 0.02); }
+
         /* Unified Filter Panel */
         .filter-panel { background: var(--surface-light); border: 1px solid var(--accent-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; display: none; animation: fadeIn 0.2s ease-in-out; }
         .filter-panel h4 { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
@@ -136,7 +143,7 @@
         .data-table th:hover { background: #323846; color: var(--text-primary); }
         .data-table th span.sort-icon { margin-left: 0.4rem; font-size: 0.75rem; color: var(--accent-color); }
         .data-table td { font-size: 1rem; }
-        .data-table tr:hover:not(.total-row) { background-color: rgba(255, 255, 255, 0.02); }
+        .data-table tr:hover:not(.total-row):not(.drawer-row) { background-color: rgba(255, 255, 255, 0.02); }
         .data-table tr:last-child td { border-bottom: none; }
         
         .name-cell { font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
@@ -260,7 +267,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -332,12 +339,12 @@
                     <div class="dash-label">Projected Asset FV</div>
                     <div class="dash-value success" id="dashFutureAssets">₹0</div>
                 </div>
-                <div class="card dash-stat-card">
+                <div class="card dash-stat-card" id="dashTotalPVCard">
                     <div class="year-badge ongoing" id="badgeDashToday2">----</div>
                     <div class="dash-label">Plan C. Expenses</div>
                     <div class="dash-value" id="dashTotalPV">₹0</div>
                 </div>
-                <div class="card dash-stat-card">
+                <div class="card dash-stat-card" id="dashTotalFVCard">
                     <div class="year-badge" id="badgeDashFV2">TO ----</div>
                     <div class="dash-label">Total Goal Required</div>
                     <div class="dash-value highlight" id="dashTotalFV">₹0</div>
@@ -347,8 +354,8 @@
             <div class="progress-container">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
-                        <h3 style="margin-bottom: 0.2rem;">Wealth Progression</h3>
-                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Total Projected Future Assets vs Total Future Goals Target</span>
+                        <h3 id="wealthProgressionTitle" style="margin-bottom: 0.2rem;">Wealth Progression</h3>
+                        <span id="wealthProgressionSub" style="font-size: 0.85rem; color: var(--text-secondary);">Total Projected Future Assets vs Total Future Goals Target</span>
                     </div>
                     <div id="dashPercentage" style="font-size: 1.2rem; font-weight: 700; color: var(--accent-color);">0%</div>
                 </div>
@@ -441,6 +448,19 @@
             </div>
 
             <div class="settings-layout">
+                
+                <div class="settings-card">
+                    <h2 style="display:flex; align-items:center; gap:0.5rem;">🤖 Auto-Pilot Engine Room</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
+                        Wealth OS runs on a 100% Auto-Pilot algorithm. It constantly analyzes your portfolio's projected future value and automatically maps the optimal assets to your goals based on financial best practices and time horizons. No manual bucketing required.
+                    </p>
+                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-primary);">
+                        <div style="margin-bottom: 0.5rem;"><strong style="color: var(--success-color);">Short-Term (0-3 Yrs):</strong> Favors Liquid, FD, RD, Debt</div>
+                        <div style="margin-bottom: 0.5rem;"><strong style="color: var(--warning-color);">Mid-Term (4-7 Yrs):</strong> Favors Hybrid, Debt, Gold</div>
+                        <div><strong style="color: var(--accent-color);">Long-Term (7+ Yrs):</strong> Favors Equity, Real Estate, EPF/PPF</div>
+                    </div>
+                </div>
+
                 <div class="settings-card">
                     <h2>Profile Data & Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
@@ -582,7 +602,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal (Updated V2.73) -->
+        <!-- Justification / Projection Math Modal -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -689,7 +709,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.73</div>
+        <div>Anantha Wealth OS V2.74</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -729,6 +749,10 @@
                 profiles: ['Main Portfolio'],
                 goals: [],
                 investments: []
+            },
+            engineState: {
+                pool: [],
+                goals: []
             },
             editingGoalId: null,
             editingBatchId: null,
@@ -904,9 +928,9 @@
             },
 
             migrateData() {
-                const savedV2_73 = localStorage.getItem('ananthaDataV2_73');
-                if (savedV2_73) {
-                    app.data = JSON.parse(savedV2_73);
+                const savedV2_74 = localStorage.getItem('ananthaDataV2_74');
+                if (savedV2_74) {
+                    app.data = JSON.parse(savedV2_74);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -926,12 +950,12 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71') || localStorage.getItem('ananthaDataV2_70') || localStorage.getItem('ananthaDataV2_69') || localStorage.getItem('ananthaDataV2_68') || localStorage.getItem('ananthaDataV2_67');
+                const savedOld = localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71') || localStorage.getItem('ananthaDataV2_70') || localStorage.getItem('ananthaDataV2_69') || localStorage.getItem('ananthaDataV2_68');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
                     app.data.investments.forEach(i => {
-                        // Stripping old allocation data logic to clean up the JSON size
+                        // Stripping old allocation data logic to clean up the JSON size for pure auto-pilot
                         delete i.linkedGoalId;
                         delete i.splitParentId;
 
@@ -992,7 +1016,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_73', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_74', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1030,6 +1054,12 @@
                         if (!importedData.profiles) importedData.profiles = ['Main Portfolio'];
                         if (!importedData.goals) importedData.goals = [];
                         
+                        // Strip manual linkages if coming from older backup
+                        importedData.investments.forEach(i => {
+                            delete i.linkedGoalId;
+                            delete i.splitParentId;
+                        });
+
                         app.data = importedData;
                         
                         app.dashProfileFilters = [...app.data.profiles];
@@ -1056,6 +1086,68 @@
                 };
                 reader.readAsText(file);
                 event.target.value = ''; 
+            },
+
+            /* -------------------------------------------------------------------------- */
+            /* 100% AUTO-PILOT ENGINE (CORE ALGORITHM)                                    */
+            /* -------------------------------------------------------------------------- */
+            runAutoPilot() {
+                // Step 1: Create a fresh processing pool from raw investments
+                let pool = app.data.investments.map(inv => {
+                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                    return { ...inv, totalFV: fv, remainingFV: fv, allocations: [] };
+                });
+
+                // Step 2: Prep goals
+                let engineGoals = app.data.goals.map(g => {
+                    let tYear = g.targetYear || (app.currentYear + (g.yrs || g.yTo || 0));
+                    let reqFv = g.fv || g.targetValue || 0;
+                    return { ...g, computedYear: tYear, computedFV: reqFv, cExp: (g.cExp || g.cv || g.pv || 0), filledFV: 0, mappedAssets: [] };
+                }).sort((a, b) => a.computedYear - b.computedYear);
+
+                // Step 3: Define Horizon Logic
+                const getPreferred = (horizon) => {
+                    if (horizon <= 3) return ['liquid', 'fd', 'rd', 'debt', 'pomis'];
+                    if (horizon <= 7) return ['hybrid', 'debt', 'gold_silver', 'liquid', 'fd', 'rd'];
+                    return ['equity', 'real_estate', 'nps', 'epf', 'ppf', 'hybrid'];
+                };
+
+                // Step 4: Map the money
+                engineGoals.forEach(g => {
+                    let horizon = g.computedYear - app.currentYear;
+                    let prefTypes = getPreferred(horizon);
+
+                    // Pass 1: Grab Preferred Assets
+                    pool.filter(a => a.remainingFV > 0 && prefTypes.includes(a.type))
+                        .sort((a,b) => b.remainingFV - a.remainingFV)
+                        .forEach(a => {
+                            if (g.filledFV >= g.computedFV) return;
+                            let needed = g.computedFV - g.filledFV;
+                            let take = Math.min(a.remainingFV, needed);
+                            a.remainingFV -= take;
+                            g.filledFV += take;
+                            a.allocations.push({ goalName: g.name, pct: (take/a.totalFV)*100 });
+                            g.mappedAssets.push({ assetName: a.name, amount: take, match: 'Optimal' });
+                        });
+
+                    // Pass 2: Grab Anything (Spillover)
+                    if (g.filledFV < g.computedFV) {
+                        pool.filter(a => a.remainingFV > 0)
+                            .sort((a,b) => b.remainingFV - a.remainingFV)
+                            .forEach(a => {
+                                if (g.filledFV >= g.computedFV) return;
+                                let needed = g.computedFV - g.filledFV;
+                                let take = Math.min(a.remainingFV, needed);
+                                a.remainingFV -= take;
+                                g.filledFV += take;
+                                a.allocations.push({ goalName: g.name, pct: (take/a.totalFV)*100 });
+                                g.mappedAssets.push({ assetName: a.name, amount: take, match: 'Spillover' });
+                            });
+                    }
+                    g.progressPct = g.computedFV > 0 ? Math.min((g.filledFV / g.computedFV) * 100, 100) : 0;
+                });
+
+                app.engineState = { pool, goals: engineGoals };
             },
 
             /* -------------------------------------------------------------------------- */
@@ -1393,8 +1485,7 @@
 
                 app.saveState();
                 app.closeAssetModal();
-                app.renderInvestments();
-                app.renderDashboard();
+                app.renderAll(); // Re-run engine
                 app.showToast("Asset saved successfully.");
             },
 
@@ -1432,18 +1523,11 @@
             },
 
             deleteInv(id) {
-                const inv = app.data.investments.find(i => i.id === id);
-                if (!inv) return;
-                
-                let msg = "Delete this asset from your portfolio?";
-                
-                if(confirm(msg)) {
+                if(confirm("Delete this asset from your portfolio?")) {
                     app.data.investments = app.data.investments.filter(i => i.id !== id);
                     if(app.editingInvId === id) app.closeAssetModal();
                     app.saveState();
-                    app.renderInvestments();
-                    app.renderDashboard();
-                    app.renderGoals();
+                    app.renderAll();
                     app.showToast("Asset removed.");
                 }
             },
@@ -1504,10 +1588,7 @@
                     
                     app.saveState();
                     app.updateProfileDropdowns();
-                    app.renderInvestments();
-                    app.renderDashboard();
-                    app.renderSettingsProfiles();
-                    app.renderGoals();
+                    app.renderAll();
                     
                     app.switchView('home');
                     app.showToast(`Imported ${allNewInvestments.length} assets into ${targetProfile}.`);
@@ -1993,8 +2074,7 @@
 
                 app.saveState();
                 app.closeGoalModal();
-                app.renderGoals();
-                app.renderDashboard();
+                app.renderAll();
                 app.showToast("Goal saved successfully.");
             },
 
@@ -2056,9 +2136,7 @@
                     app.data.goals = app.data.goals.filter(g => g.id !== id);
                     if(app.editingGoalId === id) app.closeGoalModal();
                     app.saveState();
-                    app.renderGoals();
-                    app.renderInvestments();
-                    app.renderDashboard();
+                    app.renderAll();
                     app.showToast("Goal removed.");
                 }
             },
@@ -2072,6 +2150,16 @@
                 }
                 app.saveState();
                 app.renderGoals();
+            },
+
+            toggleDrawer(id) {
+                const el = document.getElementById('drawer-' + id);
+                if (el.classList.contains('open')) {
+                    el.classList.remove('open');
+                } else {
+                    document.querySelectorAll('.drawer-row').forEach(d => d.classList.remove('open'));
+                    el.classList.add('open');
+                }
             },
 
             /* -------------------------------------------------------------------------- */
@@ -2238,7 +2326,7 @@
                 }
 
                 activeProfiles.forEach(profile => {
-                    let profInvs = app.data.investments.filter(i => i.profile === profile || (!i.profile && profile === 'Main Portfolio'));
+                    let profInvs = app.engineState.pool.filter(i => i.profile === profile || (!i.profile && profile === 'Main Portfolio'));
 
                     profInvs = profInvs.filter(i => {
                         return app.invClassFilters.includes(i.rawAssetClass || i.type) &&
@@ -2250,7 +2338,6 @@
                     if (profInvs.length === 0) return; 
 
                     const processedInv = profInvs.map(inv => {
-                        let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
                         let matDisplay = inv.maturityDate ? new Date(inv.maturityDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '';
                         let sortMat = inv.maturityDate ? new Date(inv.maturityDate).getTime() : 9999999999999; 
                         
@@ -2258,8 +2345,7 @@
                         if (inv.investedValue && inv.investedValue > 0) {
                             actualGrowthPct = ((inv.value - inv.investedValue) / inv.investedValue) * 100;
                         }
-                        
-                        return { ...inv, computedFV: fv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct };
+                        return { ...inv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct };
                     });
 
                     processedInv.sort((a, b) => {
@@ -2269,7 +2355,7 @@
                         else if (app.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
                         else if (app.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
                         else if (app.invSortColumn === 'maturity') { valA = a.sortMat; valB = b.sortMat; }
-                        else if (app.invSortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
+                        else if (app.invSortColumn === 'fv') { valA = a.totalFV; valB = b.totalFV; }
 
                         if (valA < valB) return app.invSortAsc ? -1 : 1;
                         if (valA > valB) return app.invSortAsc ? 1 : -1;
@@ -2281,7 +2367,7 @@
 
                     processedInv.forEach(inv => {
                         totalCV += (inv.value || 0);
-                        totalFV += inv.computedFV;
+                        totalFV += inv.totalFV;
 
                         let displayClass = (inv.rawAssetClass || inv.type).toUpperCase();
                         let warningIcon = "";
@@ -2310,6 +2396,19 @@
                         
                         let actionHtml = `<button class="icon-btn" onclick="event.stopPropagation(); app.openJustificationModal('${inv.id}')" title="View Projection Math" style="margin-right: 5px; font-size: 1rem;">📊</button>`;
 
+                        let destHtml = '';
+                        if (app.data.goals.length === 0 || inv.allocations.length === 0) {
+                            destHtml = `<span class="badge" style="background: var(--surface-light); color: var(--text-secondary);">UNASSIGNED</span>`;
+                        } else {
+                            inv.allocations.forEach(alloc => {
+                                destHtml += `<div style="margin-bottom: 2px;"><span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-color); border: 1px solid var(--accent-color);">✨ ${alloc.pct.toFixed(0)}% ${alloc.goalName}</span></div>`;
+                            });
+                            if (inv.remainingFV > 1) { 
+                                let unassignedPct = (inv.remainingFV / inv.totalFV) * 100;
+                                destHtml += `<div><span class="badge" style="background: var(--surface-light); color: var(--text-secondary);">${unassignedPct.toFixed(0)}% Unassigned</span></div>`;
+                            }
+                        }
+
                         tbodyHtml += `
                             <tr class="${rowClass}" onclick="app.editInv('${inv.id}')">
                                 <td>
@@ -2319,11 +2418,12 @@
                                         ${planTypeBadge}
                                     </div>
                                 </td>
+                                <td>${destHtml}</td>
                                 <td>₹${app.formatCurrency(inv.value)}</td>
                                 <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
                                 <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
                                 <td style="color: var(--text-secondary); font-size: 0.9rem;">${inv.matDisplay || '-'}</td>
-                                <td class="highlight-val">₹${app.formatCurrency(inv.computedFV)}</td>
+                                <td class="highlight-val">₹${app.formatCurrency(inv.totalFV)}</td>
                                 <td style="text-align: center; white-space: nowrap;">
                                     ${actionHtml}
                                     <button class="icon-btn" onclick="event.stopPropagation(); app.editInv('${inv.id}')" style="margin-right: 5px;">✎</button>
@@ -2333,7 +2433,7 @@
                         `;
                     });
 
-                    const safeProfileId = profile.replace(/\s+/g,'-');
+                    const safeProfileId = profile.replace(/[^a-zA-Z0-9]/g,'-');
                     const sectionHtml = `
                         <div style="margin-bottom: 3rem; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
                             <div style="padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
@@ -2352,6 +2452,7 @@
                                     <thead>
                                         <tr>
                                             <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th>Auto-Destination</th>
                                             <th onclick="app.sortInvestments('value')">Valuation <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('growth')">Expected Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
@@ -2363,7 +2464,7 @@
                                     <tbody>
                                         ${tbodyHtml}
                                         <tr class="total-row">
-                                            <td>TOTAL</td>
+                                            <td colspan="2">TOTAL</td>
                                             <td>₹${app.formatCurrency(totalCV)}</td>
                                             <td></td>
                                             <td></td>
@@ -2379,10 +2480,9 @@
                     container.innerHTML += sectionHtml;
                 });
 
-                // Update sort icons after DOM injection
                 ['name', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
                     activeProfiles.forEach(profile => {
-                        const iconEl = document.getElementById(`sort-inv-${col}-${profile.replace(/\s+/g,'-')}`);
+                        const iconEl = document.getElementById(`sort-inv-${col}-${profile.replace(/[^a-zA-Z0-9]/g,'-')}`);
                         if(iconEl) {
                             if (app.invSortColumn === col) iconEl.innerText = app.invSortAsc ? ' ▲' : ' ▼';
                             else iconEl.innerText = '';
@@ -2529,26 +2629,15 @@
                     }
                 });
 
-                if (app.data.goals.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No goals defined yet. Click "+ Define New Goal" above.</td></tr>`;
+                if (app.engineState.goals.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 3rem;">No goals defined yet. Click "+ Define New Goal" above to give the Auto-Pilot targets.</td></tr>`;
                     return;
                 }
 
                 let totalCExp = 0;
                 let totalFV = 0;
 
-                const processedGoals = app.data.goals.map(goal => {
-                    let cExp = goal.cExp || (goal.type === 'retirement' ? (goal.exp * 12) : (goal.cv || goal.pv || 0));
-                    let fv = goal.fv || goal.targetValue || 0;
-                    let tYear = goal.targetYear;
-                    if (!tYear) {
-                        if (goal.type === 'standard' || goal.type === 'edu_stage') tYear = app.currentYear + (goal.yrs || 0);
-                        else if (goal.type === 'retirement') tYear = app.currentYear + (goal.yTo || 0);
-                        else tYear = app.currentYear;
-                    }
-
-                    return { ...goal, computedCExp: cExp, computedFV: fv, computedYear: tYear };
-                });
+                let processedGoals = [...app.engineState.goals];
 
                 processedGoals.sort((a, b) => {
                     let valA, valB;
@@ -2572,12 +2661,23 @@
                     const badgeTextColor = goal.type === 'standard' ? 'var(--text-secondary)' : '#000';
 
                     const tr = document.createElement('tr');
+                    tr.className = "clickable-goal";
+                    tr.style.cursor = "pointer";
+                    tr.title = "Click to view Algorithmic Fulfillment breakdown";
+                    tr.onclick = () => app.toggleDrawer(goal.id);
+                    
                     tr.innerHTML = `
                         <td>
                             <div class="goal-name-cell" style="display:flex; flex-direction:column; align-items:flex-start; gap:0.2rem;">
                                 <div style="display:flex; align-items:center; gap:0.5rem;">
                                     <strong>${goal.name}</strong>
                                     <span class="badge" style="background:${badgeColor}; color:${badgeTextColor}; font-size:0.55rem;">${displayType}</span>
+                                </div>
+                                <div style="font-size:0.75rem; color:var(--text-secondary);">
+                                    Auto-Funded: <span style="color:var(--success-color); font-weight:600;">₹${app.formatCurrency(goal.filledFV)}</span> (${goal.progressPct.toFixed(1)}%)
+                                </div>
+                                <div class="goal-progress-track">
+                                    <div class="goal-progress-fill" style="width: ${goal.progressPct}%;"></div>
                                 </div>
                             </div>
                         </td>
@@ -2587,12 +2687,36 @@
                         <td class="highlight-val">${app.formatCurrency(goal.computedFV)}</td>
                         <td style="text-align: center;">
                             <div style="display:flex; justify-content:center; gap:0.4rem;">
-                                <button class="icon-btn" onclick="app.editGoal('${goal.id}')" title="Edit Goal">✎</button>
-                                <button class="icon-btn delete" onclick="app.deleteGoal('${goal.id}')" title="Delete Goal">✕</button>
+                                <button class="icon-btn" onclick="event.stopPropagation(); app.editGoal('${goal.id}')" title="Edit Goal">✎</button>
+                                <button class="icon-btn delete" onclick="event.stopPropagation(); app.deleteGoal('${goal.id}')" title="Delete Goal">✕</button>
                             </div>
                         </td>
                     `;
                     tbody.appendChild(tr);
+
+                    let drawerHtml = `<tr id="drawer-${goal.id}" class="drawer-row"><td colspan="6" style="padding: 1.5rem; text-align: left;">`;
+                    if (goal.mappedAssets.length === 0) {
+                        drawerHtml += `<div style="color: var(--danger-color); font-size: 0.85rem;">⚠️ No available assets to fund this goal.</div>`;
+                    } else {
+                        drawerHtml += `<div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; letter-spacing: 1px;">🤖 Algorithmic Fulfillment Report</div>`;
+                        drawerHtml += `<table style="width:100%; border-collapse:collapse; font-size: 0.9rem; background: var(--bg-color); border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">`;
+                        goal.mappedAssets.forEach(ma => {
+                            let badgeColor = ma.match === 'Optimal' ? 'var(--success-color)' : 'var(--warning-color)';
+                            let badgeTxt = ma.match === 'Optimal' ? 'Horizon Match' : 'Spillover';
+                            drawerHtml += `<tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.8rem 1rem; color: var(--text-primary); text-align: left;">${ma.assetName}</td>
+                                <td style="padding: 0.8rem 1rem; color: var(--accent-color); text-align: right; font-weight:600;">₹${app.formatCurrency(ma.amount)}</td>
+                                <td style="padding: 0.8rem 1rem; text-align: right;"><span class="badge" style="color: ${badgeColor}; border: 1px solid ${badgeColor}; background: transparent;">${badgeTxt}</span></td>
+                            </tr>`;
+                        });
+                        drawerHtml += `</table>`;
+                    }
+                    drawerHtml += `</td></tr>`;
+                    
+                    // Convert html string to elements and append
+                    const temp = document.createElement('tbody');
+                    temp.innerHTML = drawerHtml;
+                    tbody.appendChild(temp.firstElementChild);
                 });
 
                 const totalRow = document.createElement('tr');
@@ -2610,17 +2734,11 @@
             renderDashboard() {
                 let globalInvestments = 0;
                 let globalFutureInvestments = 0;
-                let profileTotals = {};
-                const maxYear = app.getMaxGoalYear();
                 
                 app.data.investments.forEach(inv => {
                     let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
                     globalInvestments += (inv.value || 0);
                     globalFutureInvestments += fv;
-
-                    let pName = inv.profile || 'Main Portfolio';
-                    if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
-                    profileTotals[pName].fv += fv;
                 });
                 
                 let totalCExp = 0;
@@ -2633,58 +2751,82 @@
 
                 document.getElementById('dashTotalAssets').innerText = '₹' + app.formatCurrency(globalInvestments);
                 document.getElementById('dashFutureAssets').innerText = '₹' + app.formatCurrency(globalFutureInvestments);
-                document.getElementById('dashTotalPV').innerText = '₹' + app.formatCurrency(totalCExp);
-                document.getElementById('dashTotalFV').innerText = '₹' + app.formatCurrency(totalFV);
 
-                const badgeT1 = document.getElementById('badgeDashToday1');
-                const badgeT2 = document.getElementById('badgeDashToday2');
-                const badgeF1 = document.getElementById('badgeDashFV1');
-                const badgeF2 = document.getElementById('badgeDashFV2');
-                
-                if (badgeT1) badgeT1.innerText = app.currentYear;
-                if (badgeT2) badgeT2.innerText = app.currentYear;
-                if (badgeF1) badgeF1.innerText = `TO ${maxYear}`;
-                if (badgeF2) badgeF2.innerText = `TO ${maxYear}`;
+                if (app.data.goals.length === 0) {
+                    document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Unassigned Wealth';
+                    document.getElementById('dashTotalPV').innerText = '100%';
+                    document.getElementById('dashTotalPV').className = 'dash-value';
+                    
+                    let reqCard = document.getElementById('dashTotalFVCard');
+                    reqCard.querySelector('.dash-label').innerText = 'Targets Missing';
+                    reqCard.querySelector('.dash-value').innerHTML = '<span style="font-size:1rem; font-weight:normal; color:var(--text-secondary);">Tell the engine what you are saving for.</span>';
+                    
+                    document.getElementById('wealthProgressionTitle').innerText = 'Wealth Trajectory';
+                    document.getElementById('wealthProgressionSub').innerText = 'Pure Accumulation Mode: Compounding over a 10-year horizon without specific targets.';
+                    document.getElementById('dashPercentage').innerText = '∞';
+                    
+                    document.getElementById('dashProgressBarContainer').style.display = 'none';
+                    document.getElementById('dashProgressLegend').style.display = 'none';
+                } else {
+                    document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Plan C. Expenses';
+                    document.getElementById('dashTotalPV').innerText = '₹' + app.formatCurrency(totalCExp);
+                    document.getElementById('dashTotalPV').className = 'dash-value';
+                    
+                    let reqCard = document.getElementById('dashTotalFVCard');
+                    reqCard.querySelector('.dash-label').innerText = 'Total Goal Required';
+                    reqCard.querySelector('.dash-value').innerHTML = '₹' + app.formatCurrency(totalFV);
+                    
+                    document.getElementById('wealthProgressionTitle').innerText = 'Wealth Progression';
+                    document.getElementById('wealthProgressionSub').innerText = 'Total Projected Future Assets vs Total Future Goals Target';
+                    
+                    let totalPct = totalFV > 0 ? Math.min((globalFutureInvestments / totalFV) * 100, 100) : 0;
+                    document.getElementById('dashPercentage').innerText = `${totalPct.toFixed(1)}%`;
+                    
+                    document.getElementById('dashProgressBarContainer').style.display = 'flex';
+                    document.getElementById('dashProgressLegend').style.display = 'flex';
 
-                let totalPct = 0;
-                if (totalFV > 0) {
-                    totalPct = Math.min((globalFutureInvestments / totalFV) * 100, 100);
+                    const progressContainer = document.getElementById('dashProgressBarContainer');
+                    const progressLegend = document.getElementById('dashProgressLegend');
+                    progressContainer.innerHTML = '';
+                    progressLegend.innerHTML = '';
+
+                    let profileTotals = {};
+                    app.data.investments.forEach(inv => {
+                        let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                        let pName = inv.profile || 'Main Portfolio';
+                        if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
+                        profileTotals[pName].fv += fv;
+                    });
+
+                    let colorIdx = 0;
+                    const sortedProfiles = Object.keys(profileTotals).sort((a,b) => profileTotals[b].fv - profileTotals[a].fv);
+                    
+                    sortedProfiles.forEach(pName => {
+                        const pFV = profileTotals[pName].fv;
+                        if (pFV > 0 && totalFV > 0) {
+                            const pPctOfGoal = (pFV / totalFV) * 100;
+                            const color = app.profileColors[colorIdx % app.profileColors.length];
+                            
+                            const seg = document.createElement('div');
+                            seg.className = 'progress-bar-segment';
+                            seg.style.background = color;
+                            seg.style.width = '0%'; 
+                            progressContainer.appendChild(seg);
+                            
+                            const leg = document.createElement('div');
+                            leg.className = 'legend-item';
+                            leg.innerHTML = `<div class="legend-color" style="background:${color};"></div><span><strong>${pName}</strong>: ${pPctOfGoal.toFixed(1)}%</span>`;
+                            progressLegend.appendChild(leg);
+
+                            setTimeout(() => {
+                                const visualWidth = totalPct >= 100 ? (pFV / globalFutureInvestments) * 100 : pPctOfGoal;
+                                seg.style.width = `${visualWidth}%`;
+                            }, 100);
+                            
+                            colorIdx++;
+                        }
+                    });
                 }
-                document.getElementById('dashPercentage').innerText = `${totalPct.toFixed(1)}%`;
-
-                const progressContainer = document.getElementById('dashProgressBarContainer');
-                const progressLegend = document.getElementById('dashProgressLegend');
-                progressContainer.innerHTML = '';
-                progressLegend.innerHTML = '';
-
-                let colorIdx = 0;
-                const sortedProfiles = Object.keys(profileTotals).sort((a,b) => profileTotals[b].fv - profileTotals[a].fv);
-                
-                sortedProfiles.forEach(pName => {
-                    const pFV = profileTotals[pName].fv;
-                    if (pFV > 0 && totalFV > 0) {
-                        const pPctOfGoal = (pFV / totalFV) * 100;
-                        const color = app.profileColors[colorIdx % app.profileColors.length];
-                        
-                        const seg = document.createElement('div');
-                        seg.className = 'progress-bar-segment';
-                        seg.style.background = color;
-                        seg.style.width = '0%'; 
-                        progressContainer.appendChild(seg);
-                        
-                        const leg = document.createElement('div');
-                        leg.className = 'legend-item';
-                        leg.innerHTML = `<div class="legend-color" style="background:${color};"></div><span><strong>${pName}</strong>: ${pPctOfGoal.toFixed(1)}%</span>`;
-                        progressLegend.appendChild(leg);
-
-                        setTimeout(() => {
-                            const visualWidth = totalPct >= 100 ? (pFV / globalFutureInvestments) * 100 : pPctOfGoal;
-                            seg.style.width = `${visualWidth}%`;
-                        }, 100);
-                        
-                        colorIdx++;
-                    }
-                });
 
                 let tableInvestments = app.data.investments.filter(i => {
                     const profileMatch = app.dashProfileFilters.includes(i.profile || 'Main Portfolio');
@@ -2699,6 +2841,7 @@
             },
 
             renderAll() {
+                app.runAutoPilot();
                 app.renderGoals();
                 app.renderInvestments();
                 app.renderDashboard();
