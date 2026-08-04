@@ -172,10 +172,10 @@
         .close-modal:hover { color: var(--danger-color); }
         
         /* YOY Chart specific styles */
-        .yoy-chart { display: flex; align-items: flex-end; height: 220px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
+        .yoy-chart { display: flex; align-items: flex-end; height: 250px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
         .yoy-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 35px; position: relative; cursor: pointer; height: 100%; }
         .yoy-bar { width: 100%; background: var(--accent-color); border-radius: 4px 4px 0 0; transition: background 0.2s; }
-        .yoy-bar-col:hover .yoy-bar { filter: brightness(1.2); }
+        .yoy-bar-col:hover .yoy-bar, .yoy-bar-col:hover .yoy-bar-segment { filter: brightness(1.2); }
         .yoy-bar-label { font-size: 0.65rem; color: var(--text-secondary); margin-top: 6px; font-weight: 600; }
         .yoy-tooltip { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); background: var(--surface-light); color: var(--text-primary); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; border: 1px solid var(--accent-color); z-index: 10; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: opacity 0.2s; }
         .yoy-bar-col:hover .yoy-tooltip { opacity: 1; }
@@ -336,22 +336,33 @@
                 </div>
                 <div class="card dash-stat-card">
                     <div class="year-badge" id="badgeDashFV1">TO ----</div>
-                    <div class="dash-label">Projected Asset FV</div>
+                    <div class="dash-label">Projected Asset Future Value</div>
                     <div class="dash-value success" id="dashFutureAssets">₹0</div>
                 </div>
                 <div class="card dash-stat-card" id="dashTotalPVCard">
                     <div class="year-badge ongoing" id="badgeDashToday2">----</div>
-                    <div class="dash-label">Plan C. Expenses</div>
+                    <div class="dash-label">Plan Current Expenses</div>
                     <div class="dash-value" id="dashTotalPV">₹0</div>
                 </div>
                 <div class="card dash-stat-card" id="dashTotalFVCard">
                     <div class="year-badge" id="badgeDashFV2">TO ----</div>
-                    <div class="dash-label">Total Goal Required</div>
+                    <div class="dash-label">Total Goal Required (Future Value)</div>
                     <div class="dash-value highlight" id="dashTotalFV">₹0</div>
                 </div>
             </div>
 
-            <div class="progress-container">
+            <!-- New Chart Area -->
+            <div class="progress-container" id="dashAssetProgressionContainer" style="margin-top: 1rem; margin-bottom: 1rem; display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <h3 style="margin-bottom: 0.2rem;">Asset Class Progression</h3>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Projected growth per asset class over time</span>
+                    </div>
+                </div>
+                <div id="assetClassChartContainer" class="yoy-chart" style="height: 250px;"></div>
+            </div>
+
+            <div class="progress-container" id="dashProgressBarWrapper" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
                         <h3 id="wealthProgressionTitle" style="margin-bottom: 0.2rem;">Wealth Progression</h3>
@@ -379,7 +390,7 @@
                         <tr>
                             <th id="dashAllocColHeader">Asset Class</th>
                             <th>Current Valuation</th>
-                            <th>Avg. Expected Growth</th>
+                            <th>Expected Growth</th>
                             <th>Projected Future Value</th>
                             <th>% of Portfolio</th>
                         </tr>
@@ -406,9 +417,9 @@
                         <tr>
                             <th onclick="app.sortGoals('name')">Goal <span id="sort-name" class="sort-icon"></span></th>
                             <th onclick="app.sortGoals('year')">Year <span id="sort-year" class="sort-icon"></span></th>
-                            <th onclick="app.sortGoals('cExp')">C. Expenses <span id="sort-cExp" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('cExp')">Current Expenses <span id="sort-cExp" class="sort-icon"></span></th>
                             <th onclick="app.sortGoals('inflation')">Inflation <span id="sort-inflation" class="sort-icon"></span></th>
-                            <th onclick="app.sortGoals('fv')">Goal Required <span id="sort-fv" class="sort-icon"></span></th>
+                            <th onclick="app.sortGoals('fv')">Goal Required (Future Value) <span id="sort-fv" class="sort-icon"></span></th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
@@ -617,7 +628,7 @@
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
                 <h3 style="margin-bottom: 0.5rem;">📊 Projection Math</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">How the engine calculates the Projected Future Value (FV) for <strong id="justAssetName" style="color: var(--text-primary);"></strong>.</p>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">How the engine calculates the Projected Future Value for <strong id="justAssetName" style="color: var(--text-primary);"></strong>.</p>
                 
                 <div style="background: var(--surface-light); padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1rem; margin-bottom: 1.5rem;">
                     <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Current Valuation (PV): <span id="justPV" style="color: var(--text-primary); float: right;"></span></div>
@@ -630,7 +641,7 @@
                     <!-- Visual CSS Chart Container -->
                     <div id="justChartContainer" class="yoy-chart"></div>
                     
-                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Projected FV: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
+                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Projected Future Value: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
                 </div>
                 
                 <button class="btn-action" onclick="app.closeJustificationModal()">Close</button>
@@ -660,7 +671,7 @@
 
                     <div id="standardFields">
                         <div class="form-group">
-                            <label for="currentValue">C. Expenses (Current Value ₹)</label>
+                            <label for="currentValue">Current Expenses (Current Value ₹)</label>
                             <input type="number" id="currentValue" placeholder="1000000" min="0" step="any">
                         </div>
                         <div class="form-group">
@@ -719,7 +730,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.75</div>
+        <div>Anantha Wealth OS V2.76</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -938,9 +949,9 @@
             },
 
             migrateData() {
-                const savedV2_75 = localStorage.getItem('ananthaDataV2_75');
-                if (savedV2_75) {
-                    app.data = JSON.parse(savedV2_75);
+                const savedV2_76 = localStorage.getItem('ananthaDataV2_76');
+                if (savedV2_76) {
+                    app.data = JSON.parse(savedV2_76);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -960,7 +971,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71') || localStorage.getItem('ananthaDataV2_70') || localStorage.getItem('ananthaDataV2_69') || localStorage.getItem('ananthaDataV2_68');
+                const savedOld = localStorage.getItem('ananthaDataV2_75') || localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -1025,7 +1036,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_75', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_76', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1063,7 +1074,6 @@
                         if (!importedData.profiles) importedData.profiles = ['Main Portfolio'];
                         if (!importedData.goals) importedData.goals = [];
                         
-                        // Strip manual linkages if coming from older backup
                         importedData.investments.forEach(i => {
                             delete i.linkedGoalId;
                             delete i.splitParentId;
@@ -1100,6 +1110,7 @@
             deleteAllData() {
                 if (confirm('CRITICAL WARNING: This will permanently wipe ALL your profiles, investments, and goals from this browser. Make sure you have downloaded a backup first. This CANNOT be undone. Proceed?')) {
                     if (confirm('Final Confirmation: Click OK to delete everything.')) {
+                        localStorage.removeItem('ananthaDataV2_76');
                         localStorage.removeItem('ananthaDataV2_75');
                         localStorage.removeItem('ananthaDataV2_74');
                         localStorage.removeItem('ananthaDataV2_73');
@@ -1136,7 +1147,9 @@
                 let engineGoals = app.data.goals.map(g => {
                     let tYear = g.targetYear || (app.currentYear + (g.yrs || g.yTo || 0));
                     let reqFv = g.fv || g.targetValue || 0;
-                    return { ...g, computedYear: tYear, computedFV: reqFv, cExp: (g.cExp || g.cv || g.pv || 0), filledFV: 0, mappedAssets: [] };
+                    // Fix legacy parsing where cExp might be 0 but cv has value
+                    let computedCExp = parseFloat(g.cExp) || parseFloat(g.cv) || parseFloat(g.currentValue) || parseFloat(g.pv) || (g.type === 'retirement' ? parseFloat(g.exp) * 12 : 0);
+                    return { ...g, computedYear: tYear, computedFV: reqFv, computedCExp: computedCExp, filledFV: 0, mappedAssets: [] };
                 }).sort((a, b) => a.computedYear - b.computedYear);
 
                 // Step 3: Define Horizon Logic
@@ -2153,8 +2166,10 @@
                 document.getElementById('goalName').value = g.name;
                 document.getElementById('inflation').value = g.inflation;
 
+                let safeCExp = parseFloat(g.cExp) || parseFloat(g.cv) || parseFloat(g.currentValue) || parseFloat(g.pv) || 0;
+
                 if (g.type === 'standard' || g.type === 'edu_stage') {
-                    document.getElementById('currentValue').value = g.cv || g.cExp || g.pv || g.currentValue;
+                    document.getElementById('currentValue').value = safeCExp;
                     document.getElementById('years').value = g.yrs || (g.targetYear ? g.targetYear - app.currentYear : 0);
                 } else if (g.type === 'retirement') {
                     document.getElementById('monthlyExpenses').value = g.exp;
@@ -2435,11 +2450,11 @@
                             destHtml = `<span class="badge" style="background: var(--surface-light); color: var(--text-secondary);">UNASSIGNED</span>`;
                         } else {
                             inv.allocations.forEach(alloc => {
-                                destHtml += `<div style="margin-bottom: 2px;"><span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-color); border: 1px solid var(--accent-color);">✨ ${alloc.pct.toFixed(0)}% ${alloc.goalName}</span></div>`;
+                                destHtml += `<div style="margin-bottom: 4px;"><span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-color); border: 1px solid var(--accent-color); display: inline-block; white-space: normal; line-height: 1.4; text-align: right; padding: 0.3rem 0.6rem; word-break: break-word;">✨ ${alloc.pct.toFixed(0)}% ${alloc.goalName}</span></div>`;
                             });
                             if (inv.remainingFV > 1) { 
                                 let unassignedPct = (inv.remainingFV / inv.totalFV) * 100;
-                                destHtml += `<div><span class="badge" style="background: var(--surface-light); color: var(--text-secondary);">${unassignedPct.toFixed(0)}% Unassigned</span></div>`;
+                                destHtml += `<div><span class="badge" style="background: var(--surface-light); color: var(--text-secondary); display: inline-block; white-space: normal; line-height: 1.4; padding: 0.3rem 0.6rem;">${unassignedPct.toFixed(0)}% Unassigned</span></div>`;
                             }
                         }
 
@@ -2476,7 +2491,7 @@
                                         👤 ${profile}
                                     </h3>
                                     <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">
-                                        Profile Projected FV: <strong style="color: var(--accent-color);">₹${app.formatCurrency(totalFV)}</strong>
+                                        Profile Projected Future Value: <strong style="color: var(--accent-color);">₹${app.formatCurrency(totalFV)}</strong>
                                     </div>
                                 </div>
                             </div>
@@ -2491,7 +2506,7 @@
                                             <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('growth')">Expected Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('maturity')">Maturity Date <span id="sort-inv-maturity-${safeProfileId}" class="sort-icon"></span></th>
-                                            <th onclick="app.sortInvestments('fv')">Projected FV <span id="sort-inv-fv-${safeProfileId}" class="sort-icon"></span></th>
+                                            <th onclick="app.sortInvestments('fv')">Projected Future Value <span id="sort-inv-fv-${safeProfileId}" class="sort-icon"></span></th>
                                             <th style="text-align: center;">Actions</th>
                                         </tr>
                                     </thead>
@@ -2777,13 +2792,25 @@
                 let totalCExp = 0;
                 let totalFV = 0;
                 app.data.goals.forEach(goal => {
-                    let cExp = goal.cExp || (goal.type === 'retirement' ? (goal.exp * 12) : (goal.cv || goal.pv || 0));
+                    // Fix legacy parsing where cExp might be 0 but cv has value
+                    let cExp = parseFloat(goal.cExp) || parseFloat(goal.cv) || parseFloat(goal.currentValue) || parseFloat(goal.pv) || (goal.type === 'retirement' ? parseFloat(goal.exp) * 12 : 0);
                     totalCExp += cExp;
                     totalFV += (goal.fv || goal.targetValue || 0);
                 });
 
                 document.getElementById('dashTotalAssets').innerText = '₹' + app.formatCurrency(globalInvestments);
                 document.getElementById('dashFutureAssets').innerText = '₹' + app.formatCurrency(globalFutureInvestments);
+
+                const maxYear = app.getMaxGoalYear();
+                const badgeT1 = document.getElementById('badgeDashToday1');
+                const badgeT2 = document.getElementById('badgeDashToday2');
+                const badgeF1 = document.getElementById('badgeDashFV1');
+                const badgeF2 = document.getElementById('badgeDashFV2');
+                
+                if (badgeT1) badgeT1.innerText = app.currentYear;
+                if (badgeT2) badgeT2.innerText = app.currentYear;
+                if (badgeF1) badgeF1.innerText = `TO ${maxYear}`;
+                if (badgeF2) badgeF2.innerText = `TO ${maxYear}`;
 
                 if (app.data.goals.length === 0) {
                     document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Unassigned Wealth';
@@ -2794,19 +2821,15 @@
                     reqCard.querySelector('.dash-label').innerText = 'Targets Missing';
                     reqCard.querySelector('.dash-value').innerHTML = '<span style="font-size:1rem; font-weight:normal; color:var(--text-secondary);">Tell the engine what you are saving for.</span>';
                     
-                    document.getElementById('wealthProgressionTitle').innerText = 'Wealth Trajectory';
-                    document.getElementById('wealthProgressionSub').innerText = 'Pure Accumulation Mode: Compounding over a 10-year horizon without specific targets.';
-                    document.getElementById('dashPercentage').innerText = '∞';
-                    
-                    document.getElementById('dashProgressBarContainer').style.display = 'none';
-                    document.getElementById('dashProgressLegend').style.display = 'none';
+                    document.getElementById('dashProgressBarWrapper').style.display = 'none';
+                    document.getElementById('dashAssetProgressionContainer').style.display = 'none';
                 } else {
-                    document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Plan C. Expenses';
+                    document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Plan Current Expenses';
                     document.getElementById('dashTotalPV').innerText = '₹' + app.formatCurrency(totalCExp);
                     document.getElementById('dashTotalPV').className = 'dash-value';
                     
                     let reqCard = document.getElementById('dashTotalFVCard');
-                    reqCard.querySelector('.dash-label').innerText = 'Total Goal Required';
+                    reqCard.querySelector('.dash-label').innerText = 'Total Goal Required (Future Value)';
                     reqCard.querySelector('.dash-value').innerHTML = '₹' + app.formatCurrency(totalFV);
                     
                     document.getElementById('wealthProgressionTitle').innerText = 'Wealth Progression';
@@ -2815,8 +2838,8 @@
                     let totalPct = totalFV > 0 ? Math.min((globalFutureInvestments / totalFV) * 100, 100) : 0;
                     document.getElementById('dashPercentage').innerText = `${totalPct.toFixed(1)}%`;
                     
-                    document.getElementById('dashProgressBarContainer').style.display = 'flex';
-                    document.getElementById('dashProgressLegend').style.display = 'flex';
+                    document.getElementById('dashProgressBarWrapper').style.display = 'block';
+                    document.getElementById('dashAssetProgressionContainer').style.display = 'block';
 
                     const progressContainer = document.getElementById('dashProgressBarContainer');
                     const progressLegend = document.getElementById('dashProgressLegend');
@@ -2859,6 +2882,74 @@
                             colorIdx++;
                         }
                     });
+
+                    // Asset Class Chart Logic
+                    let chartYears = maxYear - app.currentYear;
+                    chartYears = Math.max(1, chartYears);
+                    let chartHtml = '';
+                    let dataPoints = [];
+                    let maxTotalVal = 0;
+                    let step = chartYears > 40 ? 5 : (chartYears > 20 ? 2 : 1);
+
+                    let baseClasses = ['equity', 'debt', 'liquid', 'hybrid', 'gold_silver', 'real_estate', 'vehicle'];
+
+                    for (let i = 0; i <= chartYears; i += step) {
+                        let yearObj = { t: i, year: app.currentYear + i, total: 0, classes: {} };
+                        baseClasses.forEach(c => yearObj.classes[c] = 0);
+
+                        app.data.investments.forEach(inv => {
+                            let yearsToMat = inv.maturityDate ? (new Date(inv.maturityDate) - new Date()) / (1000 * 60 * 60 * 24 * 365.25) : chartYears;
+                            yearsToMat = Math.max(0, yearsToMat);
+                            let actualI = Math.min(i, yearsToMat); 
+
+                            let pointVal = 0;
+                            if (inv.type === 'pomis') {
+                                pointVal = inv.value;
+                            } else if (inv.type === 'rd' && inv.monthlySIP > 0) {
+                                let m = actualI * 12;
+                                let r = (inv.growthRate / 100) / 12;
+                                if (m === 0) pointVal = inv.value;
+                                else pointVal = inv.value * Math.pow(1 + r, m) + inv.monthlySIP * ((Math.pow(1 + r, m) - 1) / r) * (1 + r);
+                            } else {
+                                pointVal = inv.value * Math.pow(1 + (inv.growthRate/100), actualI);
+                            }
+
+                            let mappedClass = inv.type;
+                            if (['fd', 'rd', 'ppf', 'pomis'].includes(mappedClass)) mappedClass = 'debt';
+                            if (['nps', 'epf'].includes(mappedClass)) mappedClass = 'hybrid';
+                            if (!baseClasses.includes(mappedClass)) mappedClass = 'liquid';
+
+                            yearObj.classes[mappedClass] += pointVal;
+                            yearObj.total += pointVal;
+                        });
+
+                        if (yearObj.total > maxTotalVal) maxTotalVal = yearObj.total;
+                        dataPoints.push(yearObj);
+                    }
+
+                    dataPoints.forEach(pt => {
+                        let label = pt.t === 0 ? 'Now' : `Y${pt.t}`;
+                        let tooltipContent = `<strong>${pt.year} (Y${pt.t})</strong><br/><div style="margin-bottom:0.5rem; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:0.2rem;">Total: ₹${app.formatCurrency(pt.total)}</div>`;
+                        
+                        let stackedSegments = '';
+                        baseClasses.forEach(cls => {
+                            let val = pt.classes[cls];
+                            if (val > 0) {
+                                let hPct = (val / maxTotalVal) * 100;
+                                let color = app.getTypeColor(cls);
+                                stackedSegments = `<div style="height: ${hPct}%; width: 100%; background: ${color}; border-top: 1px solid rgba(0,0,0,0.1); transition: background 0.2s;"></div>` + stackedSegments; 
+                                tooltipContent += `<div style="display:flex; justify-content:space-between; gap:1.5rem; margin-bottom:0.2rem;"><span><span style="color:${color}; font-size:1.1rem;">■</span> ${cls.toUpperCase()}</span> <span>₹${app.formatCurrency(val)}</span></div>`;
+                            }
+                        });
+
+                        let colHtml = `<div class="yoy-bar-col">
+                                    <div style="display: flex; flex-direction: column; justify-content: flex-end; width: 100%; height: 100%;">${stackedSegments}</div>
+                                    <div class="yoy-tooltip" style="text-align:left; min-width:200px;">${tooltipContent}</div>
+                                    <div class="yoy-bar-label">${label}</div>
+                                   </div>`;
+                        chartHtml += colHtml;
+                    });
+                    document.getElementById('assetClassChartContainer').innerHTML = chartHtml;
                 }
 
                 let tableInvestments = app.data.investments.filter(i => {
