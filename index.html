@@ -405,7 +405,7 @@
                 </div>
             </div>
 
-            <!-- Wealth Progression Progress Bar -->
+            <!-- Wealth Progression Progress Bar (Moved here) -->
             <div class="progress-container" id="goalProgressBarWrapper" style="display: none; margin-top: 0; margin-bottom: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
@@ -770,7 +770,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.79</div>
+        <div>Anantha Wealth OS V2.80</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -1001,9 +1001,9 @@
             },
 
             migrateData() {
-                const savedV2_79 = localStorage.getItem('ananthaDataV2_79');
-                if (savedV2_79) {
-                    app.data = JSON.parse(savedV2_79);
+                const savedV2_80 = localStorage.getItem('ananthaDataV2_80');
+                if (savedV2_80) {
+                    app.data = JSON.parse(savedV2_80);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     
                     app.activeView = app.data.activeView || 'home';
@@ -1025,7 +1025,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_78') || localStorage.getItem('ananthaDataV2_77') || localStorage.getItem('ananthaDataV2_76') || localStorage.getItem('ananthaDataV2_75') || localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71');
+                const savedOld = localStorage.getItem('ananthaDataV2_79') || localStorage.getItem('ananthaDataV2_78') || localStorage.getItem('ananthaDataV2_77') || localStorage.getItem('ananthaDataV2_76') || localStorage.getItem('ananthaDataV2_75');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1091,7 +1091,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_79', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_80', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -2276,7 +2276,7 @@
                 app.data.budget.living = parseFloat(document.getElementById('budLiving').value) || 0;
                 app.data.budget.fun = parseFloat(document.getElementById('budFun').value) || 0;
                 app.saveState();
-                app.renderGoals(); // re-evaluates surplus and recommendations
+                app.renderGoals(); 
             },
 
             renderBudgetStats() {
@@ -2628,7 +2628,7 @@
                         let actionHtml = `<button class="icon-btn" onclick="event.stopPropagation(); app.openJustificationModal('${inv.id}')" title="View Projection Math" style="margin-right: 5px; font-size: 1rem;">📊</button>`;
 
                         let destHtml = '';
-                        if (app.data.goals.length === 0 || inv.allocations.length === 0) {
+                        if (app.engineState.goals.length === 0 || inv.allocations.length === 0) {
                             destHtml = `<span class="badge" style="background: var(--surface-light); color: var(--text-secondary);">UNASSIGNED</span>`;
                         } else {
                             inv.allocations.forEach(alloc => {
@@ -2640,7 +2640,6 @@
                             }
                         }
 
-                        // We render hex values directly into the border style using our updated getTypeColor function
                         let typeColorHex = app.getTypeColor(inv.type);
 
                         tbodyHtml += `
@@ -2726,16 +2725,15 @@
             },
 
             getTypeColor(type) {
-                // Returns explicit hex codes so Canvas (Chart.js) and DOM inline styles parse correctly
                 switch(type) {
-                    case 'equity': return '#38bdf8'; // accent
-                    case 'hybrid': return '#c084fc'; // edu
-                    case 'fd': case 'rd': case 'ppf': case 'pomis': case 'debt': return '#34d399'; // success
-                    case 'liquid': return '#818cf8'; // liquid
-                    case 'nps': case 'epf': case 'gold_silver': return '#fbbf24'; // warning
-                    case 'real_estate': return '#f97316'; // realestate
-                    case 'vehicle': return '#9ca3af'; // vehicle
-                    default: return '#94a3b8'; // text-secondary
+                    case 'equity': return '#38bdf8'; 
+                    case 'hybrid': return '#c084fc'; 
+                    case 'fd': case 'rd': case 'ppf': case 'pomis': case 'debt': return '#34d399'; 
+                    case 'liquid': return '#818cf8'; 
+                    case 'nps': case 'epf': case 'gold_silver': return '#fbbf24'; 
+                    case 'real_estate': return '#f97316'; 
+                    case 'vehicle': return '#9ca3af'; 
+                    default: return '#94a3b8'; 
                 }
             },
 
