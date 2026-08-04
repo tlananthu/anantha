@@ -499,6 +499,7 @@
             </div>
 
             <div class="settings-layout">
+                
                 <div class="settings-card">
                     <h2>Profile Data & Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
@@ -766,7 +767,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V3.0</div>
+        <div>Anantha Wealth OS V3.1</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -998,9 +999,9 @@
             },
 
             migrateData() {
-                const savedV3_0 = localStorage.getItem('ananthaDataV3_0');
-                if (savedV3_0) {
-                    app.data = JSON.parse(savedV3_0);
+                const savedV3_1 = localStorage.getItem('ananthaDataV3_1');
+                if (savedV3_1) {
+                    app.data = JSON.parse(savedV3_1);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     
                     app.activeView = app.data.activeView || 'home';
@@ -1022,7 +1023,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_84') || localStorage.getItem('ananthaDataV2_83') || localStorage.getItem('ananthaDataV2_82') || localStorage.getItem('ananthaDataV2_81') || localStorage.getItem('ananthaDataV2_80') || localStorage.getItem('ananthaDataV2_79') || localStorage.getItem('ananthaDataV2_78');
+                const savedOld = localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84') || localStorage.getItem('ananthaDataV2_83') || localStorage.getItem('ananthaDataV2_82') || localStorage.getItem('ananthaDataV2_81') || localStorage.getItem('ananthaDataV2_80');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1088,7 +1089,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV3_0', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV3_1', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1672,7 +1673,7 @@
 
                     app.dashClassFilters = [...app.invClassFilters];
                     app.dashTypeFilters = [...app.invTypeFilters];
-                    app.dashCategoryFilters = [...app.invCategoryFilters];
+                    app.dashCategoryFilters = [...app.dashCategoryFilters];
                     app.dashSectorFilters = [...app.invSectorFilters];
                     
                     app.saveState();
@@ -2325,6 +2326,179 @@
                     
                     suggEl.innerHTML = txt;
                 }
+            },
+
+            renderGoals() {
+                const tbody = document.getElementById('goalsTableBody');
+                if(!tbody) return; 
+
+                ['name', 'year', 'cExp', 'inflation', 'fv'].forEach(col => {
+                    const iconEl = document.getElementById(`sort-${col}`);
+                    if(iconEl) {
+                        if (app.sortColumn === col) {
+                            iconEl.innerText = app.sortAsc ? ' ▲' : ' ▼';
+                        } else {
+                            iconEl.innerText = '';
+                        }
+                    }
+                });
+
+                if (app.engineState.goals.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 3rem;">No goals defined yet. Click "+ Define New Goal" above to give the Auto-Pilot targets.</td></tr>`;
+                    document.getElementById('goalProgressBarWrapper').style.display = 'none';
+                    if(app.renderBudgetStats) app.renderBudgetStats(); 
+                    return;
+                }
+
+                document.getElementById('goalProgressBarWrapper').style.display = 'block';
+
+                let totalCExp = 0;
+                let totalFV = 0;
+                let totalFilled = 0;
+                let processedGoals = [...app.engineState.goals];
+                tbody.innerHTML = '';
+
+                processedGoals.sort((a, b) => {
+                    let valA, valB;
+                    if (app.sortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+                    else if (app.sortColumn === 'year') { valA = a.computedYear; valB = b.computedYear; }
+                    else if (app.sortColumn === 'cExp') { valA = a.computedCExp; valB = b.computedCExp; }
+                    else if (app.sortColumn === 'inflation') { valA = a.inflation; valB = b.inflation; }
+                    else if (app.sortColumn === 'fv') { valA = a.computedFV; valB = b.computedFV; }
+
+                    if (valA < valB) return app.sortAsc ? -1 : 1;
+                    if (valA > valB) return app.sortAsc ? 1 : -1;
+                    return 0;
+                });
+
+                processedGoals.forEach(goal => {
+                    totalCExp += goal.computedCExp;
+                    totalFV += goal.computedFV;
+                    totalFilled += goal.filledFV;
+
+                    const displayType = goal.type === 'edu_stage' ? 'Education' : goal.type;
+                    const badgeColor = goal.type === 'edu_stage' || goal.type === 'education' ? 'var(--edu-color)' : (goal.type === 'retirement' ? 'var(--warning-color)' : 'var(--surface-light)');
+                    const badgeTextColor = goal.type === 'standard' ? 'var(--text-secondary)' : '#000';
+
+                    const tr = document.createElement('tr');
+                    tr.className = "clickable-goal";
+                    tr.style.cursor = "pointer";
+                    tr.title = "Click to view Algorithmic Fulfillment breakdown";
+                    tr.onclick = () => app.toggleDrawer(goal.id);
+                    
+                    tr.innerHTML = `
+                        <td>
+                            <div class="goal-name-cell" style="display:flex; flex-direction:column; align-items:flex-start; gap:0.2rem;">
+                                <div style="display:flex; align-items:center; gap:0.5rem;">
+                                    <strong>${goal.name}</strong>
+                                    <span class="badge" style="background:${badgeColor}; color:${badgeTextColor}; font-size:0.55rem;">${displayType}</span>
+                                </div>
+                                <div style="font-size:0.75rem; color:var(--text-secondary);">
+                                    Auto-Funded: <span style="color:var(--success-color); font-weight:600;">₹${app.formatCurrency(goal.filledFV)}</span> (${goal.progressPct.toFixed(1)}%)
+                                </div>
+                                <div class="goal-progress-track">
+                                    <div class="goal-progress-fill" style="width: ${goal.progressPct}%;"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${goal.computedYear}</td>
+                        <td>₹${app.formatCurrency(goal.computedCExp)}</td>
+                        <td>${goal.inflation}%</td>
+                        <td class="highlight-val">₹${app.formatCurrency(goal.computedFV)}</td>
+                        <td style="text-align: center;">
+                            <div style="display:flex; justify-content:center; gap:0.4rem;">
+                                <button class="icon-btn" onclick="event.stopPropagation(); app.editGoal('${goal.id}')" title="Edit Goal">✎</button>
+                                <button class="icon-btn delete" onclick="event.stopPropagation(); app.deleteGoal('${goal.id}')" title="Delete Goal">✕</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+
+                    let drawerHtml = `<tr id="drawer-${goal.id}" class="drawer-row"><td colspan="6" style="padding: 1.5rem; text-align: left;">`;
+                    if (goal.mappedAssets.length === 0) {
+                        drawerHtml += `<div style="color: var(--danger-color); font-size: 0.85rem;">⚠️ No available assets to fund this goal.</div>`;
+                    } else {
+                        drawerHtml += `<div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; letter-spacing: 1px;">🤖 Algorithmic Fulfillment Report</div>`;
+                        drawerHtml += `<table style="width:100%; border-collapse:collapse; font-size: 0.9rem; background: var(--bg-color); border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">`;
+                        goal.mappedAssets.forEach(ma => {
+                            let badgeColor = ma.match === 'Optimal' ? 'var(--success-color)' : 'var(--warning-color)';
+                            let badgeTxt = ma.match === 'Optimal' ? 'Horizon Match' : 'Spillover';
+                            drawerHtml += `<tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.8rem 1rem; color: var(--text-primary); text-align: left;">${ma.assetName}</td>
+                                <td style="padding: 0.8rem 1rem; color: var(--accent-color); text-align: right; font-weight:600;">₹${app.formatCurrency(ma.amount)}</td>
+                                <td style="padding: 0.8rem 1rem; text-align: right;"><span class="badge" style="color: ${badgeColor}; border: 1px solid ${badgeColor}; background: transparent;">${badgeTxt}</span></td>
+                            </tr>`;
+                        });
+                        drawerHtml += `</table>`;
+                    }
+                    drawerHtml += `</td></tr>`;
+                    
+                    const temp = document.createElement('tbody');
+                    temp.innerHTML = drawerHtml;
+                    tbody.appendChild(temp.firstElementChild);
+                });
+
+                const totalRow = document.createElement('tr');
+                totalRow.className = 'total-row';
+                totalRow.innerHTML = `
+                    <td colspan="2">TOTAL</td>
+                    <td>₹${app.formatCurrency(totalCExp)}</td>
+                    <td></td>
+                    <td class="highlight-val">₹${app.formatCurrency(totalFV)}</td>
+                    <td></td>
+                `;
+                tbody.appendChild(totalRow);
+
+                // Update Wealth Progression Bar inside Goals Tab
+                let totalPct = totalFV > 0 ? Math.min((totalFilled / totalFV) * 100, 100) : 0;
+                document.getElementById('goalPercentage').innerText = `${totalPct.toFixed(1)}%`;
+                
+                const progressContainer = document.getElementById('goalProgressBarContainer');
+                const progressLegend = document.getElementById('goalProgressLegend');
+                progressContainer.innerHTML = '';
+                progressLegend.innerHTML = '';
+
+                let profileTotals = {};
+                app.data.investments.forEach(inv => {
+                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                    let pName = inv.profile || 'Main Portfolio';
+                    if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
+                    profileTotals[pName].fv += fv;
+                });
+
+                let colorIdx = 0;
+                const sortedProfiles = Object.keys(profileTotals).sort((a,b) => profileTotals[b].fv - profileTotals[a].fv);
+                
+                let globalFutureInvestments = 0;
+                Object.values(profileTotals).forEach(p => globalFutureInvestments += p.fv);
+
+                sortedProfiles.forEach(pName => {
+                    const pFV = profileTotals[pName].fv;
+                    if (pFV > 0 && totalFV > 0) {
+                        const pPctOfGoal = (pFV / totalFV) * 100;
+                        const color = app.profileColors[colorIdx % app.profileColors.length];
+                        
+                        const seg = document.createElement('div');
+                        seg.className = 'progress-bar-segment';
+                        seg.style.background = color;
+                        seg.style.width = '0%'; 
+                        progressContainer.appendChild(seg);
+                        
+                        const leg = document.createElement('div');
+                        leg.className = 'legend-item';
+                        leg.innerHTML = `<div class="legend-color" style="background:${color};"></div><span><strong>${pName}</strong>: ${pPctOfGoal.toFixed(1)}%</span>`;
+                        progressLegend.appendChild(leg);
+
+                        setTimeout(() => {
+                            const visualWidth = totalPct >= 100 ? (pFV / totalFilled) * 100 : pPctOfGoal;
+                            seg.style.width = `${visualWidth}%`;
+                        }, 100);
+                        
+                        colorIdx++;
+                    }
+                });
+
+                if(app.renderBudgetStats) app.renderBudgetStats();
             },
 
             /* -------------------------------------------------------------------------- */
