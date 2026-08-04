@@ -559,12 +559,12 @@
                 </div>
 
                 <div class="settings-card" style="border-top: 1px solid var(--danger-color); background: rgba(244, 63, 94, 0.02);">
-                    <h2 style="color: var(--danger-color);">Danger Zone</h2>
+                    <h2 style="color: var(--danger-color);">System Reset</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
-                        Permanently delete all profiles, investments, goals, and settings from this device. Make sure you have downloaded a backup first! This action cannot be undone.
+                        Clear all your profiles, investments, goals, and settings from this browser to start fresh. Don't forget to download a backup first.
                     </p>
                     <button onclick="app.deleteAllData()" class="btn-action" style="background-color: rgba(244, 63, 94, 0.1); color: var(--danger-color); border: 1px solid rgba(244, 63, 94, 0.2); width: auto; padding: 0.75rem 2rem;">
-                        ⚠️ Delete All Data
+                        🔄 Factory Reset
                     </button>
                 </div>
             </div>
@@ -767,7 +767,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V3.1</div>
+        <div>Anantha Wealth OS V3.2</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -999,9 +999,9 @@
             },
 
             migrateData() {
-                const savedV3_1 = localStorage.getItem('ananthaDataV3_1');
-                if (savedV3_1) {
-                    app.data = JSON.parse(savedV3_1);
+                const savedV3_2 = localStorage.getItem('ananthaDataV3_2');
+                if (savedV3_2) {
+                    app.data = JSON.parse(savedV3_2);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     
                     app.activeView = app.data.activeView || 'home';
@@ -1023,7 +1023,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84') || localStorage.getItem('ananthaDataV2_83') || localStorage.getItem('ananthaDataV2_82') || localStorage.getItem('ananthaDataV2_81') || localStorage.getItem('ananthaDataV2_80');
+                const savedOld = localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1089,7 +1089,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV3_1', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV3_2', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1163,8 +1163,8 @@
             },
 
             deleteAllData() {
-                if (confirm('CRITICAL WARNING: This will permanently wipe ALL your profiles, investments, and goals from this browser. Make sure you have downloaded a backup first. This CANNOT be undone. Proceed?')) {
-                    if (confirm('Final Confirmation: Click OK to delete everything.')) {
+                if (confirm('Are you sure you want to reset the app? This will clear all your profiles, investments, and goals to give you a fresh start. Please make sure you have a backup downloaded first.')) {
+                    if (confirm('Just to be absolutely sure: Click OK to reset everything to factory defaults.')) {
                         localStorage.clear();
                         app.data = { profiles: ['Main Portfolio'], goals: [], investments: [], budget: { salary: 0, rent: 0, living: 0, fun: 0 } };
                         app.dashProfileFilters = ['Main Portfolio'];
@@ -1673,7 +1673,7 @@
 
                     app.dashClassFilters = [...app.invClassFilters];
                     app.dashTypeFilters = [...app.invTypeFilters];
-                    app.dashCategoryFilters = [...app.dashCategoryFilters];
+                    app.dashCategoryFilters = [...app.invCategoryFilters];
                     app.dashSectorFilters = [...app.invSectorFilters];
                     
                     app.saveState();
@@ -2449,7 +2449,6 @@
                 `;
                 tbody.appendChild(totalRow);
 
-                // Update Wealth Progression Bar inside Goals Tab
                 let totalPct = totalFV > 0 ? Math.min((totalFilled / totalFV) * 100, 100) : 0;
                 document.getElementById('goalPercentage').innerText = `${totalPct.toFixed(1)}%`;
                 
