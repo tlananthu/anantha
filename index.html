@@ -543,13 +543,18 @@
                             <input type="text" id="invRawCategory" placeholder="e.g. Large Cap, NA">
                         </div>
                         <div class="form-group">
-                            <label for="invPlanType">Plan Type (MF Only)</label>
-                            <select id="invPlanType">
-                                <option value="Unknown">Unknown / NA</option>
-                                <option value="Direct">Direct</option>
-                                <option value="Regular">Regular</option>
-                            </select>
+                            <label for="invRawSector">Sector</label>
+                            <input type="text" id="invRawSector" placeholder="e.g. IT, Auto, NA">
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invPlanType">Plan Type (MF Only)</label>
+                        <select id="invPlanType">
+                            <option value="Unknown">Unknown / NA</option>
+                            <option value="Direct">Direct</option>
+                            <option value="Regular">Regular</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -584,7 +589,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal (Updated V2.65) -->
+        <!-- Justification / Projection Math Modal (Updated V2.68) -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -729,19 +734,35 @@
             </div>
         </div>
 
-        <!-- Assign Assets Modal (Goal Buckets) -->
+        <!-- Assign Assets Modal (Goal Buckets) V2.68 -->
         <div class="modal-overlay" id="assignAssetsModal">
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 600px;">
                 <button class="close-modal" onclick="app.closeAssignModal()">✕</button>
                 <h3 id="assignModalTitle">Bucket Assets into Goal</h3>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Tick the assets you want to link to this goal. Unassigned assets are shown below.</p>
                 
+                <!-- Goal Progress Summary -->
+                <div style="background: var(--surface-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">Goal Required (FV)</span>
+                        <span id="assignGoalTarget" style="color: var(--text-primary); font-weight: 600;">₹0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">Projected Assigned (FV)</span>
+                        <span id="assignGoalCurrent" style="color: var(--accent-color); font-weight: 600;">₹0</span>
+                    </div>
+                    <div class="goal-progress-track" style="height: 10px; border-radius: 5px;">
+                        <div id="assignGoalProgressBar" class="goal-progress-fill" style="width: 0%; transition: width 0.3s ease, background 0.3s ease;"></div>
+                    </div>
+                    <div id="assignGoalStatus" style="text-align: right; font-size: 0.75rem; color: var(--success-color); margin-top: 0.5rem; font-weight: bold; display: none;">✅ TARGET FULFILLED</div>
+                </div>
+
                 <!-- Instant Search Input -->
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <input type="text" id="assignSearchInput" placeholder="🔍 Search assets by name, class, or profile..." oninput="app.filterAssignAssetsList()" style="padding: 0.6rem; font-size: 0.9rem; background: var(--bg-color);">
                 </div>
 
-                <div id="assignAssetsList" style="display:flex; flex-direction:column; gap:0.6rem; max-height: 350px; overflow-y:auto; background:var(--bg-color); padding:1rem; border-radius:6px; border:1px solid var(--border-color); margin-bottom: 1.5rem;">
+                <div id="assignAssetsList" style="display:flex; flex-direction:column; gap:0.6rem; max-height: 250px; overflow-y:auto; background:var(--bg-color); padding:1rem; border-radius:6px; border:1px solid var(--border-color); margin-bottom: 1.5rem;">
                     <!-- Checklists injected via JS -->
                 </div>
 
@@ -756,7 +777,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.67</div>
+        <div>Anantha Wealth OS V2.68</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -804,6 +825,7 @@
             splittingInvId: null,
             currentYear: new Date().getFullYear(),
             currentRecommendations: [],
+            tempAssignIds: new Set(),
             
             activeView: 'home',
             sortColumn: 'year',
@@ -879,9 +901,7 @@
                 const deltaX = app.touchEndX - app.touchStartX;
                 const deltaY = app.touchEndY - app.touchStartY;
                 
-                // Check if horizontal swipe is dominant and above threshold (70px)
                 if (Math.abs(deltaX) > 70 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-                    // Ignore if touch started inside a horizontally scrollable element that hasn't reached its scroll boundary
                     const scrollable = targetEl ? targetEl.closest('.table-container, .yoy-chart, .nav-tabs') : null;
                     if (scrollable) {
                         if (deltaX < 0 && scrollable.scrollLeft + scrollable.clientWidth < scrollable.scrollWidth - 10) return;
@@ -892,11 +912,9 @@
                     const currentIndex = views.indexOf(app.activeView);
                     
                     if (deltaX < 0 && currentIndex < views.length - 1) {
-                        // Swipe Left -> Next Tab
                         app.switchView(views[currentIndex + 1]);
                         app.showToast(`Swiped to ${app.toTitleCase(views[currentIndex + 1])}`);
                     } else if (deltaX > 0 && currentIndex > 0) {
-                        // Swipe Right -> Previous Tab
                         app.switchView(views[currentIndex - 1]);
                         app.showToast(`Swiped to ${app.toTitleCase(views[currentIndex - 1])}`);
                     }
@@ -963,9 +981,9 @@
             },
 
             migrateData() {
-                const savedV2_67 = localStorage.getItem('ananthaDataV2_67');
-                if (savedV2_67) {
-                    app.data = JSON.parse(savedV2_67);
+                const savedV2_68 = localStorage.getItem('ananthaDataV2_68');
+                if (savedV2_68) {
+                    app.data = JSON.parse(savedV2_68);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -985,7 +1003,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_66') || localStorage.getItem('ananthaDataV2_65') || localStorage.getItem('ananthaDataV2_64') || localStorage.getItem('ananthaDataV2_63') || localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61');
+                const savedOld = localStorage.getItem('ananthaDataV2_67') || localStorage.getItem('ananthaDataV2_66') || localStorage.getItem('ananthaDataV2_65') || localStorage.getItem('ananthaDataV2_64') || localStorage.getItem('ananthaDataV2_63');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -1048,7 +1066,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_67', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_68', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -2110,6 +2128,50 @@
                 });
             },
 
+            updateAssignProgress() {
+                if (!app.assigningGoalId) return;
+                const goal = app.data.goals.find(g => g.id === app.assigningGoalId);
+                if (!goal) return;
+
+                let targetFV = goal.fv || goal.targetValue || 0;
+                let currentFV = 0;
+
+                app.tempAssignIds.forEach(id => {
+                    const inv = app.data.investments.find(i => i.id === id);
+                    if (inv) {
+                        currentFV += app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate);
+                    }
+                });
+
+                document.getElementById('assignGoalTarget').innerText = `₹${app.formatCurrency(targetFV)}`;
+                document.getElementById('assignGoalCurrent').innerText = `₹${app.formatCurrency(currentFV)}`;
+                
+                let progressPct = targetFV > 0 ? (currentFV / targetFV) * 100 : 0;
+                let displayPct = Math.min(progressPct, 100);
+                
+                document.getElementById('assignGoalProgressBar').style.width = `${displayPct}%`;
+                
+                const statusEl = document.getElementById('assignGoalStatus');
+                if (progressPct >= 100) {
+                    statusEl.style.display = 'block';
+                    document.getElementById('assignGoalProgressBar').style.background = 'var(--success-color)';
+                    document.getElementById('assignGoalCurrent').style.color = 'var(--success-color)';
+                } else {
+                    statusEl.style.display = 'none';
+                    document.getElementById('assignGoalProgressBar').style.background = 'var(--accent-color)';
+                    document.getElementById('assignGoalCurrent').style.color = 'var(--accent-color)';
+                }
+            },
+
+            handleAssignCheckboxChange(cb) {
+                if (cb.checked) {
+                    app.tempAssignIds.add(cb.value);
+                } else {
+                    app.tempAssignIds.delete(cb.value);
+                }
+                app.updateAssignProgress();
+            },
+
             sortInvestments(column) {
                 if (app.invSortColumn === column) {
                     app.invSortAsc = !app.invSortAsc;
@@ -2129,10 +2191,15 @@
                 const goal = app.data.goals.find(g => g.id === goalId);
                 if (!goal) return;
 
+                app.tempAssignIds = new Set(
+                    app.data.investments.filter(i => i.linkedGoalId === goalId).map(i => i.id)
+                );
+
                 document.getElementById('assignModalTitle').innerText = `Bucket Assets into: ${goal.name}`;
                 document.getElementById('assignSearchInput').value = '';
                 
                 app.renderAssignAssetsList(goalId, '');
+                app.updateAssignProgress();
                 document.getElementById('assignAssetsModal').style.display = 'flex';
             },
 
@@ -2165,8 +2232,8 @@
                 }
 
                 filtered.forEach(inv => {
-                    const isAssignedToThis = inv.linkedGoalId === goalId;
-                    const isAssignedToOther = inv.linkedGoalId && inv.linkedGoalId !== goalId;
+                    const isAssignedToThis = app.tempAssignIds.has(inv.id);
+                    const isAssignedToOther = inv.linkedGoalId && inv.linkedGoalId !== goalId && !isAssignedToThis;
                     
                     let assignedNotice = "";
                     if (isAssignedToOther) {
@@ -2177,7 +2244,7 @@
                     container.innerHTML += `
                         <label style="display:flex; align-items:center; justify-content:space-between; background:var(--surface-color); padding:0.6rem 0.8rem; border-radius:4px; cursor:pointer; border:1px solid var(--border-color);">
                             <div style="display:flex; align-items:center; gap:0.6rem;">
-                                <input type="checkbox" class="assign-asset-checkbox" value="${inv.id}" ${isAssignedToThis ? 'checked' : ''} style="width:16px; height:16px; accent-color:var(--accent-color);">
+                                <input type="checkbox" class="assign-asset-checkbox" value="${inv.id}" ${isAssignedToThis ? 'checked' : ''} onchange="app.handleAssignCheckboxChange(this)" style="width:16px; height:16px; accent-color:var(--accent-color);">
                                 <span style="font-size:0.9rem; font-weight:500; color:var(--text-primary);">${inv.name} <span style="font-size:0.75rem; color:var(--text-secondary);">(${inv.profile || 'Main'})</span></span>
                             </div>
                             <div style="display:flex; align-items:center; gap:0.8rem;">
@@ -2196,17 +2263,12 @@
 
             saveGoalAssignments() {
                 if (!app.assigningGoalId) return;
-                const checkboxes = document.querySelectorAll('.assign-asset-checkbox');
                 
-                checkboxes.forEach(cb => {
-                    const invId = cb.value;
-                    const inv = app.data.investments.find(i => i.id === invId);
-                    if (inv) {
-                        if (cb.checked) {
-                            inv.linkedGoalId = app.assigningGoalId;
-                        } else if (inv.linkedGoalId === app.assigningGoalId) {
-                            inv.linkedGoalId = null; 
-                        }
+                app.data.investments.forEach(inv => {
+                    if (app.tempAssignIds.has(inv.id)) {
+                        inv.linkedGoalId = app.assigningGoalId;
+                    } else if (inv.linkedGoalId === app.assigningGoalId) {
+                        inv.linkedGoalId = null; 
                     }
                 });
 
@@ -2214,6 +2276,7 @@
                 app.closeAssignModal();
                 app.renderGoals();
                 app.renderInvestments();
+                app.renderDashboard();
                 app.showToast("Goal buckets updated successfully.");
             },
 
