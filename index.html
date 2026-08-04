@@ -405,7 +405,7 @@
                 </div>
             </div>
 
-            <!-- Wealth Progression Progress Bar -->
+            <!-- Wealth Progression Progress Bar (Moved here) -->
             <div class="progress-container" id="goalProgressBarWrapper" style="display: none; margin-top: 0; margin-bottom: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
@@ -647,6 +647,15 @@
                         </div>
                     </div>
 
+                    <div class="row-group" id="periodicInvGroup" style="display: none;">
+                        <div class="form-group">
+                            <label id="periodicInvLabel" for="invPeriodic">Periodic Investment (₹)</label>
+                            <input type="number" id="invPeriodic" placeholder="0" min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                        </div>
+                    </div>
+
                     <div class="row-group">
                         <div class="form-group">
                             <label for="invGrowth">Expected Yearly Growth (%)</label>
@@ -671,12 +680,14 @@
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">Here is the math used to guess what <strong id="justAssetName" style="color: var(--text-primary);"></strong> will be worth in the future.</p>
                 
                 <div style="background: var(--surface-light); padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1rem; margin-bottom: 1.5rem;">
-                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Current Value (PV): <span id="justPV" style="color: var(--text-primary); float: right;"></span></div>
+                    <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Current Value: <span id="justPV" style="color: var(--text-primary); float: right;"></span></div>
                     <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Expected Yearly Growth: <span id="justRate" style="color: var(--success-color); float: right;"></span></div>
                     <div style="margin-bottom: 1rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">Years to Goal: <span id="justYears" style="color: var(--text-primary); float: right;"></span></div>
                     
                     <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Calculation:</div>
                     <div id="justFormula" style="color: var(--text-secondary); margin-bottom: 1.5rem; word-break: break-all; white-space: pre-wrap; font-size: 0.9rem; line-height: 1.6;"></div>
+                    
+                    <div id="justChartContainer" class="yoy-chart"></div>
                     
                     <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Expected Future Wealth: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
                 </div>
@@ -767,7 +778,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V3.2</div>
+        <div>Anantha Wealth OS V3.3</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -800,7 +811,6 @@
                 app.closeFilterPanel();
                 return;
             }
-            // Support ` or ~ to cycle tabs
             if (e.key === '`' || e.key === '~') {
                 e.preventDefault();
                 const views = ['home', 'goals', 'investments', 'settings'];
@@ -999,9 +1009,9 @@
             },
 
             migrateData() {
-                const savedV3_2 = localStorage.getItem('ananthaDataV3_2');
-                if (savedV3_2) {
-                    app.data = JSON.parse(savedV3_2);
+                const savedV3_3 = localStorage.getItem('ananthaDataV3_3');
+                if (savedV3_3) {
+                    app.data = JSON.parse(savedV3_3);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     
                     app.activeView = app.data.activeView || 'home';
@@ -1023,7 +1033,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
+                const savedOld = localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1035,6 +1045,7 @@
                         if (!i.source) i.source = i.isManuallyEdited ? 'Manual' : 'Legacy';
                         if (!i.planType) i.planType = 'Unknown';
                         if (!i.monthlySIP) i.monthlySIP = null;
+                        if (!i.yearlyInvestment) i.yearlyInvestment = null;
                         
                         if ((i.growthRate > 50 || i.growthRate < -15) && !i.isManuallyEdited) {
                             let sysType = i.type || 'equity';
@@ -1089,7 +1100,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV3_2', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV3_3', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1180,9 +1191,40 @@
             /* -------------------------------------------------------------------------- */
             /* 100% AUTO-PILOT ENGINE (CORE ALGORITHM)                                    */
             /* -------------------------------------------------------------------------- */
+            
+            getAssetValueAtYear(inv, yearsFromNow) {
+                if (yearsFromNow <= 0) return inv.value;
+                let r = (inv.growthRate || 0) / 100;
+                if (r === 0 && inv.type !== 'pomis') return inv.value;
+                
+                if (inv.type === 'pomis') {
+                    return inv.value;
+                } else if (inv.type === 'rd' && inv.monthlySIP > 0) {
+                    let m = yearsFromNow * 12;
+                    let rMonth = r / 12;
+                    return inv.value * Math.pow(1 + rMonth, m) + inv.monthlySIP * ((Math.pow(1 + rMonth, m) - 1) / rMonth) * (1 + rMonth);
+                } else if (inv.type === 'ppf' && inv.yearlyInvestment > 0) {
+                    return inv.value * Math.pow(1 + r, yearsFromNow) + inv.yearlyInvestment * ((Math.pow(1 + r, yearsFromNow) - 1) / r) * (1 + r);
+                } else {
+                    return inv.value * Math.pow(1 + r, yearsFromNow);
+                }
+            },
+
+            calcInvFV(inv) {
+                let years = 0;
+                if (inv.maturityDate) {
+                    const matDate = new Date(inv.maturityDate);
+                    years = (matDate - new Date()) / (1000 * 60 * 60 * 24 * 365.25);
+                } else {
+                    years = app.getMaxGoalYear() - app.currentYear;
+                }
+                if (years <= 0) return inv.value;
+                return app.getAssetValueAtYear(inv, years);
+            },
+            
             runAutoPilot() {
                 let pool = app.data.investments.map(inv => {
-                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                    let fv = app.calcInvFV(inv);
                     return { ...inv, totalFV: fv, remainingFV: fv, allocations: [] };
                 });
 
@@ -1377,45 +1419,6 @@
                 document.getElementById('assetModal').style.display = 'none'; 
                 app.cancelInvEdit(); 
             },
-            
-            getMaxGoalYear() {
-                let maxYear = app.currentYear + 10; 
-                if (app.data.goals && app.data.goals.length > 0) {
-                    const goalYears = app.data.goals.map(g => g.targetYear || app.currentYear);
-                    maxYear = Math.max(...goalYears);
-                }
-                return maxYear;
-            },
-
-            calcInvFV(val, rate, matDateStr, type, sipAmt) {
-                if (!rate && rate !== 0) return val;
-                
-                if (type === 'pomis') return val;
-
-                let years = 0;
-                if (matDateStr) {
-                    const matDate = new Date(matDateStr);
-                    const today = new Date();
-                    years = (matDate - today) / (1000 * 60 * 60 * 24 * 365.25);
-                } else {
-                    years = app.getMaxGoalYear() - app.currentYear;
-                }
-                
-                if (years <= 0) return val;
-                
-                if (type === 'rd' && sipAmt && sipAmt > 0) {
-                    let months = years * 12;
-                    let r = (rate / 100) / 12;
-                    let pvFv = val * Math.pow(1 + r, months); 
-                    let sipFv = sipAmt * ((Math.pow(1 + r, months) - 1) / r) * (1 + r); 
-                    return pvFv + sipFv;
-                }
-
-                let multiplier = 1 + (rate / 100);
-                if (multiplier < 0) return 0;
-                
-                return val * Math.pow(multiplier, years);
-            },
 
             openJustificationModal(id) {
                 const inv = app.data.investments.find(i => i.id === id);
@@ -1441,7 +1444,7 @@
                 let yText = years === 0 ? "Now" : `${years.toFixed(1)} Years`;
                 document.getElementById('justYears').innerText = `${yText} (Target: ${endYear})`;
                 
-                let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                let fv = app.calcInvFV(inv);
                 
                 if (inv.type === 'pomis') {
                     document.getElementById('justFormula').innerText = `Expected Value = ₹${app.formatCurrency(inv.value)}\n(POMIS interest is paid out monthly, so principal does not compound)`;
@@ -1449,6 +1452,9 @@
                     let m = years * 12;
                     let r = (inv.growthRate / 100) / 12;
                     document.getElementById('justFormula').innerText = `We grow your current value plus your monthly SIPs.\n\nCurrent Value = ₹${app.formatCurrency(inv.value)}\nSIP = ₹${app.formatCurrency(inv.monthlySIP)}/mo\nGrowth = ${(r*100).toFixed(2)}% per month\nDuration = ${m.toFixed(0)} months`;
+                } else if (inv.type === 'ppf' && inv.yearlyInvestment > 0) {
+                    let r = (inv.growthRate || 0) / 100;
+                    document.getElementById('justFormula').innerText = `We grow your current value plus your yearly investments.\n\nCurrent Value = ₹${app.formatCurrency(inv.value)}\nYearly Investment = ₹${app.formatCurrency(inv.yearlyInvestment)}/yr\nGrowth = ${(r*100).toFixed(2)}% per year\nDuration = ${years.toFixed(1)} years`;
                 } else {
                     document.getElementById('justFormula').innerText = `We grow your current value by ${inv.growthRate}% every year for ${years.toFixed(1)} years.`;
                 }
@@ -1460,17 +1466,7 @@
                 let step = years > 40 ? 5 : (years > 20 ? 2 : 1);
                 
                 for (let i = 0; i < years; i += step) {
-                    let pointVal = 0;
-                    if (inv.type === 'pomis') {
-                        pointVal = inv.value;
-                    } else if (inv.type === 'rd' && inv.monthlySIP > 0) {
-                        let m = i * 12;
-                        let r = (inv.growthRate / 100) / 12;
-                        if (m === 0) pointVal = inv.value;
-                        else pointVal = inv.value * Math.pow(1 + r, m) + inv.monthlySIP * ((Math.pow(1 + r, m) - 1) / r) * (1 + r);
-                    } else {
-                        pointVal = inv.value * Math.pow(1 + (inv.growthRate/100), i);
-                    }
+                    let pointVal = app.getAssetValueAtYear(inv, i);
                     if (pointVal > maxVal) maxVal = pointVal;
                     dataPoints.push({ t: i, val: pointVal, year: app.currentYear + i });
                 }
@@ -1515,6 +1511,18 @@
             handleInvTypeChange() {
                 const type = document.getElementById('invType').value;
                 document.getElementById('invGrowth').value = app.defaultRates[type] || 0;
+
+                const periodicGroup = document.getElementById('periodicInvGroup');
+                const periodicLabel = document.getElementById('periodicInvLabel');
+                if (type === 'rd') {
+                    periodicGroup.style.display = 'flex';
+                    periodicLabel.innerText = 'Monthly SIP (₹)';
+                } else if (type === 'ppf') {
+                    periodicGroup.style.display = 'flex';
+                    periodicLabel.innerText = 'Yearly Investment (₹)';
+                } else {
+                    periodicGroup.style.display = 'none';
+                }
             },
 
             handleInvSave(event) {
@@ -1528,6 +1536,10 @@
                 
                 let rawInvested = document.getElementById('invInvested').value;
                 const investedAmt = rawInvested ? parseFloat(rawInvested) : null;
+
+                let periodicAmt = parseFloat(document.getElementById('invPeriodic').value) || null;
+                let sipAmount = type === 'rd' ? periodicAmt : null;
+                let yearlyAmount = type === 'ppf' ? periodicAmt : null;
 
                 let rClass = document.getElementById('invRawClass').value.trim();
                 let rType = document.getElementById('invRawType').value.trim() || 'Other';
@@ -1548,13 +1560,14 @@
                     rawCategory: rCategory,
                     rawSector: rSector,
                     planType: planType,
+                    monthlySIP: sipAmount,
+                    yearlyInvestment: yearlyAmount,
                     isManuallyEdited: true,
                     source: "Manual"
                 };
 
                 if (app.editingInvId) {
                     const index = app.data.investments.findIndex(i => i.id === app.editingInvId);
-                    invData.monthlySIP = app.data.investments[index].monthlySIP;
                     app.data.investments[index] = invData;
                 } else {
                     app.data.investments.push(invData);
@@ -1595,12 +1608,14 @@
                 document.getElementById('invGrowth').value = inv.growthRate || inv.growthRate === 0 ? inv.growthRate : app.defaultRates[inv.type];
                 document.getElementById('invMaturity').value = inv.maturityDate || "";
                 document.getElementById('invPlanType').value = inv.planType || 'Unknown';
+                document.getElementById('invPeriodic').value = inv.monthlySIP || inv.yearlyInvestment || "";
                 
                 document.getElementById('invRawClass').value = inv.rawAssetClass || inv.type;
                 document.getElementById('invRawType').value = inv.rawAssetType || '';
                 document.getElementById('invRawCategory').value = inv.rawCategory || 'NA';
                 document.getElementById('invRawSector').value = inv.rawSector || 'NA';
 
+                app.handleInvTypeChange(); 
                 app.openAssetModal();
             },
 
@@ -2459,7 +2474,7 @@
 
                 let profileTotals = {};
                 app.data.investments.forEach(inv => {
-                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                    let fv = app.calcInvFV(inv);
                     let pName = inv.profile || 'Main Portfolio';
                     if (!profileTotals[pName]) profileTotals[pName] = { fv: 0 };
                     profileTotals[pName].fv += fv;
@@ -2943,7 +2958,7 @@
                 let totalVal = 0;
 
                 investmentsList.forEach(inv => {
-                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                    let fv = app.calcInvFV(inv);
                     totalVal += (inv.value || 0);
 
                     let key = 'Other';
@@ -3034,7 +3049,7 @@
                 let globalFutureInvestments = 0;
                 
                 app.data.investments.forEach(inv => {
-                    let fv = app.calcInvFV(inv.value, inv.growthRate, inv.maturityDate, inv.type, inv.monthlySIP);
+                    let fv = app.calcInvFV(inv);
                     globalInvestments += (inv.value || 0);
                     globalFutureInvestments += fv;
                 });
@@ -3079,7 +3094,6 @@
                     reqCard.querySelector('.dash-value').innerHTML = '₹' + app.formatCurrency(totalFV);
                 }
 
-                // Render the Chart.js Asset Progression Chart dynamically based on active grouping
                 if (app.data.investments.length > 0) {
                     document.getElementById('dashAssetProgressionContainer').style.display = 'block';
                     
@@ -3093,7 +3107,6 @@
 
                     let yearsArray = [];
                     
-                    // 1. Determine dynamic classes based on current grouping
                     let dynamicKeys = new Set();
                     app.data.investments.forEach(inv => {
                         let key = 'Other';
@@ -3105,7 +3118,6 @@
                     });
                     let baseClasses = Array.from(dynamicKeys);
 
-                    // 2. Assign unique colors
                     let colorMap = {};
                     let pIdx = 0;
                     baseClasses.forEach(c => {
@@ -3139,17 +3151,7 @@
                             yearsToMat = Math.max(0, yearsToMat);
                             let actualI = Math.min(i, yearsToMat); 
 
-                            let pointVal = 0;
-                            if (inv.type === 'pomis') {
-                                pointVal = inv.value;
-                            } else if (inv.type === 'rd' && inv.monthlySIP > 0) {
-                                let m = actualI * 12;
-                                let r = (inv.growthRate / 100) / 12;
-                                if (m === 0) pointVal = inv.value;
-                                else pointVal = inv.value * Math.pow(1 + r, m) + inv.monthlySIP * ((Math.pow(1 + r, m) - 1) / r) * (1 + r);
-                            } else {
-                                pointVal = inv.value * Math.pow(1 + (inv.growthRate/100), actualI);
-                            }
+                            let pointVal = app.getAssetValueAtYear(inv, actualI);
 
                             let key = 'Other';
                             if (app.allocationGroupBy === 'class') key = inv.rawAssetClass || inv.type;
