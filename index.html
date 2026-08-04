@@ -554,13 +554,18 @@
                             <input type="text" id="invRawCategory" placeholder="e.g. Large Cap, NA">
                         </div>
                         <div class="form-group">
-                            <label for="invPlanType">Plan Type (MF Only)</label>
-                            <select id="invPlanType">
-                                <option value="Unknown">Unknown / NA</option>
-                                <option value="Direct">Direct</option>
-                                <option value="Regular">Regular</option>
-                            </select>
+                            <label for="invRawSector">Sector</label>
+                            <input type="text" id="invRawSector" placeholder="e.g. IT, Auto, NA">
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invPlanType">Plan Type (MF Only)</label>
+                        <select id="invPlanType">
+                            <option value="Unknown">Unknown / NA</option>
+                            <option value="Direct">Direct</option>
+                            <option value="Regular">Regular</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -595,7 +600,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal (Updated V2.63) -->
+        <!-- Justification / Projection Math Modal (Updated V2.64) -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -767,7 +772,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.63</div>
+        <div>Anantha Wealth OS V2.64</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -885,9 +890,9 @@
             },
 
             migrateData() {
-                const savedV2_63 = localStorage.getItem('ananthaDataV2_63');
-                if (savedV2_63) {
-                    app.data = JSON.parse(savedV2_63);
+                const savedV2_64 = localStorage.getItem('ananthaDataV2_64');
+                if (savedV2_64) {
+                    app.data = JSON.parse(savedV2_64);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -907,7 +912,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61') || localStorage.getItem('ananthaDataV2_60') || localStorage.getItem('ananthaDataV2_59');
+                const savedOld = localStorage.getItem('ananthaDataV2_63') || localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61') || localStorage.getItem('ananthaDataV2_60') || localStorage.getItem('ananthaDataV2_59');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -970,7 +975,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_63', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_64', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -2613,7 +2618,7 @@
                         
                         if (inv.growthRate < 0) {
                             rowClass += " loss-making-row";
-                            warningIcon = `<span title="Loss making asset" style="cursor:help; margin-left:5px;">❗</span>`;
+                            warningIcon = `<span title="Loss making asset (Negative Growth Based on File)" style="cursor:help; margin-left:5px;">❗</span>`;
                         } else if (inv.growthRate < 7.0 && inv.type !== 'vehicle') {
                             rowClass += " low-growth-row";
                             warningIcon = `<span title="Losing potential to inflation (Growth < 7.0%)" style="cursor:help; margin-left:5px;">⚠️</span>`;
