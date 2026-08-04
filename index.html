@@ -8,6 +8,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #0f1115;
@@ -70,7 +71,7 @@
         .row-group { display: flex; gap: 1rem; }
         .row-group > div { flex: 1; }
 
-        button { width: 100%; background-color: var(--accent-color); color: #000; border: none; padding: 0.75rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        button { width: 100%; background-color: var(--accent-color); color: #000; border: none; padding: 0.75rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s, background-color 0.2s, color 0.2s; }
         button:hover { opacity: 0.9; }
         .btn-cancel { background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color); display: none; }
         .btn-action { width: auto; flex: 1; }
@@ -172,10 +173,10 @@
         .close-modal:hover { color: var(--danger-color); }
         
         /* YOY Chart specific styles */
-        .yoy-chart { display: flex; align-items: flex-end; height: 250px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
+        .yoy-chart { display: flex; align-items: flex-end; height: 220px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
         .yoy-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 35px; position: relative; cursor: pointer; height: 100%; }
         .yoy-bar { width: 100%; background: var(--accent-color); border-radius: 4px 4px 0 0; transition: background 0.2s; }
-        .yoy-bar-col:hover .yoy-bar, .yoy-bar-col:hover .yoy-bar-segment { filter: brightness(1.2); }
+        .yoy-bar-col:hover .yoy-bar { filter: brightness(1.2); }
         .yoy-bar-label { font-size: 0.65rem; color: var(--text-secondary); margin-top: 6px; font-weight: 600; }
         .yoy-tooltip { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); background: var(--surface-light); color: var(--text-primary); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; border: 1px solid var(--accent-color); z-index: 10; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: opacity 0.2s; }
         .yoy-bar-col:hover .yoy-tooltip { opacity: 1; }
@@ -267,7 +268,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -351,7 +352,7 @@
                 </div>
             </div>
 
-            <!-- New Chart Area -->
+            <!-- Chart.js Asset Progression Chart Area -->
             <div class="progress-container" id="dashAssetProgressionContainer" style="margin-top: 1rem; margin-bottom: 1rem; display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
@@ -359,9 +360,12 @@
                         <span style="font-size: 0.85rem; color: var(--text-secondary);">Projected growth per asset class over time</span>
                     </div>
                 </div>
-                <div id="assetClassChartContainer" class="yoy-chart" style="height: 250px;"></div>
+                <div style="position: relative; height: 350px; width: 100%; margin-top: 1.5rem;">
+                    <canvas id="assetProgressionCanvas"></canvas>
+                </div>
             </div>
 
+            <!-- Wealth Progression Progress Bar -->
             <div class="progress-container" id="dashProgressBarWrapper" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
@@ -379,7 +383,10 @@
                 <div class="table-header-row" style="flex-direction: column; align-items: flex-start; padding-bottom: 1rem;">
                     <div style="display:flex; justify-content:space-between; align-items: center; width:100%; flex-wrap:wrap; gap:1rem;">
                         <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-primary); font-weight: 600;">Asset Allocation Summary</h3>
-                        <button class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('dash')">Filter ⚡</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button id="dashClearFilterBtn" class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px; display: none; border-color: var(--danger-color); color: var(--danger-color);" onclick="app.clearFilters('dash')">Clear ✕</button>
+                            <button id="dashFilterBtn" class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('dash')">Filter ⚡</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -390,7 +397,7 @@
                         <tr>
                             <th id="dashAllocColHeader">Asset Class</th>
                             <th>Current Valuation</th>
-                            <th>Expected Growth</th>
+                            <th>Avg. Expected Growth</th>
                             <th>Projected Future Value</th>
                             <th>% of Portfolio</th>
                         </tr>
@@ -435,7 +442,8 @@
             <div class="portfolio-header">
                 <h3>Registered Assets</h3>
                 <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                    <button class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('inv')">Filter ⚡</button>
+                    <button id="invClearFilterBtn" class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px; display: none; border-color: var(--danger-color); color: var(--danger-color);" onclick="app.clearFilters('inv')">Clear ✕</button>
+                    <button id="invFilterBtn" class="btn-outline" style="width: auto; padding: 0.4rem 1rem; border-radius: 20px;" onclick="app.openFilterPanel('inv')">Filter ⚡</button>
                     <button class="btn-upload" onclick="app.openAssetModal()" style="background: var(--accent-color); color: #000; border: none; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600;">+ Add Asset</button>
                 </div>
             </div>
@@ -756,11 +764,14 @@
             if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'select' || e.target.tagName.toLowerCase() === 'textarea') {
                 return; 
             }
-            if (e.key === '`') {
+            // Support ` or ~ to cycle tabs
+            if (e.key === '`' || e.key === '~') {
                 e.preventDefault();
                 const views = ['home', 'goals', 'investments', 'settings'];
                 const currentIndex = views.indexOf(app.activeView);
-                const nextIndex = (currentIndex + 1) % views.length;
+                let nextIndex = e.shiftKey || e.key === '~' 
+                    ? (currentIndex - 1 + views.length) % views.length 
+                    : (currentIndex + 1) % views.length;
                 app.switchView(views[nextIndex]);
             }
         });
@@ -805,6 +816,8 @@
             touchStartY: 0,
             touchEndX: 0,
             touchEndY: 0,
+            
+            assetChart: null,
 
             formatCurrency(amount) {
                 if (isNaN(amount) || amount === null) return "0";
@@ -971,7 +984,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_75') || localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71');
+                const savedOld = localStorage.getItem('ananthaDataV2_75') || localStorage.getItem('ananthaDataV2_74') || localStorage.getItem('ananthaDataV2_73') || localStorage.getItem('ananthaDataV2_72') || localStorage.getItem('ananthaDataV2_71') || localStorage.getItem('ananthaDataV2_70');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -1074,6 +1087,7 @@
                         if (!importedData.profiles) importedData.profiles = ['Main Portfolio'];
                         if (!importedData.goals) importedData.goals = [];
                         
+                        // Strip manual linkages if coming from older backup
                         importedData.investments.forEach(i => {
                             delete i.linkedGoalId;
                             delete i.splitParentId;
@@ -2248,6 +2262,54 @@
                 if(panel) panel.style.display = 'none';
             },
 
+            isFilterActive(mode) {
+                let profiles = mode === 'dash' ? app.dashProfileFilters : app.invProfileFilters;
+                let classes = mode === 'dash' ? app.dashClassFilters : app.invClassFilters;
+                let types = mode === 'dash' ? app.dashTypeFilters : app.invTypeFilters;
+                let cats = mode === 'dash' ? app.dashCategoryFilters : app.invCategoryFilters;
+                let secs = mode === 'dash' ? app.dashSectorFilters : app.invSectorFilters;
+
+                if (profiles.length !== app.data.profiles.length) return true;
+
+                let dataP = app.data.investments.filter(i => profiles.includes(i.profile || 'Main Portfolio'));
+                let allClasses = new Set(dataP.map(i => i.rawAssetClass || i.type));
+                if (classes.length !== allClasses.size) return true;
+
+                let dataC = dataP.filter(i => classes.includes(i.rawAssetClass || i.type));
+                let allTypes = new Set(dataC.map(i => i.rawAssetType || 'Other'));
+                if (types.length !== allTypes.size) return true;
+
+                let dataT = dataC.filter(i => types.includes(i.rawAssetType || 'Other'));
+                let allCats = new Set(dataT.map(i => i.rawCategory || 'NA'));
+                if (cats.length !== allCats.size) return true;
+
+                let dataCat = dataT.filter(i => cats.includes(i.rawCategory || 'NA'));
+                let allSecs = new Set(dataCat.map(i => i.rawSector || 'NA'));
+                if (secs.length !== allSecs.size) return true;
+
+                return false;
+            },
+
+            clearFilters(mode) {
+                if (mode === 'dash') {
+                    app.dashProfileFilters = [...app.data.profiles];
+                    app.dashClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.dashTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.dashCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.dashSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.renderDashboard();
+                } else {
+                    app.invProfileFilters = [...app.data.profiles];
+                    app.invClassFilters = [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
+                    app.invTypeFilters = [...new Set(app.data.investments.map(i => i.rawAssetType || 'Other'))];
+                    app.invCategoryFilters = [...new Set(app.data.investments.map(i => i.rawCategory || 'NA'))];
+                    app.invSectorFilters = [...new Set(app.data.investments.map(i => i.rawSector || 'NA'))];
+                    app.renderInvestments();
+                }
+                app.saveState();
+                app.showToast("Filters cleared.");
+            },
+
             applyFilters() {
                 if (app.currentFilterMode === 'dash') {
                     app.dashProfileFilters = [...app.tempFilters.profiles];
@@ -2359,6 +2421,19 @@
             },
 
             renderInvestments() {
+                const filterActive = app.isFilterActive('inv');
+                const btn = document.getElementById('invFilterBtn');
+                const clrBtn = document.getElementById('invClearFilterBtn');
+                if (filterActive) {
+                    btn.style.backgroundColor = 'var(--accent-color)';
+                    btn.style.color = '#000';
+                    clrBtn.style.display = 'block';
+                } else {
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = 'var(--accent-color)';
+                    clrBtn.style.display = 'none';
+                }
+
                 app.renderPortfolioTable();
             },
 
@@ -2780,6 +2855,19 @@
             },
 
             renderDashboard() {
+                const isFiltered = app.isFilterActive('dash');
+                const filterBtn = document.getElementById('dashFilterBtn');
+                const clearBtn = document.getElementById('dashClearFilterBtn');
+                if (isFiltered) {
+                    filterBtn.style.backgroundColor = 'var(--accent-color)';
+                    filterBtn.style.color = '#000';
+                    clearBtn.style.display = 'block';
+                } else {
+                    filterBtn.style.backgroundColor = 'transparent';
+                    filterBtn.style.color = 'var(--accent-color)';
+                    clearBtn.style.display = 'none';
+                }
+
                 let globalInvestments = 0;
                 let globalFutureInvestments = 0;
                 
@@ -2792,7 +2880,6 @@
                 let totalCExp = 0;
                 let totalFV = 0;
                 app.data.goals.forEach(goal => {
-                    // Fix legacy parsing where cExp might be 0 but cv has value
                     let cExp = parseFloat(goal.cExp) || parseFloat(goal.cv) || parseFloat(goal.currentValue) || parseFloat(goal.pv) || (goal.type === 'retirement' ? parseFloat(goal.exp) * 12 : 0);
                     totalCExp += cExp;
                     totalFV += (goal.fv || goal.targetValue || 0);
@@ -2821,8 +2908,11 @@
                     reqCard.querySelector('.dash-label').innerText = 'Targets Missing';
                     reqCard.querySelector('.dash-value').innerHTML = '<span style="font-size:1rem; font-weight:normal; color:var(--text-secondary);">Tell the engine what you are saving for.</span>';
                     
+                    document.getElementById('wealthProgressionTitle').innerText = 'Wealth Trajectory';
+                    document.getElementById('wealthProgressionSub').innerText = 'Pure Accumulation Mode: Compounding over a 10-year horizon without specific targets.';
+                    document.getElementById('dashPercentage').innerText = '∞';
+                    
                     document.getElementById('dashProgressBarWrapper').style.display = 'none';
-                    document.getElementById('dashAssetProgressionContainer').style.display = 'none';
                 } else {
                     document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Plan Current Expenses';
                     document.getElementById('dashTotalPV').innerText = '₹' + app.formatCurrency(totalCExp);
@@ -2839,7 +2929,6 @@
                     document.getElementById('dashPercentage').innerText = `${totalPct.toFixed(1)}%`;
                     
                     document.getElementById('dashProgressBarWrapper').style.display = 'block';
-                    document.getElementById('dashAssetProgressionContainer').style.display = 'block';
 
                     const progressContainer = document.getElementById('dashProgressBarContainer');
                     const progressLegend = document.getElementById('dashProgressLegend');
@@ -2882,20 +2971,24 @@
                             colorIdx++;
                         }
                     });
+                }
 
-                    // Asset Class Chart Logic
+                // Render the Chart.js Asset Progression Chart
+                if (app.data.investments.length > 0) {
+                    document.getElementById('dashAssetProgressionContainer').style.display = 'block';
+
                     let chartYears = maxYear - app.currentYear;
-                    chartYears = Math.max(1, chartYears);
-                    let chartHtml = '';
-                    let dataPoints = [];
-                    let maxTotalVal = 0;
-                    let step = chartYears > 40 ? 5 : (chartYears > 20 ? 2 : 1);
+                    chartYears = Math.max(10, chartYears); 
 
+                    let yearsArray = [];
                     let baseClasses = ['equity', 'debt', 'liquid', 'hybrid', 'gold_silver', 'real_estate', 'vehicle'];
+                    let datasetsData = {};
+                    baseClasses.forEach(c => datasetsData[c] = []);
 
-                    for (let i = 0; i <= chartYears; i += step) {
-                        let yearObj = { t: i, year: app.currentYear + i, total: 0, classes: {} };
-                        baseClasses.forEach(c => yearObj.classes[c] = 0);
+                    for (let i = 0; i <= chartYears; i++) {
+                        yearsArray.push(app.currentYear + i);
+                        let yearTotals = {};
+                        baseClasses.forEach(c => yearTotals[c] = 0);
 
                         app.data.investments.forEach(inv => {
                             let yearsToMat = inv.maturityDate ? (new Date(inv.maturityDate) - new Date()) / (1000 * 60 * 60 * 24 * 365.25) : chartYears;
@@ -2919,37 +3012,69 @@
                             if (['nps', 'epf'].includes(mappedClass)) mappedClass = 'hybrid';
                             if (!baseClasses.includes(mappedClass)) mappedClass = 'liquid';
 
-                            yearObj.classes[mappedClass] += pointVal;
-                            yearObj.total += pointVal;
+                            yearTotals[mappedClass] += pointVal;
                         });
 
-                        if (yearObj.total > maxTotalVal) maxTotalVal = yearObj.total;
-                        dataPoints.push(yearObj);
+                        baseClasses.forEach(c => datasetsData[c].push(yearTotals[c]));
                     }
 
-                    dataPoints.forEach(pt => {
-                        let label = pt.t === 0 ? 'Now' : `Y${pt.t}`;
-                        let tooltipContent = `<strong>${pt.year} (Y${pt.t})</strong><br/><div style="margin-bottom:0.5rem; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:0.2rem;">Total: ₹${app.formatCurrency(pt.total)}</div>`;
-                        
-                        let stackedSegments = '';
-                        baseClasses.forEach(cls => {
-                            let val = pt.classes[cls];
-                            if (val > 0) {
-                                let hPct = (val / maxTotalVal) * 100;
-                                let color = app.getTypeColor(cls);
-                                stackedSegments = `<div style="height: ${hPct}%; width: 100%; background: ${color}; border-top: 1px solid rgba(0,0,0,0.1); transition: background 0.2s;"></div>` + stackedSegments; 
-                                tooltipContent += `<div style="display:flex; justify-content:space-between; gap:1.5rem; margin-bottom:0.2rem;"><span><span style="color:${color}; font-size:1.1rem;">■</span> ${cls.toUpperCase()}</span> <span>₹${app.formatCurrency(val)}</span></div>`;
-                            }
-                        });
+                    let datasets = baseClasses.map(c => {
+                        return {
+                            label: c.toUpperCase().replace('_', ' '),
+                            data: datasetsData[c],
+                            borderColor: app.getTypeColor(c),
+                            backgroundColor: app.getTypeColor(c),
+                            tension: 0.4,
+                            borderWidth: 2,
+                            pointRadius: 2,
+                            pointHoverRadius: 5,
+                            fill: false
+                        };
+                    }).filter(d => d.data.some(val => val > 0));
 
-                        let colHtml = `<div class="yoy-bar-col">
-                                    <div style="display: flex; flex-direction: column; justify-content: flex-end; width: 100%; height: 100%;">${stackedSegments}</div>
-                                    <div class="yoy-tooltip" style="text-align:left; min-width:200px;">${tooltipContent}</div>
-                                    <div class="yoy-bar-label">${label}</div>
-                                   </div>`;
-                        chartHtml += colHtml;
+                    if (app.assetChart) {
+                        app.assetChart.destroy();
+                    }
+                    
+                    const ctx = document.getElementById('assetProgressionCanvas').getContext('2d');
+                    app.assetChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: yearsArray,
+                            datasets: datasets
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            scales: {
+                                y: {
+                                    ticks: { color: '#94a3b8', callback: function(val) { return '₹' + app.formatCurrency(val); } },
+                                    grid: { color: 'rgba(255,255,255,0.05)' }
+                                },
+                                x: {
+                                    ticks: { color: '#94a3b8' },
+                                    grid: { color: 'rgba(255,255,255,0.05)' }
+                                }
+                            },
+                            plugins: {
+                                legend: { labels: { color: '#e2e8f0' } },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.dataset.label + ': ₹' + app.formatCurrency(context.raw);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     });
-                    document.getElementById('assetClassChartContainer').innerHTML = chartHtml;
+
+                } else {
+                    document.getElementById('dashAssetProgressionContainer').style.display = 'none';
                 }
 
                 let tableInvestments = app.data.investments.filter(i => {
