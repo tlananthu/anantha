@@ -98,8 +98,8 @@
         
         .badge { font-size: 0.65rem; background: var(--surface-light); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--text-secondary); vertical-align: middle; text-transform: uppercase;}
         
-        .icon-btn { background: none; color: var(--text-secondary); width: auto; padding: 0; font-size: 1.1rem; }
-        .icon-btn:hover { color: var(--accent-color); }
+        .icon-btn { background: none; color: var(--text-secondary); width: auto; padding: 0.4rem; font-size: 1.1rem; min-width: 36px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; }
+        .icon-btn:hover { color: var(--accent-color); background: rgba(255,255,255,0.05); }
         .icon-btn.delete:hover { color: var(--danger-color); }
 
         /* Dashboard specific */
@@ -160,14 +160,14 @@
         tr.clickable-row { cursor: pointer; transition: background-color 0.2s; }
         tr.clickable-row:hover td { background-color: rgba(56, 189, 248, 0.08) !important; }
 
-        /* Modals */
+        /* Modals Desktop */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; border: 1px solid var(--border-color); position: relative; max-height: 85vh; display: flex; flex-direction: column; overflow-y: auto; }
+        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; border: 1px solid var(--border-color); position: relative; max-height: 85vh; display: flex; flex-direction: column; overflow-y: auto; transition: transform 0.2s ease-out; }
         .modal-content h3 { margin-bottom: 1.5rem; color: var(--accent-color); font-size: 1.2rem; margin-top: 0; }
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
         
-        /* YOY Chart specific styles - EXPANDED HEIGHT & PADDING FOR TOOLTIPS */
+        /* YOY Chart specific styles */
         .yoy-chart { display: flex; align-items: flex-end; height: 220px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
         .yoy-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 35px; position: relative; cursor: pointer; height: 100%; }
         .yoy-bar { width: 100%; background: var(--accent-color); border-radius: 4px 4px 0 0; transition: background 0.2s; }
@@ -191,7 +191,7 @@
         @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
         @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
 
-        /* Mobile App Bottom Navigation */
+        /* Mobile App Bottom Navigation & Touch Optimizations */
         @media (max-width: 768px) {
             body { padding: 1rem 1rem 80px 1rem; }
             .nav-tabs {
@@ -214,6 +214,22 @@
             .toast { bottom: 85px; }
             @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 85px; opacity: 1; } }
             @keyframes fadeout { from { bottom: 85px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+
+            /* Native Bottom Sheets on Mobile with Drag Handle */
+            .modal-overlay { align-items: flex-end; }
+            .modal-content {
+                width: 100%; max-width: 100%; border-radius: 16px 16px 0 0;
+                max-height: 85vh; animation: slideUp 0.25s ease-out;
+            }
+            .modal-content::before {
+                content: ''; width: 40px; height: 5px; background: var(--text-secondary);
+                opacity: 0.4; border-radius: 3px; align-self: center;
+                margin-bottom: 1rem; flex-shrink: 0;
+            }
+            @keyframes slideUp {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
         }
     </style>
 </head>
@@ -246,7 +262,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -600,7 +616,7 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal (Updated V2.64) -->
+        <!-- Justification / Projection Math Modal -->
         <div class="modal-overlay" id="justificationModal">
             <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
@@ -772,7 +788,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.64</div>
+        <div>Anantha Wealth OS V2.65</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -841,6 +857,12 @@
             
             profileColors: ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#f43f5e', '#ec4899', '#14b8a6', '#6366f1'],
 
+            // Gesture variables
+            touchStartX: 0,
+            touchStartY: 0,
+            touchEndX: 0,
+            touchEndY: 0,
+
             formatCurrency(amount) {
                 if (isNaN(amount) || amount === null) return "0";
                 return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(amount));
@@ -864,6 +886,89 @@
                 app.toggleGoalFields();
                 app.renderAll();
                 app.switchView(app.activeView);
+                app.initTouchGestures();
+            },
+
+            initTouchGestures() {
+                const mainApp = document.querySelector('main.app-content');
+                if (!mainApp) return;
+
+                mainApp.addEventListener('touchstart', (e) => {
+                    app.touchStartX = e.changedTouches[0].screenX;
+                    app.touchStartY = e.changedTouches[0].screenY;
+                }, { passive: true });
+
+                mainApp.addEventListener('touchend', (e) => {
+                    app.touchEndX = e.changedTouches[0].screenX;
+                    app.touchEndY = e.changedTouches[0].screenY;
+                    app.handleSwipeGesture(e.target);
+                }, { passive: true });
+
+                app.initModalDragToDismiss();
+            },
+
+            handleSwipeGesture(targetEl) {
+                const deltaX = app.touchEndX - app.touchStartX;
+                const deltaY = app.touchEndY - app.touchStartY;
+                
+                // Check if horizontal swipe is dominant and above threshold (70px)
+                if (Math.abs(deltaX) > 70 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+                    // Ignore if touch started inside a horizontally scrollable element that hasn't reached its scroll boundary
+                    const scrollable = targetEl ? targetEl.closest('.table-container, .yoy-chart, .nav-tabs') : null;
+                    if (scrollable) {
+                        if (deltaX < 0 && scrollable.scrollLeft + scrollable.clientWidth < scrollable.scrollWidth - 10) return;
+                        if (deltaX > 0 && scrollable.scrollLeft > 10) return;
+                    }
+
+                    const views = ['home', 'goals', 'investments', 'settings'];
+                    const currentIndex = views.indexOf(app.activeView);
+                    
+                    if (deltaX < 0 && currentIndex < views.length - 1) {
+                        // Swipe Left -> Next Tab
+                        app.switchView(views[currentIndex + 1]);
+                        app.showToast(`Swiped to ${app.toTitleCase(views[currentIndex + 1])}`);
+                    } else if (deltaX > 0 && currentIndex > 0) {
+                        // Swipe Right -> Previous Tab
+                        app.switchView(views[currentIndex - 1]);
+                        app.showToast(`Swiped to ${app.toTitleCase(views[currentIndex - 1])}`);
+                    }
+                }
+            },
+
+            initModalDragToDismiss() {
+                document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                    const content = overlay.querySelector('.modal-content');
+                    if (!content) return;
+                    
+                    let modalStartY = 0;
+                    let currentY = 0;
+
+                    content.addEventListener('touchstart', (e) => {
+                        if (content.scrollTop <= 0) {
+                            modalStartY = e.touches[0].clientY;
+                        } else {
+                            modalStartY = 0;
+                        }
+                    }, { passive: true });
+
+                    content.addEventListener('touchmove', (e) => {
+                        if (modalStartY === 0) return;
+                        currentY = e.touches[0].clientY - modalStartY;
+                        if (currentY > 0) {
+                            content.style.transform = `translateY(${currentY}px)`;
+                        }
+                    }, { passive: true });
+
+                    content.addEventListener('touchend', () => {
+                        if (currentY > 120) {
+                            overlay.style.display = 'none';
+                            app.showToast('Dismissed');
+                        }
+                        content.style.transform = '';
+                        modalStartY = 0;
+                        currentY = 0;
+                    }, { passive: true });
+                });
             },
 
             async installPWA() {
@@ -890,9 +995,9 @@
             },
 
             migrateData() {
-                const savedV2_64 = localStorage.getItem('ananthaDataV2_64');
-                if (savedV2_64) {
-                    app.data = JSON.parse(savedV2_64);
+                const savedV2_65 = localStorage.getItem('ananthaDataV2_65');
+                if (savedV2_65) {
+                    app.data = JSON.parse(savedV2_65);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -912,7 +1017,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_63') || localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61') || localStorage.getItem('ananthaDataV2_60') || localStorage.getItem('ananthaDataV2_59');
+                const savedOld = localStorage.getItem('ananthaDataV2_64') || localStorage.getItem('ananthaDataV2_63') || localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -975,7 +1080,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_64', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_65', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1410,7 +1515,6 @@
                 let dataPoints = [];
                 let maxVal = 0;
                 
-                // Determine step size to keep bars clean
                 let step = years > 40 ? 5 : (years > 20 ? 2 : 1);
                 
                 for (let i = 0; i < years; i += step) {
@@ -1419,14 +1523,13 @@
                     dataPoints.push({ t: i, val: pointVal, year: app.currentYear + i });
                 }
                 
-                // Always push the final exact year
                 if (dataPoints.length === 0 || dataPoints[dataPoints.length - 1].t !== years) {
                     let finalVal = inv.value * Math.pow(1 + (inv.growthRate/100), years);
                     if (finalVal > maxVal) maxVal = finalVal;
                     dataPoints.push({ t: years, val: finalVal, year: app.currentYear + years });
                 }
 
-                if (maxVal === 0) maxVal = inv.value; // Fallback if pv is 0 or negative compounding to 0
+                if (maxVal === 0) maxVal = inv.value;
 
                 dataPoints.forEach(pt => {
                     let heightPct = (pt.val / maxVal) * 100;
@@ -2618,7 +2721,7 @@
                         
                         if (inv.growthRate < 0) {
                             rowClass += " loss-making-row";
-                            warningIcon = `<span title="Loss making asset (Negative Growth Based on File)" style="cursor:help; margin-left:5px;">❗</span>`;
+                            warningIcon = `<span title="Loss making asset" style="cursor:help; margin-left:5px;">❗</span>`;
                         } else if (inv.growthRate < 7.0 && inv.type !== 'vehicle') {
                             rowClass += " low-growth-row";
                             warningIcon = `<span title="Losing potential to inflation (Growth < 7.0%)" style="cursor:help; margin-left:5px;">⚠️</span>`;
