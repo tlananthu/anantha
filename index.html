@@ -167,8 +167,8 @@
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
         
-        /* YOY Chart specific styles */
-        .yoy-chart { display: flex; align-items: flex-end; height: 160px; gap: 6px; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
+        /* YOY Chart specific styles - EXPANDED HEIGHT & PADDING FOR TOOLTIPS */
+        .yoy-chart { display: flex; align-items: flex-end; height: 220px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
         .yoy-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 35px; position: relative; cursor: pointer; height: 100%; }
         .yoy-bar { width: 100%; background: var(--accent-color); border-radius: 4px 4px 0 0; transition: background 0.2s; }
         .yoy-bar-col:hover .yoy-bar { filter: brightness(1.2); }
@@ -595,9 +595,9 @@
             </div>
         </div>
         
-        <!-- Justification / Projection Math Modal (Updated V2.62) -->
+        <!-- Justification / Projection Math Modal (Updated V2.63) -->
         <div class="modal-overlay" id="justificationModal">
-            <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-content" style="max-width: 750px;">
                 <button class="close-modal" onclick="app.closeJustificationModal()">✕</button>
                 <h3 style="margin-bottom: 0.5rem;">📊 Projection Math</h3>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">How the engine calculates the Projected Future Value (FV) for <strong id="justAssetName" style="color: var(--text-primary);"></strong>.</p>
@@ -609,7 +609,7 @@
                     
                     <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Year-on-Year Growth Projection:</div>
                     
-                    <!-- New Visual CSS Chart Container -->
+                    <!-- Visual CSS Chart Container -->
                     <div id="justChartContainer" class="yoy-chart"></div>
                     
                     <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Projected FV: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
@@ -767,7 +767,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V2.62</div>
+        <div>Anantha Wealth OS V2.63</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -885,9 +885,9 @@
             },
 
             migrateData() {
-                const savedV2_62 = localStorage.getItem('ananthaDataV2_62');
-                if (savedV2_62) {
-                    app.data = JSON.parse(savedV2_62);
+                const savedV2_63 = localStorage.getItem('ananthaDataV2_63');
+                if (savedV2_63) {
+                    app.data = JSON.parse(savedV2_63);
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
                     app.dashClassFilters = app.data.dashClassFilters !== undefined ? app.data.dashClassFilters : [...new Set(app.data.investments.map(i => i.rawAssetClass || i.type))];
@@ -907,7 +907,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV2_61') || localStorage.getItem('ananthaDataV2_60') || localStorage.getItem('ananthaDataV2_59') || localStorage.getItem('ananthaDataV2_58');
+                const savedOld = localStorage.getItem('ananthaDataV2_62') || localStorage.getItem('ananthaDataV2_61') || localStorage.getItem('ananthaDataV2_60') || localStorage.getItem('ananthaDataV2_59');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     
@@ -970,7 +970,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV2_62', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV2_63', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1743,9 +1743,13 @@
                                     if (rows[i].length > 1 && strVal(rows[i][1])) upstoxProfileName = strVal(rows[i][1]);
                                 }
                                 
-                                if (rows[i][0] && strVal(rows[i][0]).toLowerCase() === "name") {
-                                    if (rows[i].length > 1 && strVal(rows[i][1])) {
-                                        growwProfileName = strVal(rows[i][1]);
+                                if (rowStr.includes("personal details") && rows[i+1] && strVal(rows[i+1][0]).toLowerCase() === "name") {
+                                    growwProfileName = strVal(rows[i+1][1]);
+                                }
+                                if (rowStr.includes("unique client code")) {
+                                    let sheetHeaders = Object.keys(rows[0] || {});
+                                    if (sheetHeaders.length > 1 && !sheetHeaders[1].toLowerCase().includes("unnamed")) {
+                                         growwProfileName = strVal(sheetHeaders[1]); 
                                     }
                                 }
 
