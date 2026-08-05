@@ -802,7 +802,6 @@
                 app.closeFilterPanel();
                 return;
             }
-            // Support ` or ~ to cycle tabs
             if (e.key === '`' || e.key === '~') {
                 e.preventDefault();
                 const views = ['home', 'goals', 'investments', 'settings'];
@@ -900,45 +899,7 @@
             },
 
             initTouchGestures() {
-                const mainApp = document.querySelector('main.app-content');
-                if (!mainApp) return;
-
-                mainApp.addEventListener('touchstart', (e) => {
-                    app.touchStartX = e.changedTouches[0].screenX;
-                    app.touchStartY = e.changedTouches[0].screenY;
-                }, { passive: true });
-
-                mainApp.addEventListener('touchend', (e) => {
-                    app.touchEndX = e.changedTouches[0].screenX;
-                    app.touchEndY = e.changedTouches[0].screenY;
-                    app.handleSwipeGesture(e.target);
-                }, { passive: true });
-
                 app.initModalDragToDismiss();
-            },
-
-            handleSwipeGesture(targetEl) {
-                const deltaX = app.touchEndX - app.touchStartX;
-                const deltaY = app.touchEndY - app.touchStartY;
-                
-                if (Math.abs(deltaX) > 70 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-                    const scrollable = targetEl ? targetEl.closest('.table-container, .yoy-chart, .nav-tabs, .asset-list-body') : null;
-                    if (scrollable) {
-                        if (deltaX < 0 && scrollable.scrollLeft + scrollable.clientWidth < scrollable.scrollWidth - 10) return;
-                        if (deltaX > 0 && scrollable.scrollLeft > 10) return;
-                    }
-
-                    const views = ['home', 'goals', 'investments', 'settings'];
-                    const currentIndex = views.indexOf(app.activeView);
-                    
-                    if (deltaX < 0 && currentIndex < views.length - 1) {
-                        app.switchView(views[currentIndex + 1]);
-                        app.showToast(`Swiped to ${views[currentIndex + 1].toUpperCase()}`);
-                    } else if (deltaX > 0 && currentIndex > 0) {
-                        app.switchView(views[currentIndex - 1]);
-                        app.showToast(`Swiped to ${views[currentIndex - 1].toUpperCase()}`);
-                    }
-                }
             },
 
             initModalDragToDismiss() {
