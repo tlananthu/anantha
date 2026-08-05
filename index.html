@@ -259,7 +259,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -324,22 +324,22 @@
                 <div class="card dash-stat-card">
                     <div class="year-badge ongoing" id="badgeDashToday1">----</div>
                     <div class="dash-label">Total Saved (Today)</div>
-                    <div class="dash-value success" id="dashTotalAssets">₹0</div>
+                    <div class="dash-value success" id="dashTotalAssets">0</div>
                 </div>
                 <div class="card dash-stat-card">
                     <div class="year-badge" id="badgeDashFV1">TO ----</div>
                     <div class="dash-label">Expected Future Wealth</div>
-                    <div class="dash-value success" id="dashFutureAssets">₹0</div>
+                    <div class="dash-value success" id="dashFutureAssets">0</div>
                 </div>
                 <div class="card dash-stat-card" id="dashTotalPVCard">
                     <div class="year-badge ongoing" id="badgeDashToday2">----</div>
                     <div class="dash-label">Today's Cost of Goals</div>
-                    <div class="dash-value" id="dashTotalPV">₹0</div>
+                    <div class="dash-value" id="dashTotalPV">0</div>
                 </div>
                 <div class="card dash-stat-card" id="dashTotalFVCard">
                     <div class="year-badge" id="badgeDashFV2">TO ----</div>
                     <div class="dash-label">Total Money Needed in Future</div>
-                    <div class="dash-value highlight" id="dashTotalFV">₹0</div>
+                    <div class="dash-value highlight" id="dashTotalFV">0</div>
                 </div>
             </div>
 
@@ -422,20 +422,20 @@
                         <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Incoming Cash</h4>
                         <div class="form-group"><label>Monthly Salary</label><input type="number" id="budSalary" placeholder="e.g. 100000" onchange="app.saveBudget()"></div>
                         <div class="form-group"><label>Rent / Other Income</label><input type="number" id="budRent" placeholder="e.g. 15000" onchange="app.saveBudget()"></div>
-                        <div style="font-weight: bold; color: var(--success-color); border-top: 1px solid var(--border-color); padding-top: 0.5rem;">Total: ₹<span id="budTotalInc">0</span></div>
+                        <div style="font-weight: bold; color: var(--success-color); border-top: 1px solid var(--border-color); padding-top: 0.5rem;">Total: <span id="budTotalInc">0</span></div>
                     </div>
                     
                     <div style="background: var(--surface-light); padding: 1.2rem; border-radius: 8px; border-left: 4px solid var(--danger-color);">
                         <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Monthly Expenses</h4>
                         <div class="form-group"><label>Living & Bills (Rent, Groceries, Utilities)</label><input type="number" id="budLiving" placeholder="e.g. 40000" onchange="app.saveBudget()"></div>
                         <div class="form-group"><label>Discretionary (Shopping, Fun)</label><input type="number" id="budFun" placeholder="e.g. 10000" onchange="app.saveBudget()"></div>
-                        <div style="font-weight: bold; color: var(--danger-color); border-top: 1px solid var(--border-color); padding-top: 0.5rem;">Total: ₹<span id="budTotalExp">0</span></div>
+                        <div style="font-weight: bold; color: var(--danger-color); border-top: 1px solid var(--border-color); padding-top: 0.5rem;">Total: <span id="budTotalExp">0</span></div>
                     </div>
                     
                     <div style="background: rgba(56, 189, 248, 0.05); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--accent-color);">
                         <h4 style="margin-bottom: 1rem; color: var(--accent-color);">Your Action Plan</h4>
-                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Monthly Surplus: <strong style="color: var(--text-primary); font-size: 1.1rem;">₹<span id="budSurplus">0</span></strong></div>
-                        <div style="margin-bottom: 1rem; color: var(--text-secondary);">Target Monthly Savings: <strong style="color: var(--warning-color); font-size: 1.1rem;">₹<span id="budRequired">0</span></strong></div>
+                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Monthly Surplus: <strong style="color: var(--text-primary); font-size: 1.1rem;"><span id="budSurplus">0</span></strong></div>
+                        <div style="margin-bottom: 1rem; color: var(--text-secondary);">Target Monthly Savings: <strong style="color: var(--warning-color); font-size: 1.1rem;"><span id="budRequired">0</span></strong></div>
                         <div id="budSuggestion" style="font-size: 0.9rem; line-height: 1.5; color: var(--text-primary); background: var(--bg-color); padding: 0.8rem; border-radius: 4px;"></div>
                     </div>
                 </div>
@@ -496,15 +496,21 @@
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
                         Choose how you want large numbers and currency to be displayed across the dashboard.
                     </p>
-                    <div class="form-group" style="max-width: 300px;">
-                        <label for="numberFormatSelect">Number Formatting</label>
-                        <select id="numberFormatSelect" onchange="app.changeNumberFormat(event)">
-                            <option value="indian">Indian (Lakhs / Crores)</option>
-                            <option value="western">Western (Millions / Billions)</option>
-                        </select>
+                    <div class="row-group" style="max-width: 500px;">
+                        <div class="form-group">
+                            <label for="numberFormatSelect">Number Formatting</label>
+                            <select id="numberFormatSelect" onchange="app.changeNumberFormat(event)">
+                                <option value="indian">Indian (Lakhs / Crores)</option>
+                                <option value="western">Western (Millions / Billions)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="currencySymbolInput">Currency Symbol</label>
+                            <input type="text" id="currencySymbolInput" onchange="app.changeCurrencySymbol(event)" value="₹">
+                        </div>
                     </div>
                 </div>
-                
+
                 <div class="settings-card">
                     <h2>Profile Data & Management</h2>
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
@@ -643,18 +649,18 @@
                     
                     <div class="row-group">
                         <div class="form-group">
-                            <label for="invInvested">Invested Amount (₹) [Optional]</label>
+                            <label for="invInvested">Invested Amount (<span class="currency-symbol">₹</span>) [Optional]</label>
                             <input type="number" id="invInvested" placeholder="400000" min="0" step="any">
                         </div>
                         <div class="form-group">
-                            <label for="invValue">Current Value (₹)</label>
+                            <label for="invValue">Current Value (<span class="currency-symbol">₹</span>)</label>
                             <input type="number" id="invValue" required placeholder="500000" min="0" step="any">
                         </div>
                     </div>
 
                     <div class="row-group" id="periodicInvGroup" style="display: none;">
                         <div class="form-group">
-                            <label id="periodicInvLabel" for="invPeriodic">Periodic Investment (₹)</label>
+                            <label id="periodicInvLabel" for="invPeriodic">Periodic Investment (<span class="currency-symbol">₹</span>)</label>
                             <input type="number" id="invPeriodic" placeholder="0" min="0" step="any">
                         </div>
                         <div class="form-group">
@@ -724,7 +730,7 @@
 
                     <div id="standardFields">
                         <div class="form-group">
-                            <label for="currentValue">Today's Cost (If you had to pay for this goal today, how much is it in ₹?)</label>
+                            <label for="currentValue">Today's Cost (If you had to pay for this goal today, how much is it in <span class="currency-symbol">₹</span>?)</label>
                             <input type="number" id="currentValue" placeholder="1000000" min="0" step="any">
                         </div>
                         <div class="form-group">
@@ -735,7 +741,7 @@
 
                     <div id="retirementFields" style="display: none;">
                         <div class="form-group">
-                            <label for="monthlyExpenses">Current Monthly Expenses (₹)</label>
+                            <label for="monthlyExpenses">Current Monthly Expenses (<span class="currency-symbol">₹</span>)</label>
                             <input type="number" id="monthlyExpenses" placeholder="50000" min="0" step="any">
                         </div>
                         <div class="form-group">
@@ -758,7 +764,7 @@
                             <input type="number" id="eduCurrentGrade" value="4" min="1" max="12" oninput="app.generateEduTimeline()" onchange="app.generateEduTimeline()">
                         </div>
                         <div class="form-group">
-                            <label style="color: var(--accent-color); margin-bottom: 0.8rem;">Define Upcoming Stages (Today's ₹ Cost)</label>
+                            <label style="color: var(--accent-color); margin-bottom: 0.8rem;">Define Upcoming Stages (Today's Cost)</label>
                             <div id="eduTimelineGrid" style="display:flex; flex-direction:column; gap:0.5rem; background: var(--bg-color); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); max-height: 250px; overflow-y: auto;">
                                 <!-- Auto generated via JS -->
                             </div>
@@ -783,7 +789,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V3.9</div>
+        <div>Anantha Wealth OS V4.0</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -833,7 +839,8 @@
                 goals: [],
                 investments: [],
                 budget: { salary: 0, rent: 0, living: 0, fun: 0 },
-                numberFormat: 'indian'
+                numberFormat: 'indian',
+                currency: '₹'
             },
             engineState: {
                 pool: [],
@@ -876,23 +883,24 @@
                 let val = Math.round(amount);
                 let absVal = Math.abs(val);
                 let formatType = app.data.numberFormat || 'indian';
+                let cur = app.data.currency || '₹';
 
                 if (formatType === 'western') {
                     if (absVal >= 1000000000) {
-                        return Number((val / 1000000000).toFixed(2)) + ' B';
+                        return cur + Number((val / 1000000000).toFixed(2)) + ' B';
                     } else if (absVal >= 1000000) {
-                        return Number((val / 1000000).toFixed(2)) + ' M';
+                        return cur + Number((val / 1000000).toFixed(2)) + ' M';
                     } else if (absVal >= 100000) {
-                        return Number((val / 1000).toFixed(1)) + ' K';
+                        return cur + Number((val / 1000).toFixed(1)) + ' K';
                     }
-                    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val);
+                    return cur + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val);
                 } else {
                     if (absVal >= 10000000) {
-                        return Number((val / 10000000).toFixed(2)) + ' Cr';
+                        return cur + Number((val / 10000000).toFixed(2)) + ' Cr';
                     } else if (absVal >= 100000) {
-                        return Number((val / 100000).toFixed(2)) + ' L';
+                        return cur + Number((val / 100000).toFixed(2)) + ' L';
                     }
-                    return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
+                    return cur + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
                 }
             },
 
@@ -926,6 +934,19 @@
                 app.renderAll();
                 app.showToast("Number format updated.");
             },
+            
+            changeCurrencySymbol(event) {
+                app.data.currency = event.target.value.trim() || '₹';
+                app.saveState();
+                app.renderAll();
+                app.updateCurrencyLabels();
+                app.showToast("Currency symbol updated.");
+            },
+            
+            updateCurrencyLabels() {
+                const cur = app.data.currency || '₹';
+                document.querySelectorAll('.currency-symbol').forEach(el => el.innerText = cur);
+            },
 
             init() {
                 let isFreshInstall = app.migrateData();
@@ -936,9 +957,13 @@
                 const formatSelect = document.getElementById('numberFormatSelect');
                 if(formatSelect) formatSelect.value = app.data.numberFormat || 'indian';
 
+                const currencyInput = document.getElementById('currencySymbolInput');
+                if(currencyInput) currencyInput.value = app.data.currency || '₹';
+
                 app.updateProfileDropdowns();
                 app.toggleGoalFields();
                 app.loadBudgetInputs();
+                app.updateCurrencyLabels();
                 app.renderAll();
                 app.switchView(app.activeView);
             },
@@ -958,11 +983,12 @@
             },
 
             migrateData() {
-                const savedV3_9 = localStorage.getItem('ananthaDataV3_9');
-                if (savedV3_9) {
-                    app.data = JSON.parse(savedV3_9);
+                const savedV4_0 = localStorage.getItem('ananthaDataV4_0');
+                if (savedV4_0) {
+                    app.data = JSON.parse(savedV4_0);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     if (!app.data.numberFormat) app.data.numberFormat = 'indian';
+                    if (!app.data.currency) app.data.currency = '₹';
                     
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
@@ -983,11 +1009,12 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
+                const savedOld = localStorage.getItem('ananthaDataV3_9') || localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     if (!app.data.numberFormat) app.data.numberFormat = 'indian';
+                    if (!app.data.currency) app.data.currency = '₹';
                     
                     app.data.investments.forEach(i => {
                         delete i.linkedGoalId;
@@ -1051,7 +1078,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV3_9', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV4_0', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1090,6 +1117,7 @@
                         if (!importedData.goals) importedData.goals = [];
                         if (!importedData.budget) importedData.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                         if (!importedData.numberFormat) importedData.numberFormat = 'indian';
+                        if (!importedData.currency) importedData.currency = '₹';
                         
                         importedData.investments.forEach(i => {
                             delete i.linkedGoalId;
@@ -1117,6 +1145,10 @@
                         const formatSelect = document.getElementById('numberFormatSelect');
                         if(formatSelect) formatSelect.value = app.data.numberFormat;
 
+                        const currencyInput = document.getElementById('currencySymbolInput');
+                        if(currencyInput) currencyInput.value = app.data.currency;
+
+                        app.updateCurrencyLabels();
                         app.renderAll();
                         
                         app.showToast("Data restored successfully from backup.");
@@ -1133,7 +1165,7 @@
                 if (confirm('Are you sure you want to reset the app? This will clear all your profiles, investments, and goals to give you a fresh start. Please make sure you have a backup downloaded first.')) {
                     if (confirm('Just to be absolutely sure: Click OK to reset everything to factory defaults.')) {
                         localStorage.clear();
-                        app.data = { profiles: ['Main Portfolio'], goals: [], investments: [], budget: { salary: 0, rent: 0, living: 0, fun: 0 }, numberFormat: 'indian' };
+                        app.data = { profiles: ['Main Portfolio'], goals: [], investments: [], budget: { salary: 0, rent: 0, living: 0, fun: 0 }, numberFormat: 'indian', currency: '₹' };
                         app.dashProfileFilters = ['Main Portfolio'];
                         app.dashClassFilters = []; app.dashTypeFilters = []; app.dashCategoryFilters = []; app.dashSectorFilters = [];
                         app.invProfileFilters = ['Main Portfolio'];
@@ -1406,7 +1438,7 @@
                 years = Math.max(0, years);
                 
                 document.getElementById('justAssetName').innerText = inv.name;
-                document.getElementById('justPV').innerText = `₹${app.formatCurrency(inv.value)}`;
+                document.getElementById('justPV').innerText = `${app.formatCurrency(inv.value)}`;
                 document.getElementById('justRate').innerText = `${inv.growthRate}%`;
                 
                 let yText = years === 0 ? "Now" : `${years.toFixed(1)} Years`;
@@ -1415,14 +1447,14 @@
                 let fv = app.calcInvFV(inv);
                 
                 if (inv.type === 'pomis') {
-                    document.getElementById('justFormula').innerText = `Expected Value = ₹${app.formatCurrency(inv.value)}\n(POMIS interest is paid out monthly, so principal does not compound)`;
+                    document.getElementById('justFormula').innerText = `Expected Value = ${app.formatCurrency(inv.value)}\n(POMIS interest is paid out monthly, so principal does not compound)`;
                 } else if (inv.type === 'rd' && inv.monthlySIP > 0) {
                     let m = years * 12;
                     let r = (inv.growthRate / 100) / 12;
-                    document.getElementById('justFormula').innerText = `We grow your current value plus your monthly SIPs.\n\nCurrent Value = ₹${app.formatCurrency(inv.value)}\nSIP = ₹${app.formatCurrency(inv.monthlySIP)}/mo\nGrowth = ${(r*100).toFixed(2)}% per month\nDuration = ${m.toFixed(0)} months`;
+                    document.getElementById('justFormula').innerText = `We grow your current value plus your monthly SIPs.\n\nCurrent Value = ${app.formatCurrency(inv.value)}\nSIP = ${app.formatCurrency(inv.monthlySIP)}/mo\nGrowth = ${(r*100).toFixed(2)}% per month\nDuration = ${m.toFixed(0)} months`;
                 } else if (inv.type === 'ppf' && inv.yearlyInvestment > 0) {
                     let r = (inv.growthRate || 0) / 100;
-                    document.getElementById('justFormula').innerText = `We grow your current value plus your yearly investments.\n\nCurrent Value = ₹${app.formatCurrency(inv.value)}\nYearly Investment = ₹${app.formatCurrency(inv.yearlyInvestment)}/yr\nGrowth = ${(r*100).toFixed(2)}% per year\nDuration = ${years.toFixed(1)} years`;
+                    document.getElementById('justFormula').innerText = `We grow your current value plus your yearly investments.\n\nCurrent Value = ${app.formatCurrency(inv.value)}\nYearly Investment = ${app.formatCurrency(inv.yearlyInvestment)}/yr\nGrowth = ${(r*100).toFixed(2)}% per year\nDuration = ${years.toFixed(1)} years`;
                 } else {
                     document.getElementById('justFormula').innerText = `We grow your current value by ${inv.growthRate}% every year for ${years.toFixed(1)} years.`;
                 }
@@ -1461,7 +1493,7 @@
                     chartHtml += `
                         <div class="yoy-bar-col">
                             <div class="yoy-bar" style="height: ${heightPct}%; background: ${color};">
-                                <div class="yoy-tooltip">₹${app.formatCurrency(pt.val)}<br>${Math.floor(pt.year)}</div>
+                                <div class="yoy-tooltip">${app.formatCurrency(pt.val)}<br>${Math.floor(pt.year)}</div>
                             </div>
                             <div class="yoy-bar-label">${label}</div>
                         </div>
@@ -1469,7 +1501,7 @@
                 });
                 
                 document.getElementById('justChartContainer').innerHTML = chartHtml;
-                document.getElementById('justFV').innerText = `₹${app.formatCurrency(fv)}`;
+                document.getElementById('justFV').innerText = `${app.formatCurrency(fv)}`;
                 document.getElementById('justificationModal').style.display = 'flex';
             },
             closeJustificationModal() {
@@ -1484,10 +1516,10 @@
                 const periodicLabel = document.getElementById('periodicInvLabel');
                 if (type === 'rd') {
                     periodicGroup.style.display = 'flex';
-                    periodicLabel.innerText = 'Monthly SIP (₹)';
+                    periodicLabel.innerText = `Monthly SIP (${app.data.currency || '₹'})`;
                 } else if (type === 'ppf') {
                     periodicGroup.style.display = 'flex';
-                    periodicLabel.innerText = 'Yearly Investment (₹)';
+                    periodicLabel.innerText = `Yearly Investment (${app.data.currency || '₹'})`;
                 } else {
                     periodicGroup.style.display = 'none';
                 }
@@ -2051,7 +2083,7 @@
                                 <span style="font-size:0.75rem; color:var(--accent-color);">Target Year: ${targetYear}</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <input type="number" class="edu-cost-input" data-name="${stage.name}" data-year="${targetYear}" data-yrs="${stage.yearOffset}" placeholder="₹ Cost Today" style="width:130px; padding:0.5rem; font-size:0.9rem; background: var(--surface-color);">
+                                <input type="number" class="edu-cost-input" data-name="${stage.name}" data-year="${targetYear}" data-yrs="${stage.yearOffset}" placeholder="${app.data.currency || '₹'} Cost Today" style="width:130px; padding:0.5rem; font-size:0.9rem; background: var(--surface-color);">
                                 <button type="button" class="icon-btn delete" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus();" title="Clear">✕</button>
                             </div>
                         </div>
@@ -2379,7 +2411,7 @@
                                     <span class="badge" style="background:${badgeColor}; color:${badgeTextColor}; font-size:0.55rem;">${displayType}</span>
                                 </div>
                                 <div style="font-size:0.75rem; color:var(--text-secondary);">
-                                    Auto-Funded: <span style="color:var(--success-color); font-weight:600;">₹${app.formatCurrency(goal.filledFV)}</span> (${goal.progressPct.toFixed(1)}%)
+                                    Auto-Funded: <span style="color:var(--success-color); font-weight:600;">${app.formatCurrency(goal.filledFV)}</span> (${goal.progressPct.toFixed(1)}%)
                                 </div>
                                 <div class="goal-progress-track">
                                     <div class="goal-progress-fill" style="width: ${goal.progressPct}%;"></div>
@@ -2387,9 +2419,9 @@
                             </div>
                         </td>
                         <td>${goal.computedYear}</td>
-                        <td>₹${app.formatCurrency(goal.computedCExp)}</td>
+                        <td>${app.formatCurrency(goal.computedCExp)}</td>
                         <td>${goal.inflation}%</td>
-                        <td class="highlight-val">₹${app.formatCurrency(goal.computedFV)}</td>
+                        <td class="highlight-val">${app.formatCurrency(goal.computedFV)}</td>
                         <td style="text-align: center;">
                             <div style="display:flex; justify-content:center; gap:0.4rem;">
                                 <button class="icon-btn" onclick="event.stopPropagation(); app.editGoal('${goal.id}')" title="Edit Goal">✎</button>
@@ -2410,7 +2442,7 @@
                             let badgeTxt = ma.match === 'Optimal' ? 'Horizon Match' : 'Spillover';
                             drawerHtml += `<tr style="border-bottom: 1px solid var(--border-color);">
                                 <td style="padding: 0.8rem 1rem; color: var(--text-primary); text-align: left;">${ma.assetName}</td>
-                                <td style="padding: 0.8rem 1rem; color: var(--accent-color); text-align: right; font-weight:600;">₹${app.formatCurrency(ma.amount)}</td>
+                                <td style="padding: 0.8rem 1rem; color: var(--accent-color); text-align: right; font-weight:600;">${app.formatCurrency(ma.amount)}</td>
                                 <td style="padding: 0.8rem 1rem; text-align: right;"><span class="badge" style="color: ${badgeColor}; border: 1px solid ${badgeColor}; background: transparent;">${badgeTxt}</span></td>
                             </tr>`;
                         });
@@ -2427,9 +2459,9 @@
                 totalRow.className = 'total-row';
                 totalRow.innerHTML = `
                     <td colspan="2">TOTAL</td>
-                    <td>₹${app.formatCurrency(totalCExp)}</td>
+                    <td>${app.formatCurrency(totalCExp)}</td>
                     <td></td>
-                    <td class="highlight-val">₹${app.formatCurrency(totalFV)}</td>
+                    <td class="highlight-val">${app.formatCurrency(totalFV)}</td>
                     <td></td>
                 `;
                 tbody.appendChild(totalRow);
@@ -2808,11 +2840,11 @@
                                     </div>
                                 </td>
                                 <td>${destHtml}</td>
-                                <td>₹${app.formatCurrency(inv.value)}</td>
+                                <td>${app.formatCurrency(inv.value)}</td>
                                 <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
                                 <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
                                 <td style="color: var(--text-secondary); font-size: 0.9rem;">${inv.matDisplay || '-'}</td>
-                                <td class="highlight-val">₹${app.formatCurrency(inv.totalFV)}</td>
+                                <td class="highlight-val">${app.formatCurrency(inv.totalFV)}</td>
                                 <td style="text-align: center; white-space: nowrap;">
                                     ${actionHtml}
                                     <button class="icon-btn" onclick="event.stopPropagation(); app.editInv('${inv.id}')" style="margin-right: 5px;">✎</button>
@@ -2831,7 +2863,7 @@
                                         👤 ${profile}
                                     </h3>
                                     <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">
-                                        Profile Expected Future Wealth: <strong style="color: var(--accent-color);">₹${app.formatCurrency(totalFV)}</strong>
+                                        Profile Expected Future Wealth: <strong style="color: var(--accent-color);">${app.formatCurrency(totalFV)}</strong>
                                     </div>
                                 </div>
                             </div>
@@ -2854,11 +2886,11 @@
                                         ${tbodyHtml}
                                         <tr class="total-row">
                                             <td colspan="2">TOTAL</td>
-                                            <td>₹${app.formatCurrency(totalCV)}</td>
+                                            <td>${app.formatCurrency(totalCV)}</td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td class="highlight-val">₹${app.formatCurrency(totalFV)}</td>
+                                            <td class="highlight-val">${app.formatCurrency(totalFV)}</td>
                                             <td></td>
                                         </tr>
                                     </tbody>
@@ -2995,9 +3027,9 @@
 
                     tr.innerHTML = `
                         <td style="text-transform: capitalize; font-weight: 500;">${typeKey} ${warningIcon}</td>
-                        <td>₹${app.formatCurrency(data.cv)}</td>
+                        <td>${app.formatCurrency(data.cv)}</td>
                         <td style="color: ${avgGrowth < 0 ? 'var(--danger-color)' : 'var(--text-primary)'}; font-weight: 600;">${avgGrowth}%</td>
-                        <td style="color: var(--accent-color); font-weight: 600;">₹${app.formatCurrency(data.fv)}</td>
+                        <td style="color: var(--accent-color); font-weight: 600;">${app.formatCurrency(data.fv)}</td>
                         <td>${pct}%</td>
                     `;
                     tbody.appendChild(tr);
@@ -3035,8 +3067,8 @@
                     totalFV += (goal.fv || goal.targetValue || 0);
                 });
 
-                document.getElementById('dashTotalAssets').innerText = '₹' + app.formatCurrency(globalInvestments);
-                document.getElementById('dashFutureAssets').innerText = '₹' + app.formatCurrency(globalFutureInvestments);
+                document.getElementById('dashTotalAssets').innerText = app.formatCurrency(globalInvestments);
+                document.getElementById('dashFutureAssets').innerText = app.formatCurrency(globalFutureInvestments);
 
                 const maxYear = app.getMaxGoalYear();
                 const badgeT1 = document.getElementById('badgeDashToday1');
@@ -3059,14 +3091,15 @@
                     reqCard.querySelector('.dash-value').innerHTML = '<span style="font-size:1rem; font-weight:normal; color:var(--text-secondary);">Tell the engine what you are saving for.</span>';
                 } else {
                     document.getElementById('dashTotalPVCard').querySelector('.dash-label').innerText = 'Today\'s Cost of Goals';
-                    document.getElementById('dashTotalPV').innerText = '₹' + app.formatCurrency(totalCExp);
+                    document.getElementById('dashTotalPV').innerText = app.formatCurrency(totalCExp);
                     document.getElementById('dashTotalPV').className = 'dash-value';
                     
                     let reqCard = document.getElementById('dashTotalFVCard');
                     reqCard.querySelector('.dash-label').innerText = 'Total Money Needed in Future';
-                    reqCard.querySelector('.dash-value').innerHTML = '₹' + app.formatCurrency(totalFV);
+                    reqCard.querySelector('.dash-value').innerHTML = app.formatCurrency(totalFV);
                 }
 
+                // Render the Chart.js Asset Progression Chart dynamically based on active grouping
                 if (app.data.investments.length > 0) {
                     document.getElementById('dashAssetProgressionContainer').style.display = 'block';
                     
@@ -3080,6 +3113,7 @@
 
                     let yearsArray = [];
                     
+                    // 1. Determine dynamic classes based on current grouping
                     let dynamicKeys = new Set();
                     app.data.investments.forEach(inv => {
                         let key = 'Other';
@@ -3091,6 +3125,7 @@
                     });
                     let baseClasses = Array.from(dynamicKeys);
 
+                    // 2. Assign unique colors
                     let colorMap = {};
                     let pIdx = 0;
                     baseClasses.forEach(c => {
@@ -3173,7 +3208,7 @@
                             },
                             scales: {
                                 y: {
-                                    ticks: { color: '#94a3b8', callback: function(val) { return '₹' + app.formatCurrency(val); } },
+                                    ticks: { color: '#94a3b8', callback: function(val) { return app.formatCurrency(val); } },
                                     grid: { color: 'rgba(255,255,255,0.05)' }
                                 },
                                 x: {
@@ -3186,7 +3221,7 @@
                                 tooltip: {
                                     callbacks: {
                                         label: function(context) {
-                                            return context.dataset.label + ': ₹' + app.formatCurrency(context.raw);
+                                            return context.dataset.label + ': ' + app.formatCurrency(context.raw);
                                         }
                                     }
                                 }
