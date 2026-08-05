@@ -396,7 +396,7 @@
                 </div>
             </div>
 
-            <!-- Wealth Progression Progress Bar -->
+            <!-- Wealth Progression Progress Bar (Moved here) -->
             <div class="progress-container" id="goalProgressBarWrapper" style="display: none; margin-top: 0; margin-bottom: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
@@ -769,7 +769,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V3.6</div>
+        <div>Anantha Wealth OS V3.8</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -858,7 +858,14 @@
 
             formatCurrency(amount) {
                 if (isNaN(amount) || amount === null || amount === undefined) return "0";
-                return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(amount));
+                let val = Math.round(amount);
+                let absVal = Math.abs(val);
+                if (absVal >= 10000000) {
+                    return Number((val / 10000000).toFixed(2)) + ' Cr';
+                } else if (absVal >= 100000) {
+                    return Number((val / 100000).toFixed(2)) + ' L';
+                }
+                return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
             },
 
             parseCurrencyStr(val) {
@@ -895,56 +902,6 @@
                 app.loadBudgetInputs();
                 app.renderAll();
                 app.switchView(app.activeView);
-                app.initTouchGestures();
-            },
-
-            initTouchGestures() {
-                app.initModalDragToDismiss();
-            },
-
-            initModalDragToDismiss() {
-                document.querySelectorAll('.modal-overlay').forEach(overlay => {
-                    const content = overlay.querySelector('.modal-content');
-                    if (!content) return;
-                    
-                    let modalStartY = 0;
-                    let currentY = 0;
-
-                    content.addEventListener('touchstart', (e) => {
-                        if (content.scrollTop <= 0) {
-                            modalStartY = e.touches[0].clientY;
-                        } else {
-                            modalStartY = 0;
-                        }
-                    }, { passive: true });
-
-                    content.addEventListener('touchmove', (e) => {
-                        if (modalStartY === 0) return;
-                        currentY = e.touches[0].clientY - modalStartY;
-                        if (currentY > 0) {
-                            content.style.transform = `translateY(${currentY}px)`;
-                        }
-                    }, { passive: true });
-
-                    content.addEventListener('touchend', () => {
-                        if (currentY > 120) {
-                            overlay.style.display = 'none';
-                            app.showToast('Dismissed');
-                        }
-                        content.style.transform = '';
-                        modalStartY = 0;
-                        currentY = 0;
-                    }, { passive: true });
-                });
-            },
-
-            async installPWA() {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') document.getElementById('installAppContainer').style.display = 'none';
-                    deferredPrompt = null;
-                }
             },
 
             showToast(msg, isError = false) {
@@ -962,9 +919,9 @@
             },
 
             migrateData() {
-                const savedV3_6 = localStorage.getItem('ananthaDataV3_6');
-                if (savedV3_6) {
-                    app.data = JSON.parse(savedV3_6);
+                const savedV3_8 = localStorage.getItem('ananthaDataV3_8');
+                if (savedV3_8) {
+                    app.data = JSON.parse(savedV3_8);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     
                     app.activeView = app.data.activeView || 'home';
@@ -986,7 +943,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
+                const savedOld = localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1053,7 +1010,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV3_6', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV3_8', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -3064,6 +3021,7 @@
                     reqCard.querySelector('.dash-value').innerHTML = '₹' + app.formatCurrency(totalFV);
                 }
 
+                // Render the Chart.js Asset Progression Chart dynamically based on active grouping
                 if (app.data.investments.length > 0) {
                     document.getElementById('dashAssetProgressionContainer').style.display = 'block';
                     
@@ -3077,6 +3035,7 @@
 
                     let yearsArray = [];
                     
+                    // 1. Determine dynamic classes based on current grouping
                     let dynamicKeys = new Set();
                     app.data.investments.forEach(inv => {
                         let key = 'Other';
@@ -3088,6 +3047,7 @@
                     });
                     let baseClasses = Array.from(dynamicKeys);
 
+                    // 2. Assign unique colors
                     let colorMap = {};
                     let pIdx = 0;
                     baseClasses.forEach(c => {
