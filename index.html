@@ -769,19 +769,55 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V3.4</div>
+        <div>Anantha Wealth OS v3.5</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
     <script>
+        self.addEventListener('fetch', event => {
+          // Check if request is for the main HTML page
+          if (event.request.mode === 'navigate' || event.request.url.endsWith('index.html')) {
+            event.respondWith(
+              fetch(event.request)
+                .then(response => {
+                  const copy = response.clone();
+                  caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+                  return response;
+                })
+                .catch(() => caches.match(event.request)) // Fallback to cache if offline
+            );
+            return;
+          }
+        
+          # For other static assets (images, CSS), continue using Cache-First or Stale-While-Revalidate
+          event.respondWith(
+            caches.match(event.request).then(cachedResponse => {
+              return cachedResponse || fetch(event.request);
+            })
+          );
+        });
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             document.getElementById('installAppContainer').style.display = 'block';
         });
-        
+
         if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('./sw.js').then(reg => {
+            reg.onupdatefound = () => {
+              const worker = reg.installing;
+              worker.onstatechange = () => {
+                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // Force reload to load the new version
+                  window.location.reload();
+                }
+              };
+            };
+          });
+        }
+        
+        /*if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(registration => {
                     console.log('SW registered');
@@ -789,7 +825,7 @@
                     console.log('SW registration failed');
                 });
             });
-        }
+        }*/
         
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'select' || e.target.tagName.toLowerCase() === 'textarea') {
