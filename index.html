@@ -788,8 +788,6 @@
             );
             return;
           }
-        
-          # For other static assets (images, CSS), continue using Cache-First or Stale-While-Revalidate
           event.respondWith(
             caches.match(event.request).then(cachedResponse => {
               return cachedResponse || fetch(event.request);
