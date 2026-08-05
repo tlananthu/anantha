@@ -139,7 +139,10 @@
         
         .data-table { width: 100%; border-collapse: collapse; min-width: 800px; }
         .data-table th, .data-table td { padding: 1.25rem 1rem; text-align: right; border-bottom: 1px solid var(--surface-light); }
-        .data-table th:first-child, .data-table td:first-child { text-align: left; }
+        
+        /* Explicit width for mobile optimization of Asset Column */
+        .data-table th:first-child, .data-table td:first-child { text-align: left; width: 30%; min-width: 220px; }
+        
         .data-table th { background: var(--surface-light); color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; cursor: pointer; user-select: none; transition: background 0.2s, color 0.2s; }
         .data-table th:hover { background: #323846; color: var(--text-primary); }
         .data-table th span.sort-icon { margin-left: 0.4rem; font-size: 0.75rem; color: var(--accent-color); }
@@ -259,7 +262,7 @@
                 <span>Portfolio</span>
             </button>
             <button class="tab-btn" onclick="app.switchView('settings')" title="Shortcut: Press `">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Settings</span>
             </button>
         </div>
@@ -789,7 +792,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V4.0</div>
+        <div>Anantha Wealth OS V4.1</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -983,9 +986,9 @@
             },
 
             migrateData() {
-                const savedV4_0 = localStorage.getItem('ananthaDataV4_0');
-                if (savedV4_0) {
-                    app.data = JSON.parse(savedV4_0);
+                const savedV4_1 = localStorage.getItem('ananthaDataV4_1');
+                if (savedV4_1) {
+                    app.data = JSON.parse(savedV4_1);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     if (!app.data.numberFormat) app.data.numberFormat = 'indian';
                     if (!app.data.currency) app.data.currency = '₹';
@@ -1009,7 +1012,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV3_9') || localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
+                const savedOld = localStorage.getItem('ananthaDataV4_0') || localStorage.getItem('ananthaDataV3_9') || localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1078,7 +1081,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV4_0', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV4_1', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -2817,14 +2820,14 @@
 
                         let destHtml = '';
                         if (app.engineState.goals.length === 0 || inv.allocations.length === 0) {
-                            destHtml = `<span class="badge" style="background: var(--surface-light); color: var(--text-secondary);">UNASSIGNED</span>`;
+                            destHtml = `<span class="badge" style="background: var(--surface-light); color: var(--text-secondary);">Unassigned</span>`;
                         } else {
                             inv.allocations.forEach(alloc => {
-                                destHtml += `<div style="margin-bottom: 4px;"><span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-color); border: 1px solid var(--accent-color); display: inline-block; white-space: normal; line-height: 1.4; text-align: right; padding: 0.3rem 0.6rem; word-break: break-word;">✨ ${alloc.pct.toFixed(0)}% ${alloc.goalName}</span></div>`;
+                                let shortName = alloc.goalName.length > 10 ? alloc.goalName.substring(0, 10) + '...' : alloc.goalName;
+                                destHtml += `<div style="margin-bottom: 4px;"><span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-color); border: 1px solid var(--accent-color); display: inline-block; padding: 0.3rem 0.6rem; white-space: nowrap;" title="${alloc.goalName}">✨ ${shortName}</span></div>`;
                             });
                             if (inv.remainingFV > 1) { 
-                                let unassignedPct = (inv.remainingFV / inv.totalFV) * 100;
-                                destHtml += `<div><span class="badge" style="background: var(--surface-light); color: var(--text-secondary); display: inline-block; white-space: normal; line-height: 1.4; padding: 0.3rem 0.6rem;">${unassignedPct.toFixed(0)}% Unassigned</span></div>`;
+                                destHtml += `<div><span class="badge" style="background: var(--surface-light); color: var(--text-secondary); display: inline-block; padding: 0.3rem 0.6rem;">Unassigned</span></div>`;
                             }
                         }
 
@@ -2873,7 +2876,7 @@
                                     <thead>
                                         <tr>
                                             <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name-${safeProfileId}" class="sort-icon"></span></th>
-                                            <th>Auto-Destination</th>
+                                            <th>Goal</th>
                                             <th onclick="app.sortInvestments('value')">Current Value <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('growth')">Expected Yearly Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
@@ -3099,7 +3102,6 @@
                     reqCard.querySelector('.dash-value').innerHTML = app.formatCurrency(totalFV);
                 }
 
-                // Render the Chart.js Asset Progression Chart dynamically based on active grouping
                 if (app.data.investments.length > 0) {
                     document.getElementById('dashAssetProgressionContainer').style.display = 'block';
                     
@@ -3113,7 +3115,6 @@
 
                     let yearsArray = [];
                     
-                    // 1. Determine dynamic classes based on current grouping
                     let dynamicKeys = new Set();
                     app.data.investments.forEach(inv => {
                         let key = 'Other';
@@ -3125,7 +3126,6 @@
                     });
                     let baseClasses = Array.from(dynamicKeys);
 
-                    // 2. Assign unique colors
                     let colorMap = {};
                     let pIdx = 0;
                     baseClasses.forEach(c => {
