@@ -396,7 +396,7 @@
                 </div>
             </div>
 
-            <!-- Wealth Progression Progress Bar (Moved here) -->
+            <!-- Wealth Progression Progress Bar -->
             <div class="progress-container" id="goalProgressBarWrapper" style="display: none; margin-top: 0; margin-bottom: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
@@ -490,6 +490,20 @@
             </div>
 
             <div class="settings-layout">
+                
+                <div class="settings-card">
+                    <h2>Global Preferences</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
+                        Choose how you want large numbers and currency to be displayed across the dashboard.
+                    </p>
+                    <div class="form-group" style="max-width: 300px;">
+                        <label for="numberFormatSelect">Number Formatting</label>
+                        <select id="numberFormatSelect" onchange="app.changeNumberFormat(event)">
+                            <option value="indian">Indian (Lakhs / Crores)</option>
+                            <option value="western">Western (Millions / Billions)</option>
+                        </select>
+                    </div>
+                </div>
                 
                 <div class="settings-card">
                     <h2>Profile Data & Management</h2>
@@ -769,7 +783,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V3.8</div>
+        <div>Anantha Wealth OS V3.9</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -818,7 +832,8 @@
                 profiles: ['Main Portfolio'],
                 goals: [],
                 investments: [],
-                budget: { salary: 0, rent: 0, living: 0, fun: 0 }
+                budget: { salary: 0, rent: 0, living: 0, fun: 0 },
+                numberFormat: 'indian'
             },
             engineState: {
                 pool: [],
@@ -860,12 +875,25 @@
                 if (isNaN(amount) || amount === null || amount === undefined) return "0";
                 let val = Math.round(amount);
                 let absVal = Math.abs(val);
-                if (absVal >= 10000000) {
-                    return Number((val / 10000000).toFixed(2)) + ' Cr';
-                } else if (absVal >= 100000) {
-                    return Number((val / 100000).toFixed(2)) + ' L';
+                let formatType = app.data.numberFormat || 'indian';
+
+                if (formatType === 'western') {
+                    if (absVal >= 1000000000) {
+                        return Number((val / 1000000000).toFixed(2)) + ' B';
+                    } else if (absVal >= 1000000) {
+                        return Number((val / 1000000).toFixed(2)) + ' M';
+                    } else if (absVal >= 100000) {
+                        return Number((val / 1000).toFixed(1)) + ' K';
+                    }
+                    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val);
+                } else {
+                    if (absVal >= 10000000) {
+                        return Number((val / 10000000).toFixed(2)) + ' Cr';
+                    } else if (absVal >= 100000) {
+                        return Number((val / 100000).toFixed(2)) + ' L';
+                    }
+                    return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
                 }
-                return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
             },
 
             parseCurrencyStr(val) {
@@ -892,11 +920,22 @@
                 return "";
             },
 
+            changeNumberFormat(event) {
+                app.data.numberFormat = event.target.value;
+                app.saveState();
+                app.renderAll();
+                app.showToast("Number format updated.");
+            },
+
             init() {
                 let isFreshInstall = app.migrateData();
                 if (isFreshInstall || app.data.investments.length === 0) {
                     app.activeView = 'settings';
                 }
+                
+                const formatSelect = document.getElementById('numberFormatSelect');
+                if(formatSelect) formatSelect.value = app.data.numberFormat || 'indian';
+
                 app.updateProfileDropdowns();
                 app.toggleGoalFields();
                 app.loadBudgetInputs();
@@ -919,10 +958,11 @@
             },
 
             migrateData() {
-                const savedV3_8 = localStorage.getItem('ananthaDataV3_8');
-                if (savedV3_8) {
-                    app.data = JSON.parse(savedV3_8);
+                const savedV3_9 = localStorage.getItem('ananthaDataV3_9');
+                if (savedV3_9) {
+                    app.data = JSON.parse(savedV3_9);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
+                    if (!app.data.numberFormat) app.data.numberFormat = 'indian';
                     
                     app.activeView = app.data.activeView || 'home';
                     app.dashProfileFilters = app.data.dashProfileFilters !== undefined ? app.data.dashProfileFilters : [...app.data.profiles];
@@ -943,10 +983,11 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
+                const savedOld = localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
+                    if (!app.data.numberFormat) app.data.numberFormat = 'indian';
                     
                     app.data.investments.forEach(i => {
                         delete i.linkedGoalId;
@@ -1010,7 +1051,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV3_8', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV3_9', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1048,6 +1089,7 @@
                         if (!importedData.profiles) importedData.profiles = ['Main Portfolio'];
                         if (!importedData.goals) importedData.goals = [];
                         if (!importedData.budget) importedData.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
+                        if (!importedData.numberFormat) importedData.numberFormat = 'indian';
                         
                         importedData.investments.forEach(i => {
                             delete i.linkedGoalId;
@@ -1071,6 +1113,10 @@
                         app.saveState();
                         app.updateProfileDropdowns();
                         app.loadBudgetInputs();
+                        
+                        const formatSelect = document.getElementById('numberFormatSelect');
+                        if(formatSelect) formatSelect.value = app.data.numberFormat;
+
                         app.renderAll();
                         
                         app.showToast("Data restored successfully from backup.");
@@ -1087,7 +1133,7 @@
                 if (confirm('Are you sure you want to reset the app? This will clear all your profiles, investments, and goals to give you a fresh start. Please make sure you have a backup downloaded first.')) {
                     if (confirm('Just to be absolutely sure: Click OK to reset everything to factory defaults.')) {
                         localStorage.clear();
-                        app.data = { profiles: ['Main Portfolio'], goals: [], investments: [], budget: { salary: 0, rent: 0, living: 0, fun: 0 } };
+                        app.data = { profiles: ['Main Portfolio'], goals: [], investments: [], budget: { salary: 0, rent: 0, living: 0, fun: 0 }, numberFormat: 'indian' };
                         app.dashProfileFilters = ['Main Portfolio'];
                         app.dashClassFilters = []; app.dashTypeFilters = []; app.dashCategoryFilters = []; app.dashSectorFilters = [];
                         app.invProfileFilters = ['Main Portfolio'];
@@ -3021,7 +3067,6 @@
                     reqCard.querySelector('.dash-value').innerHTML = '₹' + app.formatCurrency(totalFV);
                 }
 
-                // Render the Chart.js Asset Progression Chart dynamically based on active grouping
                 if (app.data.investments.length > 0) {
                     document.getElementById('dashAssetProgressionContainer').style.display = 'block';
                     
@@ -3035,7 +3080,6 @@
 
                     let yearsArray = [];
                     
-                    // 1. Determine dynamic classes based on current grouping
                     let dynamicKeys = new Set();
                     app.data.investments.forEach(inv => {
                         let key = 'Other';
@@ -3047,7 +3091,6 @@
                     });
                     let baseClasses = Array.from(dynamicKeys);
 
-                    // 2. Assign unique colors
                     let colorMap = {};
                     let pIdx = 0;
                     baseClasses.forEach(c => {
