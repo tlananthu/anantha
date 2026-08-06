@@ -175,15 +175,6 @@
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
         
-        /* YOY Chart specific styles */
-        .yoy-chart { display: flex; align-items: flex-end; height: 220px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
-        .yoy-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 35px; position: relative; cursor: pointer; height: 100%; }
-        .yoy-bar { width: 100%; background: var(--accent-color); border-radius: 4px 4px 0 0; transition: background 0.2s; }
-        .yoy-bar-col:hover .yoy-bar { filter: brightness(1.2); }
-        .yoy-bar-label { font-size: 0.65rem; color: var(--text-secondary); margin-top: 6px; font-weight: 600; }
-        .yoy-tooltip { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); background: var(--surface-light); color: var(--text-primary); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; border: 1px solid var(--accent-color); z-index: 10; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: opacity 0.2s; }
-        .yoy-bar-col:hover .yoy-tooltip { opacity: 1; }
-
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
         .portfolio-header h3 { font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin: 0; }
         .btn-upload { background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color); font-weight: 500; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
@@ -723,7 +714,9 @@
                     <div style="margin-bottom: 0.5rem; color: var(--accent-color); font-weight: bold;">Calculation:</div>
                     <div id="justFormula" style="color: var(--text-secondary); margin-bottom: 1.5rem; word-break: break-all; white-space: pre-wrap; font-size: 0.9rem; line-height: 1.6;"></div>
                     
-                    <div id="justChartContainer" class="yoy-chart"></div>
+                    <div style="position: relative; height: 250px; width: 100%; margin-top: 1rem;">
+                        <canvas id="justProgressionCanvas"></canvas>
+                    </div>
                     
                     <div style="font-size: 1.2rem; font-weight: bold; color: var(--text-primary); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">Expected Future Wealth: <span id="justFV" style="color: var(--accent-color); float: right;"></span></div>
                 </div>
@@ -814,7 +807,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V4.2</div>
+        <div>Anantha Wealth OS V4.3</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -903,6 +896,7 @@
             
             assetChart: null,
             invChart: null,
+            justChart: null,
 
             formatCurrency(amount) {
                 if (isNaN(amount) || amount === null || amount === undefined) return "0";
@@ -1009,9 +1003,9 @@
             },
 
             migrateData() {
-                const savedV4_2 = localStorage.getItem('ananthaDataV4_2');
-                if (savedV4_2) {
-                    app.data = JSON.parse(savedV4_2);
+                const savedV4_3 = localStorage.getItem('ananthaDataV4_3');
+                if (savedV4_3) {
+                    app.data = JSON.parse(savedV4_3);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     if (!app.data.numberFormat) app.data.numberFormat = 'indian';
                     if (!app.data.currency) app.data.currency = '₹';
@@ -1035,7 +1029,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV4_1') || localStorage.getItem('ananthaDataV4_0') || localStorage.getItem('ananthaDataV3_9') || localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
+                const savedOld = localStorage.getItem('ananthaDataV4_2') || localStorage.getItem('ananthaDataV4_1') || localStorage.getItem('ananthaDataV4_0') || localStorage.getItem('ananthaDataV3_9') || localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1104,7 +1098,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV4_2', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV4_3', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -1485,48 +1479,74 @@
                     document.getElementById('justFormula').innerText = `We grow your current value by ${inv.growthRate}% every year for ${years.toFixed(1)} years.`;
                 }
 
-                let chartHtml = '';
+                let labels = [];
                 let dataPoints = [];
-                let maxVal = 0;
                 
                 let step = years > 40 ? 5 : (years > 20 ? 2 : 1);
                 
-                for (let i = 0; i < years; i += step) {
-                    let pointVal = app.getAssetValueAtYear(inv, i);
-                    if (pointVal > maxVal) maxVal = pointVal;
-                    dataPoints.push({ t: i, val: pointVal, year: app.currentYear + i });
+                for (let i = 0; i <= years; i += step) {
+                    labels.push(Math.floor(app.currentYear + i));
+                    dataPoints.push(app.getAssetValueAtYear(inv, i));
                 }
                 
-                if (dataPoints.length === 0 || dataPoints[dataPoints.length - 1].t !== years) {
-                    let finalVal = fv;
-                    if (finalVal > maxVal) maxVal = finalVal;
-                    dataPoints.push({ t: years, val: finalVal, year: app.currentYear + years });
+                if (dataPoints.length === 0 || labels[labels.length - 1] !== Math.floor(app.currentYear + years)) {
+                    labels.push(Math.floor(app.currentYear + years));
+                    dataPoints.push(fv);
                 }
 
-                if (maxVal === 0) maxVal = inv.value;
+                let typeColorHex = app.getTypeColor(inv.type);
+                
+                if (app.justChart) {
+                    app.justChart.destroy();
+                }
 
-                dataPoints.forEach(pt => {
-                    let heightPct = (pt.val / maxVal) * 100;
-                    let isFinal = pt.t === years;
-                    
-                    let color = isFinal ? 'var(--success-color)' : 'var(--accent-color)';
-                    if (inv.growthRate < 0) {
-                        color = isFinal ? 'var(--danger-color)' : 'var(--warning-color)';
+                const ctx = document.getElementById('justProgressionCanvas').getContext('2d');
+                app.justChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: inv.name,
+                            data: dataPoints,
+                            borderColor: typeColorHex,
+                            backgroundColor: typeColorHex,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#94a3b8', callback: function(val) { return app.formatCurrency(val); } },
+                                grid: { color: 'rgba(255,255,255,0.05)' }
+                            },
+                            x: {
+                                ticks: { color: '#94a3b8' },
+                                grid: { color: 'rgba(255,255,255,0.05)' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + app.formatCurrency(context.raw);
+                                    }
+                                }
+                            }
+                        }
                     }
-                    
-                    let label = pt.t === 0 ? 'Now' : (Number.isInteger(pt.t) ? `Y${pt.t}` : `Y${pt.t.toFixed(1)}`);
-                    
-                    chartHtml += `
-                        <div class="yoy-bar-col">
-                            <div class="yoy-bar" style="height: ${heightPct}%; background: ${color};">
-                                <div class="yoy-tooltip">${app.formatCurrency(pt.val)}<br>${Math.floor(pt.year)}</div>
-                            </div>
-                            <div class="yoy-bar-label">${label}</div>
-                        </div>
-                    `;
                 });
-                
-                document.getElementById('justChartContainer').innerHTML = chartHtml;
+
                 document.getElementById('justFV').innerText = `${app.formatCurrency(fv)}`;
                 document.getElementById('justificationModal').style.display = 'flex';
             },
@@ -2894,6 +2914,7 @@
                     processedInv.sort((a, b) => {
                         let valA, valB;
                         if (app.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+                        else if (app.invSortColumn === 'invested') { valA = a.investedValue || 0; valB = b.investedValue || 0; }
                         else if (app.invSortColumn === 'value') { valA = a.value; valB = b.value; }
                         else if (app.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
                         else if (app.invSortColumn === 'actualGrowth') { valA = a.actualGrowthPct || -9999; valB = b.actualGrowthPct || -9999; }
@@ -2905,10 +2926,11 @@
                         return 0;
                     });
 
-                    let totalCV = 0, totalFV = 0;
+                    let totalInv = 0, totalCV = 0, totalFV = 0;
                     let tbodyHtml = '';
 
                     processedInv.forEach(inv => {
+                        totalInv += (inv.investedValue || 0);
                         totalCV += (inv.value || 0);
                         totalFV += inv.totalFV;
 
@@ -2964,6 +2986,7 @@
                                     </div>
                                 </td>
                                 <td>${destHtml}</td>
+                                <td>${inv.investedValue ? app.formatCurrency(inv.investedValue) : '-'}</td>
                                 <td>${app.formatCurrency(inv.value)}</td>
                                 <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
                                 <td style="color: ${inv.growthRate < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${parseFloat(inv.growthRate).toFixed(1)}%</td>
@@ -2998,6 +3021,7 @@
                                         <tr>
                                             <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name-${safeProfileId}" class="sort-icon"></span></th>
                                             <th>Goal</th>
+                                            <th onclick="app.sortInvestments('invested')">Invested Value <span id="sort-inv-invested-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('value')">Current Value <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('growth')">Expected Yearly Growth <span id="sort-inv-growth-${safeProfileId}" class="sort-icon"></span></th>
@@ -3010,6 +3034,7 @@
                                         ${tbodyHtml}
                                         <tr class="total-row">
                                             <td colspan="2">TOTAL</td>
+                                            <td>${app.formatCurrency(totalInv)}</td>
                                             <td>${app.formatCurrency(totalCV)}</td>
                                             <td></td>
                                             <td></td>
@@ -3025,7 +3050,7 @@
                     container.innerHTML += sectionHtml;
                 });
 
-                ['name', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
+                ['name', 'invested', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
                     activeProfiles.forEach(profile => {
                         const iconEl = document.getElementById(`sort-inv-${col}-${profile.replace(/[^a-zA-Z0-9]/g,'-')}`);
                         if(iconEl) {
