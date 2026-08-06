@@ -175,6 +175,15 @@
         .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; border: none; padding: 0; width: auto; }
         .close-modal:hover { color: var(--danger-color); }
         
+        /* YOY Chart specific styles */
+        .yoy-chart { display: flex; align-items: flex-end; height: 220px; gap: 6px; margin-top: 1rem; padding-top: 55px; border-top: 1px solid var(--border-color); overflow-x: auto; padding-bottom: 10px; }
+        .yoy-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 35px; position: relative; cursor: pointer; height: 100%; }
+        .yoy-bar { width: 100%; background: var(--accent-color); border-radius: 4px 4px 0 0; transition: background 0.2s; }
+        .yoy-bar-col:hover .yoy-bar { filter: brightness(1.2); }
+        .yoy-bar-label { font-size: 0.65rem; color: var(--text-secondary); margin-top: 6px; font-weight: 600; }
+        .yoy-tooltip { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); background: var(--surface-light); color: var(--text-primary); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; border: 1px solid var(--accent-color); z-index: 10; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: opacity 0.2s; }
+        .yoy-bar-col:hover .yoy-tooltip { opacity: 1; }
+
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
         .portfolio-header h3 { font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin: 0; }
         .btn-upload { background-color: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color); font-weight: 500; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
@@ -807,7 +816,7 @@
     <div id="appToast" class="toast"></div>
 
     <footer class="app-footer">
-        <div>Anantha Wealth OS V4.3</div>
+        <div>Anantha Wealth OS V4.4</div>
         <div style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.2rem;">Infinite Possibilities</div>
     </footer>
 
@@ -1003,9 +1012,9 @@
             },
 
             migrateData() {
-                const savedV4_3 = localStorage.getItem('ananthaDataV4_3');
-                if (savedV4_3) {
-                    app.data = JSON.parse(savedV4_3);
+                const savedV4_4 = localStorage.getItem('ananthaDataV4_4');
+                if (savedV4_4) {
+                    app.data = JSON.parse(savedV4_4);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
                     if (!app.data.numberFormat) app.data.numberFormat = 'indian';
                     if (!app.data.currency) app.data.currency = '₹';
@@ -1029,7 +1038,7 @@
                     return false; 
                 }
 
-                const savedOld = localStorage.getItem('ananthaDataV4_2') || localStorage.getItem('ananthaDataV4_1') || localStorage.getItem('ananthaDataV4_0') || localStorage.getItem('ananthaDataV3_9') || localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
+                const savedOld = localStorage.getItem('ananthaDataV4_3') || localStorage.getItem('ananthaDataV4_2') || localStorage.getItem('ananthaDataV4_1') || localStorage.getItem('ananthaDataV4_0') || localStorage.getItem('ananthaDataV3_9') || localStorage.getItem('ananthaDataV3_8') || localStorage.getItem('ananthaDataV3_7') || localStorage.getItem('ananthaDataV3_6') || localStorage.getItem('ananthaDataV3_5') || localStorage.getItem('ananthaDataV3_4') || localStorage.getItem('ananthaDataV3_3') || localStorage.getItem('ananthaDataV3_2') || localStorage.getItem('ananthaDataV3_1') || localStorage.getItem('ananthaDataV3_0') || localStorage.getItem('ananthaDataV2_84');
                 if (savedOld) {
                     app.data = JSON.parse(savedOld);
                     if (!app.data.budget) app.data.budget = { salary: 0, rent: 0, living: 0, fun: 0 };
@@ -1098,7 +1107,7 @@
                 app.data.invSortColumn = app.invSortColumn;
                 app.data.invSortAsc = app.invSortAsc;
                 
-                localStorage.setItem('ananthaDataV4_3', JSON.stringify(app.data));
+                localStorage.setItem('ananthaDataV4_4', JSON.stringify(app.data));
             },
 
             exportData() {
@@ -2908,12 +2917,21 @@
                         if (inv.investedValue && inv.investedValue > 0) {
                             actualGrowthPct = ((inv.value - inv.investedValue) / inv.investedValue) * 100;
                         }
-                        return { ...inv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct };
+                        
+                        let primaryGoal = 'Unassigned';
+                        if (inv.allocations && inv.allocations.length > 0) {
+                            primaryGoal = inv.allocations[0].goalName;
+                        } else if (inv.remainingFV > 1) {
+                            primaryGoal = 'Unassigned';
+                        }
+                        
+                        return { ...inv, matDisplay: matDisplay, sortMat: sortMat, actualGrowthPct: actualGrowthPct, primaryGoal: primaryGoal };
                     });
 
                     processedInv.sort((a, b) => {
                         let valA, valB;
                         if (app.invSortColumn === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+                        else if (app.invSortColumn === 'goal') { valA = a.primaryGoal.toLowerCase(); valB = b.primaryGoal.toLowerCase(); }
                         else if (app.invSortColumn === 'invested') { valA = a.investedValue || 0; valB = b.investedValue || 0; }
                         else if (app.invSortColumn === 'value') { valA = a.value; valB = b.value; }
                         else if (app.invSortColumn === 'growth') { valA = a.growthRate; valB = b.growthRate; }
@@ -2985,7 +3003,7 @@
                                         ${planTypeBadge}
                                     </div>
                                 </td>
-                                <td>${destHtml}</td>
+                                <td style="text-align: left;">${destHtml}</td>
                                 <td>${inv.investedValue ? app.formatCurrency(inv.investedValue) : '-'}</td>
                                 <td>${app.formatCurrency(inv.value)}</td>
                                 <td style="color: ${actualGrowthColor}; font-weight: 500;">${actualGrowthDisplay}</td>
@@ -3020,7 +3038,7 @@
                                     <thead>
                                         <tr>
                                             <th onclick="app.sortInvestments('name')">Asset / Instrument <span id="sort-inv-name-${safeProfileId}" class="sort-icon"></span></th>
-                                            <th>Goal</th>
+                                            <th style="text-align: left;" onclick="app.sortInvestments('goal')">Goal <span id="sort-inv-goal-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('invested')">Invested Value <span id="sort-inv-invested-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('value')">Current Value <span id="sort-inv-value-${safeProfileId}" class="sort-icon"></span></th>
                                             <th onclick="app.sortInvestments('actualGrowth')">Actual Growth <span id="sort-inv-actualGrowth-${safeProfileId}" class="sort-icon"></span></th>
@@ -3050,7 +3068,7 @@
                     container.innerHTML += sectionHtml;
                 });
 
-                ['name', 'invested', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
+                ['name', 'goal', 'invested', 'value', 'actualGrowth', 'growth', 'maturity', 'fv'].forEach(col => {
                     activeProfiles.forEach(profile => {
                         const iconEl = document.getElementById(`sort-inv-${col}-${profile.replace(/[^a-zA-Z0-9]/g,'-')}`);
                         if(iconEl) {
